@@ -3,62 +3,41 @@
 
 import React, { useState } from 'react';
 
-const AddEmployee = () => {
-    const [employee, setEmployee] = useState({
-        id: '',
-        fullName: '',
-        phone: '',
+const AddPatient = () => {
+
+    const [patient, setPatient] = useState({
+        name: '',
         email: '',
+        phone: '',
         dob: '',
-        role: 'admin',
+        address: '',
     });
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setEmployee((prevEmployee) => ({
-            ...prevEmployee,
+        setPatient((prevPatient) => ({
+            ...prevPatient,
             [name]: value,
         }));
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("Employee Data Submitted:", employee);
-
-        setEmployee({
-            id: '',
-            fullName: '',
-            phone: '',
-            email: '',
-            dob: '',
-            role: 'admin',
-        });
+        console.log("Patient Data Submitted:", patient);
     };
 
     return (
         <div className="flex">
             <div className="p-4 flex-1">
-                <h2 className="text-2xl font-semibold mb-4">Add Employee</h2>
+                <h2 className="text-2xl font-semibold mb-4">Add Patient</h2>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium">Full Name</label>
+                        <label className="block text-sm font-medium">Tên</label>
                         <input
                             type="text"
-                            name="fullName"
-                            value={employee.fullName}
-                            onChange={handleChange}
-                            required
-                            className="border rounded p-2 w-full"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium">Phone</label>
-                        <input
-                            type="text"
-                            name="phone"
-                            value={employee.phone}
+                            name="name"
+                            value={patient.name}
                             onChange={handleChange}
                             required
                             className="border rounded p-2 w-full"
@@ -70,7 +49,19 @@ const AddEmployee = () => {
                         <input
                             type="email"
                             name="email"
-                            value={employee.email}
+                            value={patient.email}
+                            onChange={handleChange}
+                            required
+                            className="border rounded p-2 w-full"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium">Phone</label>
+                        <input
+                            type="text"
+                            name="phone"
+                            value={patient.phone}
                             onChange={handleChange}
                             required
                             className="border rounded p-2 w-full"
@@ -82,7 +73,7 @@ const AddEmployee = () => {
                         <input
                             type="date"
                             name="dob"
-                            value={employee.dob}
+                            value={patient.dob}
                             onChange={handleChange}
                             required
                             className="border rounded p-2 w-full"
@@ -90,25 +81,22 @@ const AddEmployee = () => {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium">Role</label>
-                        <select
-                            name="role"
-                            value={employee.role}
+                        <label className="block text-sm font-medium">Address</label>
+                        <input
+                            type="text"
+                            name="address"
+                            value={patient.address}
                             onChange={handleChange}
                             required
                             className="border rounded p-2 w-full"
-                        >
-                            <option value="admin">Admin</option>
-                            <option value="doctor">Doctor</option>
-                            <option value="receptionist">Receptionist</option>
-                        </select>
+                        />
                     </div>
 
                     <button
                         type="submit"
-                        className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                     >
-                        Save Employee
+                        Save Patient
                     </button>
                 </form>
             </div>
@@ -116,4 +104,4 @@ const AddEmployee = () => {
     );
 };
 
-export default AddEmployee;
+export default AddPatient;

@@ -3,10 +3,11 @@
 import React from "react";
 import Link from "next/link";
 import { TiHome } from "react-icons/ti";
-import { FaUserDoctor } from "react-icons/fa6";
+import { FaUserDoctor, FaUser } from "react-icons/fa6";
 import { MdAddModerator } from "react-icons/md";
 import { IoPersonAddSharp } from "react-icons/io5";
 import { RiLogoutBoxFill } from "react-icons/ri";
+import { GiHealthNormal } from "react-icons/gi";
 import { FaFileMedical, FaClipboardList, FaFileInvoiceDollar, FaChartBar, FaPills } from "react-icons/fa";
 import { useRouter } from 'next/navigation';
 
@@ -32,8 +33,16 @@ const Sidebar = () => {
                     <IoPersonAddSharp className="w-8 h-8 cursor-pointer" title="Employees" />
                 </Link>
 
+                <Link href="/specialty/SpecialtyList">
+                    <GiHealthNormal className="w-8 h-8 cursor-pointer" title="Specialties" />
+                </Link>
+
                 <Link href="/service/ServiceList">
                     <MdAddModerator className="w-8 h-8 cursor-pointer" title="Services" />
+                </Link>
+
+                <Link href="/patient/PatientList">
+                    <FaUser className="w-8 h-8 cursor-pointer" title="Patients" />
                 </Link>
 
                 <Link href="/appointment/AppointmentList">

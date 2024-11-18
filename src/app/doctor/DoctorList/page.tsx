@@ -2,45 +2,51 @@
 "use client";
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
 const doctorsData = [
     {
         id: 39,
-        firstName: 'AV',
-        lastName: 'Stranger',
-        email: 'gmhs13@yopmail.com',
-        dob: '18/03/2020',
-        gender: 'male',
-        address: '3125 Elkview Drive, Miami, 33169',
+        fullname: 'AV Stranger',
         phone: '7865641399',
-        department: 'Intensive Care Unit (ICU)',
-        image: '/doc.png',
+        email: 'abc123@yopmail.com',
+        password: 'password123',
+        gender: 'male',
+        specialty: 'Xét nghiệm',
+        license: 'AB123456',
+        yearsOfExperience: 5,
     },
     {
         id: 41,
-        firstName: 'SHAHID AFRIDI',
-        lastName: 'ZIHAD',
-        email: 'gmhs13@yopmail.com',
-        dob: '18/03/2020',
-        gender: 'male',
-        address: '3125 Elkview Drive, Miami, 33169',
+        fullname: 'SHAHID AFRIDI',
         phone: '7865641399',
-        department: 'Intensive Care Unit (ICU)',
-        image: '/doc.png',
+        email: 'gmhs13@yopmail.com',
+        password: 'password456',
+        gender: 'male',
+        specialty: 'Cơ xương khớp',
+        license: 'CD789012',
+        yearsOfExperience: 8,
     },
-    // Add more doctor objects if needed
 ];
 
 const DoctorList = () => {
     const [currentPage, setCurrentPage] = useState(1);
+    const [searchQuery, setSearchQuery] = useState('');
     const recordsPerPage = 5;
 
     const indexOfLastRecord = currentPage * recordsPerPage;
     const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
-    const currentDoctor = doctorsData.slice(indexOfFirstRecord, indexOfLastRecord);
+    const filteredDoctors = doctorsData.filter(doctor =>
+        doctor.fullname.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        doctor.phone.includes(searchQuery) ||
+        doctor.email.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    const currentDoctor = filteredDoctors.slice(indexOfFirstRecord, indexOfLastRecord);
 
-    const totalPages = Math.ceil(doctorsData.length / recordsPerPage);
+    const totalPages = Math.ceil(filteredDoctors.length / recordsPerPage);
+
+    const router = useRouter();
 
     const handleNextPage = () => {
         if (currentPage < totalPages) {
@@ -54,12 +60,12 @@ const DoctorList = () => {
         }
     };
 
-    const handleEdit = () => {
-        console.log("Edit doctor with ID:");
+    const handleEdit = (doctorId: number) => {
+        router.push(`/doctor/EditDoctor?id=${doctorId}`);
     };
 
-    const handleDelete = () => {
-        console.log("Delete doctor with ID:");
+    const handleDelete = (doctorId: number) => {
+        console.log("Delete doctor with ID:", doctorId);
     };
 
     return (
@@ -69,51 +75,50 @@ const DoctorList = () => {
             <div className="flex items-center mb-4">
                 <input
                     type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search"
-                    className="border rounded p-2 flex-grow mr-2" />
+                    className="border rounded p-2 flex-grow mr-2"
+                />
                 <button className="bg-green-500 text-white px-4 py-2 rounded">Search</button>
             </div>
 
             <table className="min-w-full bg-white shadow rounded-lg overflow-hidden">
                 <thead>
                     <tr className="bg-gray-100">
-                        <th className="px-6 py-3 text-left">Image</th>
                         <th className="px-6 py-3 text-left">ID</th>
-                        <th className="px-6 py-3 text-left">First Name</th>
-                        <th className="px-6 py-3 text-left">Last Name</th>
-                        <th className="px-6 py-3 text-left">Email</th>
-                        <th className="px-6 py-3 text-left">DOB</th>
-                        <th className="px-6 py-3 text-left">Gender</th>
-                        <th className="px-6 py-3 text-left">Address</th>
+                        <th className="px-6 py-3 text-left">Full Name</th>
                         <th className="px-6 py-3 text-left">Phone</th>
-                        <th className="px-6 py-3 text-left">Department</th>
+                        <th className="px-6 py-3 text-left">Email</th>
+                        <th className="px-6 py-3 text-left">Password</th>
+                        <th className="px-6 py-3 text-left">Gender</th>
+                        <th className="px-6 py-3 text-left">Specialty</th>
+                        <th className="px-6 py-3 text-left">License</th>
+                        <th className="px-6 py-3 text-left">Years of Experience</th>
                         <th className="px-6 py-3 text-left">Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     {currentDoctor.map((doctor, index) => (
                         <tr key={doctor.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                            <td className="px-6 py-4">
-                                <img src={doctor.image} alt="doctor" className="w-10 h-10 rounded-full" />
-                            </td>
                             <td className="px-6 py-4">{doctor.id}</td>
-                            <td className="px-6 py-4">{doctor.firstName}</td>
-                            <td className="px-6 py-4">{doctor.lastName}</td>
-                            <td className="px-6 py-4">{doctor.email}</td>
-                            <td className="px-6 py-4">{doctor.dob}</td>
-                            <td className="px-6 py-4">{doctor.gender}</td>
-                            <td className="px-6 py-4">{doctor.address}</td>
+                            <td className="px-6 py-4">{doctor.fullname}</td>
                             <td className="px-6 py-4">{doctor.phone}</td>
-                            <td className="px-6 py-4">{doctor.department}</td>
+                            <td className="px-6 py-4">{doctor.email}</td>
+                            <td className="px-6 py-4">{doctor.password}</td>
+                            <td className="px-6 py-4">{doctor.gender}</td>
+                            <td className="px-6 py-4">{doctor.specialty}</td>
+                            <td className="px-6 py-4">{doctor.license}</td>
+                            <td className="px-6 py-4">{doctor.yearsOfExperience}</td>
                             <td className="px-6 py-4 flex space-x-2">
                                 <button
-                                    onClick={() => handleEdit()}
+                                    onClick={() => handleEdit(doctor.id)}
                                     className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
                                 >
                                     Edit
                                 </button>
                                 <button
-                                    onClick={() => handleDelete()}
+                                    onClick={() => handleDelete(doctor.id)}
                                     className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
                                 >
                                     Delete
@@ -129,6 +134,7 @@ const DoctorList = () => {
                     <button className="bg-blue-500 text-white px-4 py-2 rounded">+ Add Doctor</button>
                 </Link>
             </div>
+
             <div className="flex justify-between mt-4">
                 <button
                     onClick={handlePreviousPage}

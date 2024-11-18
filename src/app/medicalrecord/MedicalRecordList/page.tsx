@@ -5,36 +5,38 @@ import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
 const medicalRecordsData = [
-    { id: 1, name: 'Nguyen Van A', phone: '0912345678', dateOfBirth: '01/01/1990', address: '123 ABC Street', email: 'abc@gmail.com' },
-    { id: 2, name: 'Tran Thi B', phone: '0987654321', dateOfBirth: '15/05/1985', address: '456 DEF Avenue', email: 'ctien@gmail.com' },
-    { id: 3, name: 'Nguyen Van A', phone: '0912345678', dateOfBirth: '01/01/1990', address: '123 ABC Street', email: 'abc@gmail.com' },
-    { id: 4, name: 'Tran Thi B', phone: '0987654321', dateOfBirth: '15/05/1985', address: '456 DEF Avenue', email: 'ctien@gmail.com' },
-    { id: 5, name: 'Nguyen Van A', phone: '0912345678', dateOfBirth: '01/01/1990', address: '123 ABC Street', email: 'abc@gmail.com' },
-    { id: 6, name: 'Tran Thi B', phone: '0987654321', dateOfBirth: '15/05/1985', address: '456 DEF Avenue', email: 'ctien@gmail.com' },
-    { id: 7, name: 'Nguyen Van A', phone: '0912345678', dateOfBirth: '01/01/1990', address: '123 ABC Street', email: 'abc@gmail.com' },
-    { id: 8, name: 'Tran Thi B', phone: '0987654321', dateOfBirth: '15/05/1985', address: '456 DEF Avenue', email: 'ctien@gmail.com' },
-    { id: 9, name: 'Nguyen Van A', phone: '0912345678', dateOfBirth: '01/01/1990', address: '123 ABC Street', email: 'abc@gmail.com' },
-    { id: 10, name: 'Tran Thi B', phone: '0987654321', dateOfBirth: '15/05/1985', address: '456 DEF Avenue', email: 'ctien@gmail.com' },
-    { id: 11, name: 'Nguyen Van A', phone: '0912345678', dateOfBirth: '01/01/1990', address: '123 ABC Street', email: 'abc@gmail.com' },
-    { id: 12, name: 'Tran Thi B', phone: '0987654321', dateOfBirth: '15/05/1985', address: '456 DEF Avenue', email: 'ctien@gmail.com' },
-    { id: 13, name: 'Nguyen Van A', phone: '0912345678', dateOfBirth: '01/01/1990', address: '123 ABC Street', email: 'abc@gmail.com' },
-    { id: 14, name: 'Tran Thi B', phone: '0987654321', dateOfBirth: '15/05/1985', address: '456 DEF Avenue', email: 'ctien@gmail.com' },
-    { id: 15, name: 'Nguyen Van A', phone: '0912345678', dateOfBirth: '01/01/1990', address: '123 ABC Street', email: 'abc@gmail.com' },
-    { id: 16, name: 'Tran Thi B', phone: '0987654321', dateOfBirth: '15/05/1985', address: '456 DEF Avenue', email: 'ctien@gmail.com' },
-    { id: 17, name: 'Nguyen Van A', phone: '0912345678', dateOfBirth: '01/01/1990', address: '123 ABC Street', email: 'abc@gmail.com' },
-    { id: 18, name: 'Tran Thi B', phone: '0987654321', dateOfBirth: '15/05/1985', address: '456 DEF Avenue', email: 'ctien@gmail.com' },
+    { id: 1, patientName: 'Nguyen Van A', patientPhone: '0912345678', doctorName: 'Dr. A', symptom: 'Cough', disease: 'Flu', dateOfVisit: '01/01/2024', medicine: 'Paracetamol', quantity: 2, price: 100000 },
+    { id: 2, patientName: 'Tran Thi B', patientPhone: '0987654321', doctorName: 'Dr. B', symptom: 'Headache', disease: 'Migraine', dateOfVisit: '02/01/2024', medicine: 'Aspirin', quantity: 1, price: 50000 },
+    { id: 3, patientName: 'Nguyen Van C', patientPhone: '0912345678', doctorName: 'Dr. A', symptom: 'Fever', disease: 'Cold', dateOfVisit: '03/01/2024', medicine: 'Ibuprofen', quantity: 3, price: 150000 },
+    { id: 4, patientName: 'Tran Thi D', patientPhone: '0987654321', doctorName: 'Dr. B', symptom: 'Stomach pain', disease: 'Ulcer', dateOfVisit: '04/01/2024', medicine: 'Omeprazole', quantity: 1, price: 80000 },
+    { id: 5, patientName: 'Nguyen Van E', patientPhone: '0912345678', doctorName: 'Dr. C', symptom: 'Back pain', disease: 'Scoliosis', dateOfVisit: '05/01/2024', medicine: 'Pain reliever', quantity: 2, price: 120000 },
+    { id: 6, patientName: 'Tran Thi F', patientPhone: '0987654321', doctorName: 'Dr. D', symptom: 'Sore throat', disease: 'Tonsillitis', dateOfVisit: '06/01/2024', medicine: 'Antibiotics', quantity: 1, price: 60000 },
 ];
-
 
 const MedicalRecordList = () => {
     const [currentPage, setCurrentPage] = useState(1);
-    const recordsPerPage = 5;
+    const [searchQuery, setSearchQuery] = useState('');
+    const recordsPerPage = 10;
+
+    const filteredRecords = medicalRecordsData.filter((record) => {
+        return (
+            record.patientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            record.patientPhone.includes(searchQuery) ||
+            record.doctorName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            record.symptom.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            record.disease.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            record.dateOfVisit.includes(searchQuery) ||
+            record.medicine.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            record.quantity.toString().includes(searchQuery) ||
+            record.price.toString().includes(searchQuery)
+        );
+    });
 
     const indexOfLastRecord = currentPage * recordsPerPage;
     const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
-    const currentRecords = medicalRecordsData.slice(indexOfFirstRecord, indexOfLastRecord);
+    const currentRecords = filteredRecords.slice(indexOfFirstRecord, indexOfLastRecord);
 
-    const totalPages = Math.ceil(medicalRecordsData.length / recordsPerPage);
+    const totalPages = Math.ceil(filteredRecords.length / recordsPerPage);
 
     const handleNextPage = () => {
         if (currentPage < totalPages) {
@@ -64,19 +66,30 @@ const MedicalRecordList = () => {
                         type="text"
                         placeholder="Search"
                         className="border rounded p-2 flex-grow mr-2"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
                     />
-                    <button className="bg-green-500 text-white px-4 py-2 rounded">Search</button>
+                    <button
+                        className="bg-green-500 text-white px-4 py-2 rounded"
+                        onClick={() => setSearchQuery('')}
+                    >
+                        Search
+                    </button>
                 </div>
 
                 <table className="min-w-full bg-white shadow rounded-lg overflow-hidden">
                     <thead>
                         <tr className="bg-gray-100">
                             <th className="px-6 py-3 text-left">ID</th>
-                            <th className="px-6 py-3 text-left">Name</th>
-                            <th className="px-6 py-3 text-left">Email</th>
+                            <th className="px-6 py-3 text-left">Patient Name</th>
                             <th className="px-6 py-3 text-left">Phone</th>
-                            <th className="px-6 py-3 text-left">Date of Birth</th>
-                            <th className="px-6 py-3 text-left">Address</th>
+                            <th className="px-6 py-3 text-left">Doctor</th>
+                            <th className="px-6 py-3 text-left">Symptom</th>
+                            <th className="px-6 py-3 text-left">Disease</th>
+                            <th className="px-6 py-3 text-left">Date of Visit</th>
+                            <th className="px-6 py-3 text-left">Medicine</th>
+                            <th className="px-6 py-3 text-left">Quantity</th>
+                            <th className="px-6 py-3 text-left">Price</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -92,12 +105,16 @@ const MedicalRecordList = () => {
                                     className="px-6 py-4 text-blue-500 cursor-pointer"
                                     onClick={() => navigateToDetail()}
                                 >
-                                    {record.name}
+                                    {record.patientName}
                                 </td>
-                                <td className="px-6 py-4">{record.email}</td>
-                                <td className="px-6 py-4">{record.phone}</td>
-                                <td className="px-6 py-4">{record.dateOfBirth}</td>
-                                <td className="px-6 py-4">{record.address}</td>
+                                <td className="px-6 py-4">{record.patientPhone}</td>
+                                <td className="px-6 py-4">{record.doctorName}</td>
+                                <td className="px-6 py-4">{record.symptom}</td>
+                                <td className="px-6 py-4">{record.disease}</td>
+                                <td className="px-6 py-4">{record.dateOfVisit}</td>
+                                <td className="px-6 py-4">{record.medicine}</td>
+                                <td className="px-6 py-4">{record.quantity}</td>
+                                <td className="px-6 py-4">{record.price}</td>
                             </tr>
                         ))}
                     </tbody>

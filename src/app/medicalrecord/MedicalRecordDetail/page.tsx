@@ -1,29 +1,57 @@
 "use client"
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 const MedicalRecordDetail = () => {
     const patientInfo = {
-        id: "3",
-        name: "NGUYỄN THỊ NGỌC LINH - SHS 828",
+        id: "1",
+        name: "Lê Nguyễn Cẩm Tiên",
         gender: "Nữ",
         dob: "01/07/2023",
         address: "hn",
         phone: "0121 365 463",
         email: "",
         notes: "",
-        totalVisits: 18,
-        totalPaid: "120.000.004 ₫",
+        totalVisits: 3,
+        totalPaid: "650.000 ₫",
 
     };
 
     const medicalRecords = [
-        { id: "20241108034831", treatmentName: "--", date: "08/11/2024", status: "Đang điều trị" },
-        { id: "20241016033148", treatmentName: "--", date: "16/10/2024", status: "Đang điều trị" },
-        { id: "20241014023659", treatmentName: "Xét nghiệm", date: "14/10/2024", status: "Đang điều trị" },
-
+        {
+            id: "20241108034831",
+            doctorName: "Dr. Nguyễn Văn A",
+            symptoms: "Ho, sốt",
+            disease: "Cảm cúm",
+            date: "08/11/2024",
+            medicine: "Paracetamol",
+            quantity: 10,
+            price: "200.000 ₫",
+        },
+        {
+            id: "20241016033148",
+            doctorName: "Dr. Trần Văn B",
+            symptoms: "Đau bụng",
+            disease: "Rối loạn tiêu hóa",
+            date: "16/10/2024",
+            medicine: "Smecta",
+            quantity: 5,
+            price: "150.000 ₫",
+        },
+        {
+            id: "20241014023659",
+            doctorName: "Dr. Lê Thị C",
+            symptoms: "Đau đầu, mệt mỏi",
+            disease: "Thiếu máu",
+            date: "14/10/2024",
+            medicine: "Sắt uống",
+            quantity: 20,
+            price: "300.000 ₫",
+        },
     ];
 
+    const router = useRouter();
     const [currentPage, setCurrentPage] = useState(1);
     const recordsPerPage = 5;
 
@@ -32,6 +60,10 @@ const MedicalRecordDetail = () => {
     const currentRecords = medicalRecords.slice(indexOfFirstRecord, indexOfLastRecord);
 
     const totalPages = Math.ceil(medicalRecords.length / recordsPerPage);
+
+    const handleCancel = () => {
+        router.push("/appointment/AppointmentList");
+    };
 
     const handleNextPage = () => {
         if (currentPage < totalPages) {
@@ -77,9 +109,13 @@ const MedicalRecordDetail = () => {
                     <thead>
                         <tr>
                             <th className="border-b p-4 text-left font-medium">Mã bệnh án</th>
-                            <th className="border-b p-4 text-left font-medium">Tên bệnh án</th>
-                            <th className="border-b p-4 text-left font-medium">Ngày</th>
-                            <th className="border-b p-4 text-left font-medium">Trạng thái</th>
+                            <th className="border-b p-4 text-left font-medium">Tên bác sĩ</th>
+                            <th className="border-b p-4 text-left font-medium">Triệu chứng</th>
+                            <th className="border-b p-4 text-left font-medium">Bệnh</th>
+                            <th className="border-b p-4 text-left font-medium">Ngày khám</th>
+                            <th className="border-b p-4 text-left font-medium">Thuốc</th>
+                            <th className="border-b p-4 text-left font-medium">Số lượng</th>
+                            <th className="border-b p-4 text-left font-medium">Tiền</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -90,9 +126,13 @@ const MedicalRecordDetail = () => {
                                 className="cursor-pointer hover:bg-gray-100 text-black"
                             >
                                 <td className="border-b p-4">{record.id}</td>
-                                <td className="border-b p-4">{record.treatmentName}</td>
+                                <td className="border-b p-4">{record.doctorName}</td>
+                                <td className="border-b p-4">{record.symptoms}</td>
+                                <td className="border-b p-4">{record.disease}</td>
                                 <td className="border-b p-4">{record.date}</td>
-                                <td className="border-b p-4">{record.status}</td>
+                                <td className="border-b p-4">{record.medicine}</td>
+                                <td className="border-b p-4">{record.quantity}</td>
+                                <td className="border-b p-4">{record.price}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -117,6 +157,12 @@ const MedicalRecordDetail = () => {
             </section>
 
             <button className="mt-6 bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600">
+                QUAY LẠI
+            </button>
+            <button
+                onClick={handleCancel}
+                className="mt-6 bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600"
+            >
                 QUAY LẠI
             </button>
         </div>

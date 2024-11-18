@@ -1,10 +1,25 @@
 /* eslint-disable @next/next/no-img-element */
-"use client"
+"use client";
 
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent, FormEvent } from 'react';
 
-const AddDoctor = () => {
-    const [doctor, setDoctor] = useState({
+
+interface Doctor {
+    fullname: string;
+    phone: string;
+    email: string;
+    password: string;
+    gender: string;
+    specialty: string;
+    license: string;
+    experienceYears: number;
+}
+
+const EditDoctor = () => {
+
+
+
+    const [doctor, setDoctor] = useState<Doctor>({
         fullname: '',
         phone: '',
         email: '',
@@ -12,28 +27,34 @@ const AddDoctor = () => {
         gender: '',
         specialty: '',
         license: '',
-        experienceYears: '',
+        experienceYears: 0,
     });
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const [loading, setLoading] = useState(false);
+    const [error] = useState<string | null>(null);
+
+
+
+
+    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setDoctor((prevDoctor) => ({
             ...prevDoctor,
-            [name]: value,
+            [name]: name === "experienceYears" ? Number(value) : value,
         }));
     };
 
-
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        console.log("Doctor Data Submitted:", doctor);
-    };
+        setLoading(true);
 
+    };
 
     return (
         <div className="flex">
             <div className="p-4 flex-1">
-                <h2 className="text-2xl font-semibold mb-4">Add Doctor</h2>
+                <h2 className="text-2xl font-semibold mb-4">Edit Doctor</h2>
+                {error && <p className="text-red-500">{error}</p>}
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
@@ -141,9 +162,10 @@ const AddDoctor = () => {
 
                     <button
                         type="submit"
-                        className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                        className={`bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 ${loading && "opacity-50"}`}
+                        disabled={loading}
                     >
-                        Save Doctor
+                        {loading ? "Updating..." : "Update Doctor"}
                     </button>
                 </form>
             </div>
@@ -151,4 +173,4 @@ const AddDoctor = () => {
     );
 };
 
-export default AddDoctor;
+export default EditDoctor;

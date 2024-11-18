@@ -36,12 +36,20 @@ const recordsPerPage = 5;
 
 const AppointmentList = () => {
     const [currentPage, setCurrentPage] = useState(1);
+    const [searchQuery, setSearchQuery] = useState('');
+
+    // Lọc danh sách dựa trên giá trị tìm kiếm
+    const filteredAppointments = appointmentsData.filter((appointment) =>
+        Object.values(appointment).some((value) =>
+            value.toString().toLowerCase().includes(searchQuery.toLowerCase())
+        )
+    );
 
     const indexOfLastRecord = currentPage * recordsPerPage;
     const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
-    const currentAppointments = appointmentsData.slice(indexOfFirstRecord, indexOfLastRecord);
+    const currentAppointments = filteredAppointments.slice(indexOfFirstRecord, indexOfLastRecord);
 
-    const totalPages = Math.ceil(appointmentsData.length / recordsPerPage);
+    const totalPages = Math.ceil(filteredAppointments.length / recordsPerPage);
 
     const handleNextPage = () => {
         if (currentPage < totalPages) {
@@ -72,8 +80,15 @@ const AppointmentList = () => {
                     type="text"
                     placeholder="Search"
                     className="border rounded p-2 flex-grow mr-2"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <button className="bg-green-500 text-white px-4 py-2 rounded">Search</button>
+                <button
+                    onClick={() => setCurrentPage(1)} // Reset về trang đầu sau khi tìm kiếm
+                    className="bg-green-500 text-white px-4 py-2 rounded"
+                >
+                    Search
+                </button>
             </div>
 
             <table className="min-w-full bg-white shadow rounded-lg overflow-hidden">
@@ -110,13 +125,13 @@ const AppointmentList = () => {
                                     onClick={() => handleEdit()}
                                     className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
                                 >
-                                    Edit
+                                    Confirm
                                 </button>
                                 <button
                                     onClick={() => handleDelete()}
                                     className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
                                 >
-                                    Delete
+                                    Reject
                                 </button>
                             </td>
                         </tr>

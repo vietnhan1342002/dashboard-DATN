@@ -1,9 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent, FormEvent } from 'react';
 
-const AddEmployee = () => {
+
+const EditEmployee = () => {
     const [employee, setEmployee] = useState({
         id: '',
         fullName: '',
@@ -13,32 +14,28 @@ const AddEmployee = () => {
         role: 'admin',
     });
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const [loading, setLoading] = useState(false);
+
+
+    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setEmployee((prevEmployee) => ({
             ...prevEmployee,
-            [name]: value,
+            [name]: name === "experienceYears" ? Number(value) : value,
         }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        console.log("Employee Data Submitted:", employee);
 
-        setEmployee({
-            id: '',
-            fullName: '',
-            phone: '',
-            email: '',
-            dob: '',
-            role: 'admin',
-        });
+    const handleSubmit = async (e: FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+
     };
 
     return (
         <div className="flex">
             <div className="p-4 flex-1">
-                <h2 className="text-2xl font-semibold mb-4">Add Employee</h2>
+                <h2 className="text-2xl font-semibold mb-4">Edit Employee</h2>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
@@ -106,9 +103,10 @@ const AddEmployee = () => {
 
                     <button
                         type="submit"
-                        className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                        className={`bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 ${loading && "opacity-50"}`}
+                        disabled={loading}
                     >
-                        Save Employee
+                        {loading ? "Updating..." : "Update Employee"}
                     </button>
                 </form>
             </div>
@@ -116,4 +114,4 @@ const AddEmployee = () => {
     );
 };
 
-export default AddEmployee;
+export default EditEmployee;
