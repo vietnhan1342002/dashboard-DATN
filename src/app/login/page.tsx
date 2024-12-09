@@ -1,46 +1,126 @@
-import { Button } from "@/app/components/ui/button";
-import { Input } from "@/app/components/ui/input";
-import { Label } from "@/app/components/ui/label";
-import { FcGoogle } from 'react-icons/fc';
-import Image from 'next/image';
+/* eslint-disable @next/next/no-img-element */
+'use client'
+
 import Link from "next/link";
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
-const Login = () => {
+
+export default function LoginPage() {
+
+    const router = useRouter();
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        const phone = (e.target as HTMLFormElement).phone.value;
+        const password = (e.target as HTMLFormElement).password.value;
+
+        try {
+            const response = await axios.post('http://13.211.141.240:8080/api/v1/user-auth/login', {
+                phone,
+                password,
+            });
+
+            const { token } = response.data;
+
+            // Lưu token vào Local Storage
+            localStorage.setItem('authToken', token);
+
+            // Điều hướng đến trang chính
+            router.push('/');
+        } catch (error) {
+            console.error('Login failed:', error);
+            alert('Invalid credentials. Please try again.');
+        }
+    };
+
     return (
-        <main className="bg-[#26313c] h-screen flex items-center justify-center p-10">
-            <div className="grid w-full h-full grid-cols-1 bg-white md:grid-cols-2">
-                <div className="bg-[#16202a] text-white flex items-center justify-center flex-col">
-                    <div className="my-4">
-                        <h1 className="text-[1.75rem] text-white mb-[30px]">WELCOME TO ZCARE</h1>
-                        <h1 className="text-3x1 font-semibold mt-4">Login</h1>
-                        <p className="mt-2 text-xs text-slate-400">{' '}Enter your information to login to your account</p>
-                    </div>
-                    <form>
-                        <Button className="flex items-center w-full gap-4 px-12 mb-4 bg-transparent rounded-full" variant="outline">
-                            <FcGoogle /> Login with Google
-                        </Button>
-
-                        <Label htmlFor="phone">Phone Number *</Label>
-                        <Input className="mt-2 mb-4 bg-transparent rounded-full" type="phone" id="phone" placeholder="Phone" />
-
-                        <Label htmlFor="password">Password *</Label>
-                        <Input className="mt-2 mb-4 bg-transparent rounded-full" type="password" id="password" placeholder="Password" />
-
-                        <Button type="submit" className="w-full mt-6 bg-indigo-600 rounded-full hover:bg-indigo-700">
-                            Login
-                        </Button>
-                    </form>
-
-                    <div className="mt-4 text-xs text-slate-200">
-                        Don&apos;t have an account?
-                        <Link className="underline ml-2" href="/register">Sign Up</Link>
-                    </div>
+        <div className="min-h-screen flex items-center justify-center bg-blue-100">
+            {/* Outer Card with Rounded Border */}
+            <div className="bg-white rounded-3xl shadow-lg flex w-4/5 max-w-5xl border-2 border-blue-500 overflow-hidden">
+                {/* Left Section - Full Image */}
+                <div className="w-1/2">
+                    <img
+                        src="/login.jpg" // Thay đường dẫn ảnh phù hợp
+                        alt="Login Illustration"
+                        className="w-full h-full object-cover"
+                    />
                 </div>
-                <div className="relative hidden md:block">
-                    <Image className='object-cover' fill={true} src="/bg.jpg" alt="background image" />
+
+                {/* Right Section */}
+                <div className="w-1/2 p-10 border-l-2 border-gray-200">
+                    {/* Inner Box for Right Section */}
+                    <div className="bg-white p-8 rounded-lg shadow-md border border-gray-300">
+                        <h1 className="text-3xl font-bold mb-6 text-blue-800">
+                            Welcome to <span className="text-blue-900">Design School</span>
+                        </h1>
+                        <button className="w-full bg-white border border-gray-300 text-gray-600 rounded-lg px-4 py-2 mb-4 flex items-center justify-center shadow-sm hover:bg-gray-50">
+                            <img src="/google.png" alt="Google" className="w-5 h-5 mr-2" />
+                            Login with Google
+                        </button>
+                        <button className="w-full bg-white border border-gray-300 text-gray-600 rounded-lg px-4 py-2 mb-6 flex items-center justify-center shadow-sm hover:bg-gray-50">
+                            <img
+                                src="/facebook.png"
+                                alt="Facebook"
+                                className="w-5 h-5 mr-2"
+                            />
+                            Login with Facebook
+                        </button>
+                        <div className="text-center text-gray-500 mb-4">OR</div>
+                        <form onSubmit={handleSubmit}>
+                            <div className="mb-4">
+                                <label htmlFor="phone" className="block text-sm font-medium">
+                                    Phone
+                                </label>
+                                <input
+                                    type="tel"
+                                    id="phone"
+                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    placeholder="Enter your phone number"
+                                />
+                            </div>
+
+                            <div className="mb-4">
+                                <label htmlFor="password" className="block text-sm font-medium">
+                                    Password
+                                </label>
+                                <input
+                                    type="password"
+                                    id="password"
+                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    placeholder="********"
+                                />
+                            </div>
+                            <div className="flex items-center justify-between mb-4">
+                                <div>
+                                    <input type="checkbox" id="remember" className="mr-2" />
+                                    <label htmlFor="remember" className="text-sm">
+                                        Remember me
+                                    </label>
+                                </div>
+                                <a href="#" className="text-sm text-blue-700 hover:underline">
+                                    Forgot Password?
+                                </a>
+                            </div>
+                            <Link
+                                href="/"
+                                className="w-full bg-blue-600 text-white rounded-lg px-4 py-2 text-center block hover:bg-blue-700 transition"
+                            >
+                                Login
+                            </Link>
+                        </form>
+                        <div className="text-center mt-4">
+                            <p className="text-sm">
+                                Don’t have an account?{" "}
+                                <a href="/register" className="text-blue-700 hover:underline">
+                                    Register
+                                </a>
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </main>
-    )
+        </div>
+    );
 }
-export default Login;
