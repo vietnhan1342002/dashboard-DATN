@@ -1,37 +1,34 @@
 /* eslint-disable @next/next/no-img-element */
 'use client'
 
-import Link from "next/link";
-import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import { FormEvent, useState } from "react";
+import { useDispatch } from "react-redux";
+import { handleLogin } from "@/redux/store/authSlice";
+import { AppDispatch } from "@/redux/store";
 
 
 export default function LoginPage() {
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
 
     const router = useRouter();
+    const dispatch: AppDispatch = useDispatch();
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
-        const phone = (e.target as HTMLFormElement).phone.value;
-        const password = (e.target as HTMLFormElement).password.value;
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        setError('');
 
         try {
-            const response = await axios.post('http://13.211.141.240:8080/api/v1/user-auth/login', {
-                phone,
-                password,
-            });
-
-            const { token } = response.data;
-
-            // Lưu token vào Local Storage
-            localStorage.setItem('authToken', token);
-
-            // Điều hướng đến trang chính
-            router.push('/');
+            await dispatch(handleLogin(phoneNumber, password));
+            const token = localStorage.getItem('accessToken');
+            if (token) {
+                router.push('/');
+            }
         } catch (error) {
-            console.error('Login failed:', error);
-            alert('Invalid credentials. Please try again.');
+            console.error("Login failed:", error);
+            setError('Error')
         }
     };
 
@@ -55,29 +52,17 @@ export default function LoginPage() {
                         <h1 className="text-3xl font-bold mb-6 text-blue-800">
                             Welcome to <span className="text-blue-900">Design School</span>
                         </h1>
-                        <button className="w-full bg-white border border-gray-300 text-gray-600 rounded-lg px-4 py-2 mb-4 flex items-center justify-center shadow-sm hover:bg-gray-50">
-                            <img src="/google.png" alt="Google" className="w-5 h-5 mr-2" />
-                            Login with Google
-                        </button>
-                        <button className="w-full bg-white border border-gray-300 text-gray-600 rounded-lg px-4 py-2 mb-6 flex items-center justify-center shadow-sm hover:bg-gray-50">
-                            <img
-                                src="/facebook.png"
-                                alt="Facebook"
-                                className="w-5 h-5 mr-2"
-                            />
-                            Login with Facebook
-                        </button>
-                        <div className="text-center text-gray-500 mb-4">OR</div>
                         <form onSubmit={handleSubmit}>
                             <div className="mb-4">
-                                <label htmlFor="phone" className="block text-sm font-medium">
-                                    Phone
+                                <label htmlFor="emailOrPhone" className="block text-sm font-medium">
+                                    Email or Phone Number
                                 </label>
                                 <input
-                                    type="tel"
-                                    id="phone"
+                                    id="emailOrPhone"
                                     className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    placeholder="Enter your phone number"
+                                    placeholder="Enter your email or phone number"
+                                    value={phoneNumber}
+                                    onChange={(e) => setPhoneNumber(e.target.value)}
                                 />
                             </div>
 
@@ -90,25 +75,19 @@ export default function LoginPage() {
                                     id="password"
                                     className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     placeholder="********"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
                                 />
                             </div>
-                            <div className="flex items-center justify-between mb-4">
-                                <div>
-                                    <input type="checkbox" id="remember" className="mr-2" />
-                                    <label htmlFor="remember" className="text-sm">
-                                        Remember me
-                                    </label>
-                                </div>
-                                <a href="#" className="text-sm text-blue-700 hover:underline">
-                                    Forgot Password?
-                                </a>
-                            </div>
-                            <Link
-                                href="/"
+
+                            {/* Hiển thị thông báo lỗi nếu có */}
+                            {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+                            <button
+                                type="submit"
                                 className="w-full bg-blue-600 text-white rounded-lg px-4 py-2 text-center block hover:bg-blue-700 transition"
                             >
                                 Login
-                            </Link>
+                            </button>
                         </form>
                         <div className="text-center mt-4">
                             <p className="text-sm">
