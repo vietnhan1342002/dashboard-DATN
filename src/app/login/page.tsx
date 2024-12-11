@@ -2,35 +2,44 @@
 'use client'
 
 import { useRouter } from 'next/navigation';
-import { FormEvent, useState } from "react";
-import { useDispatch } from "react-redux";
-import { handleLogin } from "@/redux/store/authSlice";
+import { FormEvent, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/redux/store";
+import { fetchlogin } from '@/redux/store/authSlice';
 
 
 export default function LoginPage() {
-    const [phoneNumber, setPhoneNumber] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
-
+    const initialState = { emailOrPhone: '', password: '' };
+    const [userData, setUserData] = useState(initialState);
     const router = useRouter();
     const dispatch: AppDispatch = useDispatch();
+    const { emailOrPhone, password } = userData;
 
-    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        setError('');
+    const handleChange = (e: any) => {
+        const { name, value } = e.target;
+        setUserData({ ...userData, [name]: value })
 
+    }
+
+    const handleSubmit = async (e: any) => {
+        e.preventDefault();
         try {
-            await dispatch(handleLogin(phoneNumber, password));
-            const token = localStorage.getItem('accessToken');
-            if (token) {
+            const resultAction = await dispatch(fetchlogin(userData)); // Dispatch fetchlogin thay vì login trực tiếp
+            console.log('resultAction', resultAction);
+            if (resultAction.type === 'auth/login/fulfilled') {
                 router.push('/');
             }
-        } catch (error) {
-            console.error("Login failed:", error);
-            setError('Error')
+        } catch (err) {
+            console.log(err);
         }
     };
+
+    useEffect(() => {
+        const accessToken = localStorage.getItem('accessToken')
+        if (accessToken) {
+            router.push('/');
+        }
+    }, [dispatch])
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-blue-100">
@@ -58,11 +67,11 @@ export default function LoginPage() {
                                     Email or Phone Number
                                 </label>
                                 <input
-                                    id="emailOrPhone"
+                                    name="emailOrPhone"
                                     className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     placeholder="Enter your email or phone number"
-                                    value={phoneNumber}
-                                    onChange={(e) => setPhoneNumber(e.target.value)}
+                                    value={emailOrPhone}
+                                    onChange={handleChange}
                                 />
                             </div>
 
@@ -72,16 +81,14 @@ export default function LoginPage() {
                                 </label>
                                 <input
                                     type="password"
-                                    id="password"
+                                    name="password"
                                     className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    placeholder="********"
+                                    placeholder="Enter password"
                                     value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    onChange={handleChange}
                                 />
                             </div>
 
-                            {/* Hiển thị thông báo lỗi nếu có */}
-                            {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
                             <button
                                 type="submit"
                                 className="w-full bg-blue-600 text-white rounded-lg px-4 py-2 text-center block hover:bg-blue-700 transition"

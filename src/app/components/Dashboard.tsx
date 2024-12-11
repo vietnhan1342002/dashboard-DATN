@@ -1,9 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 "use client"
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 
 const Dashboard = () => {
     const [admin] = useState();
+    const { userId } = useSelector((state: any) => state.auth)
+    console.log("user", userId);
+
     return (
         <div className="ml-[70px] p-4 bg-blue-50 h-full absolute top-0 left-0 z-20 rounded-l-2xl overflow-hidden" style={{ width: 'calc(100vw - 70px)' }}>
             {/* Header Section */}

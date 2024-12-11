@@ -15,7 +15,6 @@ export const getDataApi = async (url: string, token: string) => {
 
 // Hàm POST data tới API
 export const postDataApi = async (url: string, post: any, token: string) => {
-    console.log('axiosInstance:', axios);
     try {
         const res = await axios.post(`/api/v1${url}`, post, {
             headers: { Authorization: `Bearer ${token}` },

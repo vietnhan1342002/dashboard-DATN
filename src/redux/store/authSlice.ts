@@ -1,69 +1,98 @@
-import { postDataApi } from '@/utils/fetchAPI';
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AppDispatch } from '../store';
+// redux/authSlice.js
+import { getDataApi, postDataApi } from '@/utils/fetchAPI';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-// Định nghĩa kiểu dữ liệu cho authentication
-interface AuthState {
-    isAuthenticated: boolean;
-    user: User | null;
-    loading: boolean;
-    error: string | null;
+interface Data {
+    emailOrPhone: string,
+    password: string
 }
 
 interface User {
-    emailOrPhone: string;
-    password: string;
+    userId: string | null;
+    // fullName: string | null;
+    // phone: string | null;
+    // role: string | null;
 }
 
-// Khởi tạo state ban đầu
+interface AuthState {
+    user: User | null;
+    loading: boolean;
+    isAuthenticated: boolean
+}
+
 const initialState: AuthState = {
-    isAuthenticated: false,
     user: null,
     loading: false,
-    error: null,
+    isAuthenticated: false
 };
 
-// Tạo slice cho authentication
+import { AxiosError } from 'axios';
+
+export const fetchlogin = createAsyncThunk(
+    'auth/login',
+    async (data: Data, { rejectWithValue }) => {
+        try {
+            const res = await postDataApi('/user-auth/login', data, '');
+            const { accessToken, userId } = res;
+            // Lưu accessToken vào localStorage
+            localStorage.setItem('accessToken', accessToken);
+            console.log(res);
+            return { userId }; // Trả về userId trong một object
+        } catch (error) {
+            console.log(error);
+            if (error instanceof AxiosError) {
+                return rejectWithValue(error.response ? error.response.data : error.message);
+            }
+            return rejectWithValue('An unknown error occurred');
+        }
+    }
+);
+
 const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        loginStart(state) {
-            state.loading = true;
-            state.error = null;
-        },
-        loginSuccess(state, action: PayloadAction<User>) {
-            state.isAuthenticated = true;
-            state.user = action.payload;
-            state.loading = false;
-        },
-        loginFailure(state, action: PayloadAction<string>) {
-            state.loading = false;
-            state.error = action.payload;
-        },
-        logout(state) {
+        logout: (state) => {
+            state.user = {
+                userId: null,
+                // fullName: null,
+                // phone: null,
+                // role: null,
+            };
             state.isAuthenticated = false;
-            state.user = null;
-            state.error = null;
+            localStorage.removeItem('accessToken');
         },
+    },
+    extraReducers: (builder) => {
+
+        const handlePending = (state: any) => {
+            state.isLoading = true;
+            state.isError = false;
+        };
+
+        const handleFulfilled = (state: any,) => {
+            state.isLoading = false;
+            state.isError = false;
+        };
+
+        const handleRejected = (state: any, action: any) => {
+            state.isLoading = false;
+            state.isError = true;
+            state.error = action.error.message;
+        };
+
+        builder
+        // .addCase(fetchlogin.pending, handlePending)
+        // .addCase(fetchlogin.fulfilled, (state, action: any) => {
+        //     handleFulfilled(state, action);
+        //     state.user = action.payload;
+        //     state.loading = false;
+        //     state.isAuthenticated = true
+        // })
+        // .addCase(fetchlogin.rejected, handleRejected)
     },
 });
 
-// Thunk để xử lý đăng nhập
-export const handleLogin = (emailOrPhone: string, password: string) => async (dispatch: AppDispatch): Promise<void> => {
-    dispatch(loginStart());
-    try {
-        const data = await postDataApi('/user-auth/login', { emailOrPhone, password }, '');
-        dispatch(loginSuccess({ emailOrPhone, password })); // Hoặc thay đổi theo thông tin từ API
-        const accessToken = data.accessToken;
-        const refreshToken = data.refreshToken;
-        localStorage.setItem("accessToken", accessToken)
-        localStorage.setItem("refreshToken", refreshToken)
-    } catch (error: any) {
-        dispatch(loginFailure(error.response?.data?.message || 'Login failed'));
-    }
-};
+export const { logout } = authSlice.actions;
 
-// Xuất actions và reducer
-export const { loginStart, loginSuccess, loginFailure, logout } = authSlice.actions;
 export default authSlice.reducer;
