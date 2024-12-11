@@ -1,6 +1,6 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
+import { useSearchParams } from 'next/navigation';
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 
 
@@ -17,8 +17,8 @@ interface Doctor {
 
 const EditDoctor = () => {
 
-
-
+    const searchParams = useSearchParams()
+    const _id = searchParams.get('id')
     const [doctor, setDoctor] = useState<Doctor>({
         fullname: '',
         phone: '',
@@ -32,9 +32,6 @@ const EditDoctor = () => {
 
     const [loading, setLoading] = useState(false);
     const [error] = useState<string | null>(null);
-
-
-
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;

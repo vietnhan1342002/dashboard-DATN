@@ -1,12 +1,21 @@
-/* eslint-disable @next/next/no-img-element */
 "use client"
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { getUser } from "@/redux/actions/userAction";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
+import React, { useEffect, useState } from "react";
 
 const Dashboard = () => {
-    const [admin] = useState();
-    const { userId } = useSelector((state: any) => state.auth)
-    console.log("user", userId);
+    const dispatch = useAppDispatch()
+    const user = useAppSelector(state => state.auth.user)
+    const accessToken = localStorage.getItem('accessToken') as string
+    const userId = localStorage.getItem('userId') as string
+
+    console.log(accessToken, userId);
+    useEffect(() => {
+        dispatch(getUser({ accessToken, userId }))
+    }, [])
+
+    console.log('user', user);
+
 
     return (
         <div className="ml-[70px] p-4 bg-blue-50 h-full absolute top-0 left-0 z-20 rounded-l-2xl overflow-hidden" style={{ width: 'calc(100vw - 70px)' }}>
@@ -17,7 +26,7 @@ const Dashboard = () => {
                     <img src="/doc.png" alt="Doctor" className="w-16 h-16 rounded-full" />
                     <div>
                         <h2 className="text-lg font-semibold text-purple-800">
-                            Hello, <span className="text-purple-600">{admin}</span>
+                            Hello, <span className="text-purple-600">{user?.fullName}</span>
                         </h2>
                         <p className="text-sm text-purple-700">Welcome to your dashboard. Here you can manage appointments and doctors.</p>
                     </div>

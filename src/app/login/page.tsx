@@ -2,17 +2,42 @@
 'use client'
 
 import { useRouter } from 'next/navigation';
-import { FormEvent, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch } from "@/redux/store";
-import { fetchlogin } from '@/redux/store/authSlice';
+import { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { login, validateUser } from '@/redux/actions/authAction';
 
 
 export default function LoginPage() {
+    const router = useRouter()
+    const dispatch = useAppDispatch()
+
+    //get data
+    const isAuthenticated = useAppSelector(state => state?.auth?.isAuthenticated ?? false)
+    const isAuthenticating = useAppSelector(state => state?.auth?.isAuthenticating ?? true)
+
+    useEffect(() => {
+        const accessToken = localStorage.getItem('accessToken');
+        const userId = localStorage.getItem('userId');
+
+        // Kiểm tra nếu accessToken và userId không phải null
+        if (accessToken && userId) {
+            dispatch(validateUser({ accessToken: accessToken, userId }))
+        } else {
+            // Xử lý trường hợp không có token hoặc userId
+            console.error("Token or User ID is missing!");
+        }
+    }, []);
+
+
+    useEffect(() => {
+        if (isAuthenticated && !isAuthenticating) {
+            router.push('/')
+        }
+    }, [isAuthenticated, isAuthenticating])
+
     const initialState = { emailOrPhone: '', password: '' };
     const [userData, setUserData] = useState(initialState);
-    const router = useRouter();
-    const dispatch: AppDispatch = useDispatch();
+
     const { emailOrPhone, password } = userData;
 
     const handleChange = (e: any) => {
@@ -23,23 +48,8 @@ export default function LoginPage() {
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
-        try {
-            const resultAction = await dispatch(fetchlogin(userData)); // Dispatch fetchlogin thay vì login trực tiếp
-            console.log('resultAction', resultAction);
-            if (resultAction.type === 'auth/login/fulfilled') {
-                router.push('/');
-            }
-        } catch (err) {
-            console.log(err);
-        }
+        dispatch(login(userData))
     };
-
-    useEffect(() => {
-        const accessToken = localStorage.getItem('accessToken')
-        if (accessToken) {
-            router.push('/');
-        }
-    }, [dispatch])
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-blue-100">
@@ -110,3 +120,4 @@ export default function LoginPage() {
         </div>
     );
 }
+

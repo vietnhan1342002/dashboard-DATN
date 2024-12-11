@@ -5,10 +5,10 @@ interface Employee {
     _id: string;
     fullName: string;
     phoneNumber: string;
-    email: string;
+    // email: string;
     dob: string;
     roleId: {
-        roleName: string
+        nameRole: string
     }
 }
 

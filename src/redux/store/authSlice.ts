@@ -1,98 +1,54 @@
-// redux/authSlice.js
-import { getDataApi, postDataApi } from '@/utils/fetchAPI';
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface Data {
-    emailOrPhone: string,
-    password: string
-}
 
+import { createSlice } from '@reduxjs/toolkit'
+import type { PayloadAction } from '@reduxjs/toolkit'
 interface User {
-    userId: string | null;
-    // fullName: string | null;
-    // phone: string | null;
-    // role: string | null;
+    _id: string; // ID từ MongoDB
+    fullName: string;
+    phoneNumber: string;
+    roleId: {
+        nameRole: string
+    };
 }
 
-interface AuthState {
-    user: User | null;
-    loading: boolean;
-    isAuthenticated: boolean
+interface authState {
+    isAuthenticated: boolean,
+    isAuthenticating: boolean,
+    accessToken: null | string
+    user: User | null,
 }
 
-const initialState: AuthState = {
+
+const initialState: authState = {
+    isAuthenticated: false,
+    isAuthenticating: true,
+    accessToken: null,
     user: null,
-    loading: false,
-    isAuthenticated: false
-};
-
-import { AxiosError } from 'axios';
-
-export const fetchlogin = createAsyncThunk(
-    'auth/login',
-    async (data: Data, { rejectWithValue }) => {
-        try {
-            const res = await postDataApi('/user-auth/login', data, '');
-            const { accessToken, userId } = res;
-            // Lưu accessToken vào localStorage
-            localStorage.setItem('accessToken', accessToken);
-            console.log(res);
-            return { userId }; // Trả về userId trong một object
-        } catch (error) {
-            console.log(error);
-            if (error instanceof AxiosError) {
-                return rejectWithValue(error.response ? error.response.data : error.message);
-            }
-            return rejectWithValue('An unknown error occurred');
-        }
-    }
-);
+}
 
 const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        logout: (state) => {
-            state.user = {
-                userId: null,
-                // fullName: null,
-                // phone: null,
-                // role: null,
-            };
-            state.isAuthenticated = false;
-            localStorage.removeItem('accessToken');
+        setIsAuthenticated: (state, action: PayloadAction<boolean>) => {
+            state.isAuthenticated = action.payload
         },
-    },
-    extraReducers: (builder) => {
+        setIsAuthenticating: (state, action: PayloadAction<boolean>) => {
+            state.isAuthenticating = action.payload
+        },
+        setToken: (state, action: PayloadAction<null | string>) => {
+            state.accessToken = action.payload
+        },
+        setUser: (state, action) => {
+            console.log('action.payload', action.payload);
+            console.log('state.payload', state.user);
+            return {
+                ...state,
+                user: action.payload,
+            };
+        },
+    }
+})
 
-        const handlePending = (state: any) => {
-            state.isLoading = true;
-            state.isError = false;
-        };
-
-        const handleFulfilled = (state: any,) => {
-            state.isLoading = false;
-            state.isError = false;
-        };
-
-        const handleRejected = (state: any, action: any) => {
-            state.isLoading = false;
-            state.isError = true;
-            state.error = action.error.message;
-        };
-
-        builder
-        // .addCase(fetchlogin.pending, handlePending)
-        // .addCase(fetchlogin.fulfilled, (state, action: any) => {
-        //     handleFulfilled(state, action);
-        //     state.user = action.payload;
-        //     state.loading = false;
-        //     state.isAuthenticated = true
-        // })
-        // .addCase(fetchlogin.rejected, handleRejected)
-    },
-});
-
-export const { logout } = authSlice.actions;
-
-export default authSlice.reducer;
+export const { setIsAuthenticated, setIsAuthenticating, setToken, setUser } = authSlice.actions
+export default authSlice.reducer

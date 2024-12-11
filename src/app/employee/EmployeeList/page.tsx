@@ -7,6 +7,7 @@ import { setEmployees, setLoading, setError } from '@/redux/store/employeeSlice'
 import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { getDataApi } from '@/utils/fetchAPI';
 
 const EmployeeList = () => {
     const dispatch = useDispatch();
@@ -24,24 +25,20 @@ const EmployeeList = () => {
     useEffect(() => {
         const fetchEmployees = async () => {
             dispatch(setLoading(true));
-            dispatch(setError(null)); // Reset lỗi trước khi fetch
-
+            dispatch(setError(null));
             try {
-                const token = localStorage.getItem('accessToken');  // Hoặc lấy từ Redux Store
+                const token = localStorage.getItem('accessToken');
 
                 if (!token) {
                     dispatch(setError('No access token found.'));
                     return;
                 }
+                console.log(1);
 
                 // Gửi request với token trong Authorization header
-                const response = await axios.get('http://13.211.141.240:8080/api/v1/user-auth', {
-                    headers: {
-                        Authorization: `Bearer ${token}`, // Thêm token vào header
-                    },
-                });
+                const response = await getDataApi('/user-auth', token)
 
-                const employeeList = response.data.result; // Truy cập vào trường `result`
+                const employeeList = response.result; // Truy cập vào trường `result`
                 console.log('Employee API Response:', employeeList);
                 dispatch(setEmployees(employeeList));
             } catch (err) {
@@ -71,8 +68,8 @@ const EmployeeList = () => {
     const filteredEmployees = employees.filter((employee) =>
         employee.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         employee.phoneNumber.includes(searchQuery) ||
-        employee.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        employee.roleId.roleName.toLowerCase().includes(searchQuery.toLowerCase())
+        // employee.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        employee.roleId.nameRole.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     const indexOfLastItem = currentPage * itemsPerPage;
@@ -115,7 +112,7 @@ const EmployeeList = () => {
                                     <th className="px-6 py-3 text-left">ID</th>
                                     <th className="px-6 py-3 text-left">Full Name</th>
                                     <th className="px-6 py-3 text-left">Phone</th>
-                                    <th className="px-6 py-3 text-left">Email</th>
+                                    {/* <th className="px-6 py-3 text-left">Email</th> */}
                                     <th className="px-6 py-3 text-left">DOB</th>
                                     <th className="px-6 py-3 text-left">Role</th>
                                     <th className="px-6 py-3 text-left">Action</th>
@@ -127,9 +124,9 @@ const EmployeeList = () => {
                                         <td className="px-6 py-4">{employee._id}</td>
                                         <td className="px-6 py-4">{employee.fullName}</td>
                                         <td className="px-6 py-4">{employee.phoneNumber}</td>
-                                        <td className="px-6 py-4">{employee.email}</td>
+                                        {/* <td className="px-6 py-4">{employee.email}</td> */}
                                         <td className="px-6 py-4">{employee.dob || 'N/A'}</td>
-                                        <td className="px-6 py-4">{employee.roleId.roleName}</td>
+                                        <td className="px-6 py-4">{employee.roleId.nameRole}</td>
                                         <td className="px-6 py-4 flex space-x-2">
                                             <button
                                                 onClick={() => handleEdit(employee._id)}

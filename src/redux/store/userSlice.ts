@@ -2,38 +2,42 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 // Định nghĩa kiểu dữ liệu cho bác sĩ
-interface Doctor {
+interface User {
     _id: string; // ID từ MongoDB
-    userId: {
-        fullName: string;
-        phoneNumber: string;
+    fullName: string;
+    phoneNumber: string;
+    roleId: {
+        nameRole: string
     };
-    specialtyId: {
-        name: string
-    };
-    licenseNumber: string;
-    yearsOfExperience: number;
+
 }
 
 // Định nghĩa state của doctors
 interface DoctorState {
-    doctors: Doctor[];
+    user: User
     loading: boolean;
 }
 
 // Giá trị mặc định của state
 const initialState: DoctorState = {
-    doctors: [],
+    user: {
+        _id: '',
+        fullName: '',
+        phoneNumber: '',
+        roleId: {
+            nameRole: ''
+        }
+    },
     loading: false,
 };
 
 // Tạo slice cho doctor
-const doctorSlice = createSlice({
-    name: 'doctors',
+const userSlice = createSlice({
+    name: 'users',
     initialState,
     reducers: {
-        setDoctors(state, action: PayloadAction<Doctor[]>) {
-            state.doctors = action.payload;
+        setUser(state, action: PayloadAction<User>) {
+            state.user = action.payload;
         },
         setLoading(state, action: PayloadAction<boolean>) {
             state.loading = action.payload;
@@ -42,5 +46,5 @@ const doctorSlice = createSlice({
 });
 
 // Xuất actions và reducer
-export const { setDoctors, setLoading } = doctorSlice.actions;
-export default doctorSlice.reducer;
+export const { setUser, setLoading } = userSlice.actions;
+export default userSlice.reducer;

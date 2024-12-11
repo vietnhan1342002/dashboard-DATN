@@ -19,7 +19,6 @@ export const postDataApi = async (url: string, post: any, token: string) => {
         const res = await axios.post(`/api/v1${url}`, post, {
             headers: { Authorization: `Bearer ${token}` },
         });
-        console.log('Response:', res);
         return res.data;
     } catch (error) {
         console.error('Error in POST:', error);

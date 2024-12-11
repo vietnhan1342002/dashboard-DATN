@@ -66,7 +66,6 @@ const DoctorList = () => {
                                 <th className="px-6 py-3 text-left">ID</th>
                                 <th className="px-6 py-3 text-left">Full Name</th>
                                 <th className="px-6 py-3 text-left">Phone</th>
-                                <th className="px-6 py-3 text-left">Email</th>
                                 <th className="px-6 py-3 text-left">Specialty</th>
                                 <th className="px-6 py-3 text-left">License</th>
                                 <th className="px-6 py-3 text-left">Years of Experience</th>
@@ -79,7 +78,6 @@ const DoctorList = () => {
                                     <td className="px-6 py-4">{doctor._id}</td>
                                     <td className="px-6 py-4">{doctor.userId.fullName}</td>
                                     <td className="px-6 py-4">{doctor.userId.phoneNumber}</td>
-                                    <td className="px-6 py-4">{doctor.userId.email}</td>
                                     <td className="px-6 py-4">{doctor.specialtyId.name}</td>
                                     <td className="px-6 py-4">{doctor.licenseNumber}</td>
                                     <td className="px-6 py-4">{doctor.yearsOfExperience}</td>
