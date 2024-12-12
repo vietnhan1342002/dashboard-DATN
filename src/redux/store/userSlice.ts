@@ -13,13 +13,13 @@ interface User {
 }
 
 // Định nghĩa state của doctors
-interface DoctorState {
+interface UserState {
     user: User
     loading: boolean;
 }
 
 // Giá trị mặc định của state
-const initialState: DoctorState = {
+const initialState: UserState = {
     user: {
         _id: '',
         fullName: '',

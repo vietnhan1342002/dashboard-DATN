@@ -1,55 +1,61 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { setDoctors, setLoading } from '@/redux/store/doctorSlice';
-import { RootState } from '@/redux/store';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { fetchDoctorDetail, setDoctors, setLoading } from '@/redux/store/doctorSlice';
+import { RootState, useAppDispatch } from '@/redux/store';
 import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { deleteDataApi } from '@/utils/fetchAPI';
+import { toast } from 'sonner';
 
 const DoctorList = () => {
 
     const pageSize = 10;
 
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const router = useRouter(); // Dùng router để điều hướng
 
-    const doctors = useSelector((state: RootState) => state.doctors.doctors);
+    const [doctors, setDoctors] = useState<any[]>([])
     const loading = useSelector((state: RootState) => state.doctors.loading);
     const [error, setError] = useState<string | null>(null); // Quản lý lỗi khi gọi API
+    const accessToken = localStorage.getItem('accessToken')
 
+    const fetchDoctors = async () => {
+        const response = await axios.get(`http://localhost:8080/api/v1/doctors?current=1&pageSize=${pageSize}`);
+        // const response = await axios.get(`http://13.211.141.240:8080/api/v1/doctors?current=1&pageSize=${pageSize}`);
+        if (response) {
+            const doctorList = response.data.result;
+            setDoctors(doctorList)
+        }
 
+    };
 
     useEffect(() => {
-        const fetchDoctors = async () => {
-            // console.log("Fetching doctors...");
-            dispatch(setLoading(true));
-            try {
-                const response = await axios.get(`http://13.211.141.240:8080/api/v1/doctors?current=1&pageSize=${pageSize}`);
-                const doctorList = response.data.result; // Truy cập vào trường `result`
-                console.log("API Response:", doctorList);
-                dispatch(setDoctors(doctorList)); // Cập nhật Redux với mảng từ `result`
-            } catch (err) {
-                console.error('Error fetching doctors:', err);
-                setError('Failed to fetch doctors');
-            } finally {
-                dispatch(setLoading(false));
-            }
-        };
-
         fetchDoctors();
-    }, [dispatch])
+    }, [doctors])
 
 
 
-    const handleEdit = (doctorId: string) => {
+    const handleEdit = useCallback((doctorId: string) => {
+        dispatch(fetchDoctorDetail(doctorId));
         router.push(`/doctor/EditDoctor?id=${doctorId}`); // Chuyển hướng tới trang chỉnh sửa
+    }, [dispatch]);
+
+    const handleDelete = async (doctorId: string) => {
+        try {
+            const res = await deleteDataApi(`/doctors/${doctorId}`, accessToken as string);
+            if (res) {
+                toast.success('Delete Success');
+                // Tạo bản sao mới và cập nhật state
+                setDoctors(prevDoctors => prevDoctors.filter(doctor => doctor._id !== doctorId));
+            }
+        } catch (error) {
+            toast.error('Delete Failed');
+        }
     };
 
-    const handleDelete = (doctorId: string) => {
-        console.log('Delete doctor with ID:', doctorId);
-        // Bạn có thể thêm logic để thực hiện việc xóa bác sĩ từ API ở đây
-    };
+
 
     return (
         <div className="p-4 flex-1">
@@ -78,7 +84,7 @@ const DoctorList = () => {
                                     <td className="px-6 py-4">{doctor._id}</td>
                                     <td className="px-6 py-4">{doctor.userId.fullName}</td>
                                     <td className="px-6 py-4">{doctor.userId.phoneNumber}</td>
-                                    <td className="px-6 py-4">{doctor.specialtyId.name}</td>
+                                    <td className="px-6 py-4">{doctor.specialtyId?.name}</td>
                                     <td className="px-6 py-4">{doctor.licenseNumber}</td>
                                     <td className="px-6 py-4">{doctor.yearsOfExperience}</td>
                                     <td className="px-6 py-4 flex space-x-2">

@@ -4,6 +4,8 @@ import doctorReducer from './store/doctorSlice';
 import employeeReducer from './store/employeeSlice';
 import authReducer from './store/authSlice';
 import userSlice from './store/userSlice';
+import specialtySlice from './store/specialtiesSlice';
+
 import { thunk } from 'redux-thunk';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 
@@ -15,6 +17,7 @@ export const makeStore = () =>
             employees: employeeReducer,
             auth: authReducer,
             user: userSlice,
+            specialties: specialtySlice
         },
     });
 

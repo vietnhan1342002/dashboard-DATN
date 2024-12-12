@@ -1,7 +1,7 @@
 import axios from './axios';
 
 // Hàm GET data từ API
-export const getDataApi = async (url: string, token: string) => {
+export const getDataApi = async (url: string, token?: string) => {
     try {
         const res = await axios.get(`/api/v1${url}`, {
             headers: { Authorization: `Bearer ${token}` },

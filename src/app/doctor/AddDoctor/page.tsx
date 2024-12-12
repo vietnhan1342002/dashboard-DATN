@@ -1,19 +1,28 @@
 /* eslint-disable @next/next/no-img-element */
 "use client"
 
+import { getDataApi } from '@/utils/fetchAPI';
 import React, { useState } from 'react';
 
 const AddDoctor = () => {
+    const [specialties, setSpecialties] = useState<any[]>([]);
     const [doctor, setDoctor] = useState({
         fullname: '',
         phone: '',
-        email: '',
         password: '',
-        gender: '',
-        specialty: '',
+        specialtyId: '',
         license: '',
         experienceYears: '',
     });
+
+    const fetchSpecialties = async () => {
+        try {
+            const response = await getDataApi(`/specialties?current=1&pageSize=10`);
+            setSpecialties(response.data.result || []);
+        } catch (err) {
+            console.error("Error fetching specialties:", err);
+        }
+    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -59,19 +68,6 @@ const AddDoctor = () => {
                             className="border rounded p-2 w-full"
                         />
                     </div>
-
-                    <div>
-                        <label className="block text-sm font-medium">Email</label>
-                        <input
-                            type="email"
-                            name="email"
-                            value={doctor.email}
-                            onChange={handleChange}
-                            required
-                            className="border rounded p-2 w-full"
-                        />
-                    </div>
-
                     <div>
                         <label className="block text-sm font-medium">Password</label>
                         <input
@@ -85,33 +81,18 @@ const AddDoctor = () => {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium">Gender</label>
-                        <select
-                            name="gender"
-                            value={doctor.gender}
-                            onChange={handleChange}
-                            required
-                            className="border rounded p-2 w-full"
-                        >
-                            <option value="">Select Gender</option>
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
-                        </select>
-                    </div>
-
-                    <div>
                         <label className="block text-sm font-medium">Specialty (Chuyên Khoa)</label>
                         <select
-                            name="specialty"
-                            value={doctor.specialty}
+                            name="specialtyId"
+                            value={doctor.specialtyId}
                             onChange={handleChange}
                             required
                             className="border rounded p-2 w-full"
                         >
-                            <option value="">Select Specialty</option>
-                            <option value="xet-nghiem">Xét Nghiệm</option>
-                            <option value="chup-xquang">Chụp Xquang</option>
-                            <option value="co-xuong-khop">Cơ Xương Khớp</option>
+                            <option value="" disabled>Select a specialty</option>
+                            {specialties.map((item) => (
+                                <option key={item._id} value={item._id}>{item.name}</option>
+                            ))}
                         </select>
                     </div>
 

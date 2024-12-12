@@ -3,7 +3,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 interface User {
-    _id: string; // ID từ MongoDB
+    _id: string;
     fullName: string;
     phoneNumber: string;
     roleId: {
@@ -40,8 +40,6 @@ const authSlice = createSlice({
             state.accessToken = action.payload
         },
         setUser: (state, action) => {
-            console.log('action.payload', action.payload);
-            console.log('state.payload', state.user);
             return {
                 ...state,
                 user: action.payload,
