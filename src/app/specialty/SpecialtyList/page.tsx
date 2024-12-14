@@ -1,40 +1,46 @@
-/* eslint-disable @next/next/no-img-element */
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { setSpecialties, setLoading } from "@/redux/store/specialtySlice";
+import axios from "axios";
 import Link from "next/link";
 
-const specialtiesData = [
-    { id: 1, name: "Nội Khoa", description: "Chuyên khoa điều trị các bệnh bên trong cơ thể." },
-    { id: 2, name: "Ngoại Khoa", description: "Chuyên khoa phẫu thuật và điều trị bệnh ngoại khoa." },
-    { id: 3, name: "Nhi Khoa", description: "Chăm sóc sức khỏe và điều trị cho trẻ em." },
-    { id: 4, name: "Sản Phụ Khoa", description: "Chuyên khoa về phụ nữ và sinh sản." },
-    { id: 5, name: "Răng Hàm Mặt", description: "Chăm sóc và điều trị về răng miệng, hàm mặt." },
-    { id: 6, name: "Da Liễu", description: "Điều trị các bệnh lý về da." },
-    { id: 7, name: "Mắt", description: "Chăm sóc và điều trị các bệnh về mắt." },
-    { id: 8, name: "Tai Mũi Họng", description: "Điều trị các bệnh lý liên quan đến tai, mũi, họng." },
-];
-
+// Component
 const SpecialtyList = () => {
+    const dispatch = useDispatch();
+
+    // Get specialties and loading state from the Redux store
+    const { specialties, loading } = useSelector((state: RootState) => state.specialties);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchQuery, setSearchQuery] = useState("");
     const itemsPerPage = 10;
 
-    const router = useRouter();
+    // Fetch specialties from the API when the component mounts
+    useEffect(() => {
+        const fetchSpecialties = async () => {
+            dispatch(setLoading(true)); // Start loading state
+            try {
+                const response = await axios.get("http://13.211.141.240:8080/api/v1/departments");
+                dispatch(setSpecialties(response.data.result)); // Store specialties in Redux
+            } catch (error) {
+                console.error("Error fetching specialties:", error);
+            } finally {
+                dispatch(setLoading(false)); // End loading state
+            }
+        };
 
-    const handleEdit = (specialtyId: number) => {
-        router.push(`/specialty/EditSpecialty?id=${specialtyId}`);
-    };
+        fetchSpecialties();
+    }, [dispatch]);
 
-    const handleDelete = (specialtyId: number) => {
-        console.log("Delete specialty with ID:", specialtyId);
-    };
+    // Filter specialties based on search query
+    const filteredSpecialties = specialties.filter((specialty) => {
+        const departmentName = specialty.departmentName?.toLowerCase() || ''; // Thêm điều kiện kiểm tra
+        const description = specialty.description?.toLowerCase() || ''; // Thêm điều kiện kiểm tra
 
-    const filteredSpecialties = specialtiesData.filter((specialty) =>
-        specialty.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        specialty.description.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+        return departmentName.includes(searchQuery.toLowerCase()) || description.includes(searchQuery.toLowerCase());
+    });
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -49,6 +55,26 @@ const SpecialtyList = () => {
         if (currentPage > 1) setCurrentPage(currentPage - 1);
     };
 
+    // Show loading state while data is being fetched
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    // Handle deletion of a specialty
+    const handleDelete = async (id: string) => {
+        try {
+            // Add logic to delete specialty (e.g., API request)
+            await axios.delete(`http://13.211.141.240:8080/api/v1/specialties/${id}`);
+            // After deletion, re-fetch specialties
+            dispatch(setLoading(true));
+            const response = await axios.get("http://13.211.141.240:8080/api/v1/departments");
+            dispatch(setSpecialties(response.data.result));
+            dispatch(setLoading(false));
+        } catch (error) {
+            console.error("Error deleting specialty:", error);
+        }
+    };
+
     return (
         <div className="p-4 flex-1">
             <h2 className="text-2xl font-semibold mb-4">Specialties</h2>
@@ -61,7 +87,7 @@ const SpecialtyList = () => {
                     value={searchQuery}
                     onChange={(e) => {
                         setSearchQuery(e.target.value);
-                        setCurrentPage(1); // Reset về trang đầu tiên khi tìm kiếm
+                        setCurrentPage(1); // Reset to the first page when searching
                     }}
                     className="border rounded p-2 flex-grow mr-2"
                 />
@@ -86,21 +112,20 @@ const SpecialtyList = () => {
                 <tbody>
                     {currentSpecialties.map((specialty, index) => (
                         <tr
-                            key={specialty.id}
+                            key={specialty._id}
                             className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
                         >
-                            <td className="px-6 py-4">{specialty.id}</td>
-                            <td className="px-6 py-4">{specialty.name}</td>
+                            <td className="px-6 py-4">{specialty._id}</td>
+                            <td className="px-6 py-4">{specialty.departmentName}</td>
                             <td className="px-6 py-4">{specialty.description}</td>
                             <td className="px-6 py-4 flex space-x-2">
+                                <Link href={`/specialty/EditSpecialty?id=${specialty._id}`}>
+                                    <button className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">
+                                        Edit
+                                    </button>
+                                </Link>
                                 <button
-                                    onClick={() => handleEdit(specialty.id)}
-                                    className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
-                                >
-                                    Edit
-                                </button>
-                                <button
-                                    onClick={() => handleDelete(specialty.id)}
+                                    onClick={() => handleDelete(specialty._id)}
                                     className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
                                 >
                                     Delete
