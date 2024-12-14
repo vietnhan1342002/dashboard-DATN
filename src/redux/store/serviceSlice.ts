@@ -15,7 +15,6 @@ interface Service {
         _id: string;
         departmentName: string;
     };
-    price: string;
     description: ServiceDescription;
 }
 

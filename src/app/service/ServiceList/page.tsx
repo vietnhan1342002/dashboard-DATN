@@ -103,7 +103,6 @@ const ServiceList = () => {
                         <th className="px-6 py-3 text-left">Service Name</th>
                         <th className="px-6 py-3 text-left">Department</th>
                         <th className="px-6 py-3 text-left">Description</th>
-                        <th className="px-6 py-3 text-left">Price</th>
                         <th className="px-6 py-3 text-left">Action</th>
                     </tr>
                 </thead>
@@ -125,7 +124,7 @@ const ServiceList = () => {
                                     <strong>Related Diseases:</strong> {service.description.relatedDiseases.join(', ')}
                                 </div>
                             </td>
-                            <td className="px-6 py-4">{service.price}</td>
+
                             <td className="px-6 py-4 flex space-x-2">
                                 <Link href={`/service/EditService?id=${service._id}`}>
                                     <button className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">

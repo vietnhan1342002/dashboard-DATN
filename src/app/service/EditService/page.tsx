@@ -1,42 +1,133 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "@/redux/store";
+import { setServices, setLoading } from "@/redux/store/serviceSlice";
+import axios from "axios";
 
-interface Service {
+// Định nghĩa kiểu dữ liệu cho Department
+interface Department {
+    _id: string;
+    departmentName: string;
+}
+
+// Loại dữ liệu tạm thời cho chỉnh sửa dịch vụ
+interface EditServiceData {
     name: string;
-    department: string;
+    departmentId: string;
     description: string;
-    price: number;
 }
 
 const EditService = () => {
-
-    const [service, setService] = useState<Service>({
-        name: '',
-        department: '',
-        description: '',
-        price: 0,
+    const [serviceData, setServiceData] = useState<EditServiceData>({
+        name: "",
+        departmentId: "",
+        description: "",
     });
 
-    const [loading, setLoading] = useState(false);
-    const [error] = useState<string | null>(null);
+    const [specialties, setSpecialty] = useState<Department[]>([]); // Danh sách departments để chọn
+    const [error, setError] = useState<string | null>(null);
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const _id = searchParams.get("id");
+
+    const dispatch = useDispatch();
+    const { services, loading } = useSelector((state: RootState) => state.services);
+
+    // Lấy danh sách departments và thông tin service từ API
+    useEffect(() => {
+        const fetchData = async () => {
+            if (!_id) {
+                setError("Invalid service ID.");
+                return;
+            }
+            try {
+                dispatch(setLoading(true));
+
+                // Fetch danh sách departments và service theo ID
+                const [departmentsResponse, serviceResponse] = await Promise.all([
+                    axios.get("http://13.211.141.240:8080/api/v1/departments"),
+                    axios.get(`http://13.211.141.240:8080/api/v1/specialties/${_id}`),
+                ]);
+
+                console.log("Departments Response:", departmentsResponse.data);
+                console.log("Service Response:", serviceResponse.data);
+
+                // Set danh sách departments
+                setSpecialty(Array.isArray(departmentsResponse.data) ? departmentsResponse.data : []);
+
+                // Kiểm tra xem serviceResponse có dữ liệu không và cập nhật form
+                if (serviceResponse.data) {
+                    const { name, departmentId, description } = serviceResponse.data;
+                    setServiceData({
+                        name: name || "",
+                        departmentId: departmentId?._id || "", // Đảm bảo departmentId là chuỗi
+                        description: description || "", // Đảm bảo description không bị undefined
+                    });
+                } else {
+                    setError("Service not found.");
+                }
+
+            } catch (err) {
+                console.error("Error fetching data:", err);
+                setError("Failed to fetch data.");
+            } finally {
+                dispatch(setLoading(false));
+            }
+        };
+
+        fetchData();
+    }, [_id, dispatch]);
+
+    // Xử lý thay đổi input
+    const handleChange = (
+        e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    ) => {
         const { name, value } = e.target;
-        setService((prevService) => ({
-            ...prevService,
-            [name]: name === "price" ? Number(value) : value,
+        setServiceData((prev) => ({
+            ...prev,
+            [name]: value,
         }));
     };
 
+    // Xử lý submit form
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        setLoading(true);
+        if (!_id) {
+            setError("Invalid service ID.");
+            return;
+        }
 
+        dispatch(setLoading(true));
+        try {
+            const response = await axios.put(
+                `http://13.211.141.240:8080/api/v1/specialties/${_id}`,
+                serviceData
+            );
 
-        setLoading(false);
+            console.log("Service updated:", response.data);
+
+            // Cập nhật Redux store
+            const updatedServices = services.map((service) =>
+                service._id === _id ? response.data : service
+            );
+            dispatch(setServices(updatedServices));
+
+            router.push("/service"); // Điều hướng sau khi cập nhật
+        } catch (err) {
+            console.error("Error updating service:", err);
+            setError("Failed to update service.");
+        } finally {
+            dispatch(setLoading(false));
+        }
     };
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div className="flex">
@@ -50,7 +141,7 @@ const EditService = () => {
                         <input
                             type="text"
                             name="name"
-                            value={service.name}
+                            value={serviceData.name}
                             onChange={handleChange}
                             required
                             className="border rounded p-2 w-full"
@@ -58,24 +149,20 @@ const EditService = () => {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium">Department</label>
+                        <label className="block text-sm font-medium">Specialty</label>
                         <select
-                            name="department"
-                            value={service.department}
+                            name="departmentId"
+                            value={serviceData.departmentId}
                             onChange={handleChange}
                             required
                             className="border rounded p-2 w-full"
                         >
-                            <option value="">Select Department</option>
-                            <option value="noi-khoa">Nội khoa</option>
-                            <option value="ngoai-khoa">Ngoại khoa</option>
-                            <option value="nhi-khoa">Nhi khoa</option>
-                            <option value="san-phu-khoa">Sản phụ khoa</option>
-                            <option value="rang-ham-mat">Răng hàm mặt</option>
-                            <option value="da-lieu">Da liễu</option>
-                            <option value="mat">Mắt</option>
-                            <option value="tai-mui-hong">Tai mũi họng</option>
-
+                            <option value="">Select Specialty</option>
+                            {specialties.map((dept) => (
+                                <option key={dept._id} value={dept._id}>
+                                    {dept.departmentName}
+                                </option>
+                            ))}
                         </select>
                     </div>
 
@@ -83,23 +170,11 @@ const EditService = () => {
                         <label className="block text-sm font-medium">Description</label>
                         <textarea
                             name="description"
-                            value={service.description}
+                            value={serviceData.description}
                             onChange={handleChange}
                             required
                             className="border rounded p-2 w-full"
                             rows={4}
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium">Price</label>
-                        <input
-                            type="number"
-                            name="price"
-                            value={service.price}
-                            onChange={handleChange}
-                            required
-                            className="border rounded p-2 w-full"
                         />
                     </div>
 

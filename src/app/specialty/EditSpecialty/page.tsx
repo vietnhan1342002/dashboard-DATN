@@ -1,21 +1,50 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import axios from 'axios';
 
 interface Specialty {
-    name: string;
+    departmentName: string;
     description: string;
 }
 
 const EditSpecialty = () => {
     const [specialty, setSpecialty] = useState<Specialty>({
-        name: '',
+        departmentName: '',
         description: '',
     });
 
     const [loading, setLoading] = useState(false);
-    const [error] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
+
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const departmentId = searchParams.get('id'); // Lấy ID từ URL
+
+    useEffect(() => {
+        const fetchSpecialty = async () => {
+            if (!departmentId) {
+                setError('No ID provided.');
+                return;
+            }
+            setLoading(true);
+            try {
+                const response = await axios.get(
+                    `http://13.211.141.240:8080/api/v1/departments/${departmentId}`
+                );
+                setSpecialty(response.data); // Đảm bảo API trả về đúng định dạng
+            } catch (err) {
+                console.error('Error fetching specialty:', err);
+                setError('Failed to fetch specialty details.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchSpecialty();
+    }, [departmentId]);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -27,14 +56,29 @@ const EditSpecialty = () => {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
+        if (!departmentId) {
+            setError('Invalid ID.');
+            return;
+        }
         setLoading(true);
-
-        // Simulating a delay, replace with actual API call logic
-        setTimeout(() => {
+        try {
+            await axios.put(
+                `http://13.211.141.240:8080/api/v1/departments/${departmentId}`,
+                specialty
+            );
+            console.log('Specialty updated:', specialty);
+            router.push('/specialty'); // Điều hướng sau khi cập nhật
+        } catch (err) {
+            console.error('Error updating specialty:', err);
+            setError('Failed to update specialty.');
+        } finally {
             setLoading(false);
-            console.log("Specialty Data Updated:", specialty);
-        }, 1000);
+        }
     };
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div className="flex">
@@ -47,8 +91,8 @@ const EditSpecialty = () => {
                         <label className="block text-sm font-medium">Specialty Name</label>
                         <input
                             type="text"
-                            name="name"
-                            value={specialty.name}
+                            name="departmentName"
+                            value={specialty.departmentName}
                             onChange={handleChange}
                             required
                             className="border rounded p-2 w-full"

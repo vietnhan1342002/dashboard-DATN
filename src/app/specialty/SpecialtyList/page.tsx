@@ -6,10 +6,17 @@ import { RootState } from "@/redux/store";
 import { setSpecialties, setLoading } from "@/redux/store/specialtySlice";
 import axios from "axios";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 // Component
 const SpecialtyList = () => {
     const dispatch = useDispatch();
+    const router = useRouter();
+
+    const handleEdit = (id: string) => {
+        router.push(`/specialty/EditSpecialty?id=${id}`);
+    };
+
 
     // Get specialties and loading state from the Redux store
     const { specialties, loading } = useSelector((state: RootState) => state.specialties);
@@ -119,11 +126,12 @@ const SpecialtyList = () => {
                             <td className="px-6 py-4">{specialty.departmentName}</td>
                             <td className="px-6 py-4">{specialty.description}</td>
                             <td className="px-6 py-4 flex space-x-2">
-                                <Link href={`/specialty/EditSpecialty?id=${specialty._id}`}>
-                                    <button className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">
-                                        Edit
-                                    </button>
-                                </Link>
+                                <button
+                                    onClick={() => handleEdit(specialty._id)}
+                                    className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
+                                >
+                                    Edit
+                                </button>
                                 <button
                                     onClick={() => handleDelete(specialty._id)}
                                     className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"

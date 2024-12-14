@@ -1,7 +1,7 @@
 // redux/store/specialtySlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-// Định nghĩa kiểu dữ liệu cho Specialty
+// Định nghĩa kiểu dữ liệu cho Department (Specialty)
 interface Specialty {
     _id: string;
     departmentName: string;
@@ -10,8 +10,8 @@ interface Specialty {
 
 // Định nghĩa state
 interface SpecialtyState {
-    specialties: Specialty[]; // Danh sách các chuyên khoa
-    selectedSpecialty: Specialty | null; // Chuyên khoa được chọn
+    specialties: Specialty[]; // Danh sách các khoa phòng
+    selectedSpecialty: Specialty | null; // Khoa phòng được chọn
     loading: boolean; // Trạng thái loading
 }
 
@@ -33,14 +33,12 @@ const specialtySlice = createSlice({
         setLoading(state, action: PayloadAction<boolean>) {
             state.loading = action.payload;
         },
-        // selectSpecialty(state, action: PayloadAction<string>) {
-        //     state.selectedSpecialty = state.specialties.find(
-        //         (specialty) => specialty._id === action.payload
-        //     ) || null;
-        // },
+        setSelectedSpecialty(state, action: PayloadAction<Specialty | null>) {
+            state.selectedSpecialty = action.payload;
+        },
     },
 });
 
 // Xuất actions và reducer
-export const { setSpecialties, setLoading } = specialtySlice.actions;
+export const { setSpecialties, setLoading, setSelectedSpecialty } = specialtySlice.actions;
 export default specialtySlice.reducer;
