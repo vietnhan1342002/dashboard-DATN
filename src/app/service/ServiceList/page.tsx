@@ -21,7 +21,7 @@ const ServiceList = () => {
         const fetchServices = async () => {
             dispatch(setLoading(true)); // Bắt đầu trạng thái loading
             try {
-                const response = await axios.get('http://13.211.141.240:8080/api/v1/specialties');
+                const response = await axios.get('http://localhost:8080/api/v1/specialties');
                 dispatch(setServices(response.data.result)); // Lưu dữ liệu vào Redux store
             } catch (error) {
                 console.error("Error fetching services:", error);
@@ -60,10 +60,10 @@ const ServiceList = () => {
 
     const handleDelete = async (id: string) => {
         try {
-            await axios.delete(`http://13.211.141.240:8080/api/v1/specialties/${id}`);
+            await axios.delete(`http://localhost:8080/api/v1/specialties/${id}`);
             // Sau khi xóa, re-fetch lại danh sách dịch vụ
             dispatch(setLoading(true));
-            const response = await axios.get('http://13.211.141.240:8080/api/v1/specialties');
+            const response = await axios.get('http://localhost:8080/api/v1/specialties');
             dispatch(setServices(response.data.result));
             dispatch(setLoading(false));
         } catch (error) {

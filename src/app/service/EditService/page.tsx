@@ -49,8 +49,8 @@ const EditService = () => {
 
                 // Fetch danh sách departments và service theo ID
                 const [departmentsResponse, serviceResponse] = await Promise.all([
-                    axios.get("http://13.211.141.240:8080/api/v1/departments"),
-                    axios.get(`http://13.211.141.240:8080/api/v1/specialties/${_id}`),
+                    axios.get("http://localhost:8080/api/v1/departments"),
+                    axios.get(`http://localhost:8080/api/v1/specialties/${_id}`),
                 ]);
 
                 console.log("Departments Response:", departmentsResponse.data);
@@ -104,7 +104,7 @@ const EditService = () => {
         dispatch(setLoading(true));
         try {
             const response = await axios.put(
-                `http://13.211.141.240:8080/api/v1/specialties/${_id}`,
+                `http://localhost:8080/api/v1/specialties/${_id}`,
                 serviceData
             );
 

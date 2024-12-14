@@ -32,7 +32,7 @@ const EditSpecialty = () => {
             setLoading(true);
             try {
                 const response = await axios.get(
-                    `http://13.211.141.240:8080/api/v1/departments/${departmentId}`
+                    `http://localhost:8080/api/v1/departments/${departmentId}`
                 );
                 setSpecialty(response.data); // Đảm bảo API trả về đúng định dạng
             } catch (err) {
@@ -63,7 +63,7 @@ const EditSpecialty = () => {
         setLoading(true);
         try {
             await axios.put(
-                `http://13.211.141.240:8080/api/v1/departments/${departmentId}`,
+                `http://localhost:8080/api/v1/departments/${departmentId}`,
                 specialty
             );
             console.log('Specialty updated:', specialty);

@@ -25,7 +25,7 @@ const DoctorList = () => {
             // console.log("Fetching doctors...");
             dispatch(setLoading(true));
             try {
-                const response = await axios.get(`http://13.211.141.240:8080/api/v1/doctors?current=1&pageSize=${pageSize}`);
+                const response = await axios.get(`http://localhost:8080/api/v1/doctors?current=1&pageSize=${pageSize}`);
                 const doctorList = response.data.result; // Truy cập vào trường `result`
                 console.log("API Response:", doctorList);
                 dispatch(setDoctors(doctorList)); // Cập nhật Redux với mảng từ `result`

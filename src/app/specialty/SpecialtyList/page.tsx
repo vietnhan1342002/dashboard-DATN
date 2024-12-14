@@ -29,7 +29,7 @@ const SpecialtyList = () => {
         const fetchSpecialties = async () => {
             dispatch(setLoading(true)); // Start loading state
             try {
-                const response = await axios.get("http://13.211.141.240:8080/api/v1/departments");
+                const response = await axios.get("http://localhost:8080/api/v1/departments");
                 dispatch(setSpecialties(response.data.result)); // Store specialties in Redux
             } catch (error) {
                 console.error("Error fetching specialties:", error);
@@ -71,10 +71,10 @@ const SpecialtyList = () => {
     const handleDelete = async (id: string) => {
         try {
             // Add logic to delete specialty (e.g., API request)
-            await axios.delete(`http://13.211.141.240:8080/api/v1/specialties/${id}`);
+            await axios.delete(`http://localhost:8080/api/v1/specialties/${id}`);
             // After deletion, re-fetch specialties
             dispatch(setLoading(true));
-            const response = await axios.get("http://13.211.141.240:8080/api/v1/departments");
+            const response = await axios.get("http://localhost:8080/api/v1/departments");
             dispatch(setSpecialties(response.data.result));
             dispatch(setLoading(false));
         } catch (error) {

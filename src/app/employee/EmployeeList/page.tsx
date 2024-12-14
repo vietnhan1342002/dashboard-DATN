@@ -35,7 +35,7 @@ const EmployeeList = () => {
                 }
 
                 // Gửi request với token trong Authorization header
-                const response = await axios.get('http://13.211.141.240:8080/api/v1/user-auth', {
+                const response = await axios.get('http://localhost:8080/api/v1/user-auth', {
                     headers: {
                         Authorization: `Bearer ${token}`, // Thêm token vào header
                     },

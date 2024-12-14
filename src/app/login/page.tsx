@@ -17,7 +17,7 @@ export default function LoginPage() {
         const password = (e.target as HTMLFormElement).password.value;
 
         try {
-            const response = await axios.post('http://13.211.141.240:8080/api/v1/user-auth/login', {
+            const response = await axios.post('http://localhost:8080/api/v1/user-auth/login', {
                 phone,
                 password,
             });

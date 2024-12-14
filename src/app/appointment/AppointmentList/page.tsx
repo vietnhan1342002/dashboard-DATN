@@ -21,7 +21,7 @@ const AppointmentList = () => {
         const fetchAppointments = async () => {
             dispatch(setLoading(true)); // Bắt đầu loading
             try {
-                const response = await axios.get("http://13.211.141.240:8080/api/v1/appointments");
+                const response = await axios.get("http://localhost:8080/api/v1/appointments");
                 dispatch(setAppointments(response.data.result)); // Lưu dữ liệu vào Redux store
             } catch (error) {
                 console.error("Error fetching appointments:", error);
