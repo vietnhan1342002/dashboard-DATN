@@ -52,7 +52,7 @@ const AddEmployee = () => {
             toast.success('update successfully')
             setTimeout(() => {
                 router.push(`/doctor/EditDoctor?id=${doctor.data._id}`)
-            })
+            }, 2000)
         }
     };
 

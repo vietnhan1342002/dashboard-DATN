@@ -4,6 +4,8 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import axios from 'axios';
+import { toast } from 'sonner';
+import axiosInstance from '@/app/utils/axios';
 
 interface Specialty {
     departmentName: string;
@@ -16,7 +18,6 @@ const EditSpecialty = () => {
         description: '',
     });
 
-    const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const router = useRouter();
@@ -29,17 +30,17 @@ const EditSpecialty = () => {
                 setError('No ID provided.');
                 return;
             }
-            setLoading(true);
+
             try {
-                const response = await axios.get(
+                const response = await axiosInstance.get(
                     `http://localhost:8080/api/v1/departments/${departmentId}`
                 );
+                console.log(response.data);
+
                 setSpecialty(response.data); // Đảm bảo API trả về đúng định dạng
             } catch (err) {
                 console.error('Error fetching specialty:', err);
                 setError('Failed to fetch specialty details.');
-            } finally {
-                setLoading(false);
             }
         };
 
@@ -60,25 +61,23 @@ const EditSpecialty = () => {
             setError('Invalid ID.');
             return;
         }
-        setLoading(true);
         try {
-            await axios.put(
+            await axiosInstance.patch(
                 `http://localhost:8080/api/v1/departments/${departmentId}`,
-                specialty
+                {
+                    departmentName: specialty.departmentName,
+                    description: specialty.description
+                }
             );
             console.log('Specialty updated:', specialty);
-            router.push('/specialty'); // Điều hướng sau khi cập nhật
+            toast.success('Update successly')
+            setTimeout(() => {
+                router.back();
+            }, 1500);
         } catch (err) {
             console.error('Error updating specialty:', err);
-            setError('Failed to update specialty.');
-        } finally {
-            setLoading(false);
         }
     };
-
-    if (loading) {
-        return <div>Loading...</div>;
-    }
 
     return (
         <div className="flex">
@@ -113,10 +112,10 @@ const EditSpecialty = () => {
 
                     <button
                         type="submit"
-                        className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 ${loading && "opacity-50"}`}
-                        disabled={loading}
+                        className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600`}
+
                     >
-                        {loading ? "Updating..." : "Update Specialty"}
+                        Update Specialty
                     </button>
                 </form>
             </div>
