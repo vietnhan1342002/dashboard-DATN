@@ -21,6 +21,8 @@ const Dashboard = () => {
         try {
             const res = await axiosInstance.get(`/user-auth/${userId}`)
             const user = res.data
+            console.log(user);
+
             setUser(user)
         } catch (error) {
             toast.error('Error')
@@ -35,18 +37,15 @@ const Dashboard = () => {
     }
 
     const handleCompleted = () => {
-        // Logic xử lý khi bấm Confirm
         console.log("Confirmed!");
     };
 
     const handleCancel = () => {
-        // Logic xử lý khi bấm Cancel
         console.log("Canceled!");
     };
 
     const fetchAppointment = async () => {
         try {
-            // Lấy danh sách cuộc hẹn đã xác nhận
             const confirmed = await axiosInstance.get('/filter/appointment-confirmed');
             const appointments = confirmed.data;
 

@@ -81,7 +81,7 @@ export default function LoginPage() {
                 </div>
 
                 {/* Right Section */}
-                <div className="w-1/2 p-10 border-l-2 border-gray-200">
+                <div className="w-1/2 p-10 my-auto border-l-2 border-gray-200">
                     {/* Inner Box for Right Section */}
                     <div className="bg-white p-8 rounded-lg shadow-md border border-gray-300">
                         <h1 className="text-3xl text-center font-bold mb-6 text-blue-800">
