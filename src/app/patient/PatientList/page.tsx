@@ -6,6 +6,7 @@ import { getFormattedDate } from '@/lib/utils';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 const patientData = [
     { id: 1, name: 'Nguyen Van A', phone: '0912345678', dateOfBirth: '01/01/1990', address: '123 ABC Street', email: 'abc@gmail.com' },
@@ -44,8 +45,9 @@ const PatientList = () => {
 
             setTotalPages(totalPages);
             setPatients(result)
-        } catch (err) {
-
+        } catch (err: any) {
+            console.log('Error from fetchPatient', err);
+            toast.error(err.response.data.message)
         }
     };
 

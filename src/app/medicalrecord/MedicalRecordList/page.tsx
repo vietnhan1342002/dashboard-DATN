@@ -1,42 +1,58 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
+import axiosInstance from '@/app/utils/axios';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 const medicalRecordsData = [
     { id: 1, patientName: 'Nguyen Van A', patientPhone: '0912345678', doctorName: 'Dr. A', symptom: 'Cough', disease: 'Flu', dateOfVisit: '01/01/2024', medicine: 'Paracetamol', quantity: 2, price: 100000 },
-    { id: 2, patientName: 'Tran Thi B', patientPhone: '0987654321', doctorName: 'Dr. B', symptom: 'Headache', disease: 'Migraine', dateOfVisit: '02/01/2024', medicine: 'Aspirin', quantity: 1, price: 50000 },
-    { id: 3, patientName: 'Nguyen Van C', patientPhone: '0912345678', doctorName: 'Dr. A', symptom: 'Fever', disease: 'Cold', dateOfVisit: '03/01/2024', medicine: 'Ibuprofen', quantity: 3, price: 150000 },
-    { id: 4, patientName: 'Tran Thi D', patientPhone: '0987654321', doctorName: 'Dr. B', symptom: 'Stomach pain', disease: 'Ulcer', dateOfVisit: '04/01/2024', medicine: 'Omeprazole', quantity: 1, price: 80000 },
-    { id: 5, patientName: 'Nguyen Van E', patientPhone: '0912345678', doctorName: 'Dr. C', symptom: 'Back pain', disease: 'Scoliosis', dateOfVisit: '05/01/2024', medicine: 'Pain reliever', quantity: 2, price: 120000 },
-    { id: 6, patientName: 'Tran Thi F', patientPhone: '0987654321', doctorName: 'Dr. D', symptom: 'Sore throat', disease: 'Tonsillitis', dateOfVisit: '06/01/2024', medicine: 'Antibiotics', quantity: 1, price: 60000 },
 ];
 
 const MedicalRecordList = () => {
     const [currentPage, setCurrentPage] = useState(1);
-    const [searchQuery, setSearchQuery] = useState('');
-    const recordsPerPage = 10;
+    const [totalPages, setTotalPages] = useState(0);
+    const [searchQuery, setSearchQuery] = useState("");
 
-    const filteredRecords = medicalRecordsData.filter((record) => {
-        return (
-            record.patientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            record.patientPhone.includes(searchQuery) ||
-            record.doctorName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            record.symptom.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            record.disease.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            record.dateOfVisit.includes(searchQuery) ||
-            record.medicine.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            record.quantity.toString().includes(searchQuery) ||
-            record.price.toString().includes(searchQuery)
-        );
-    });
+    const ininitialMedical = [{
+        _id: "",
+        patientId: {
+            _id: "",
+            userId: {
+                _id: "",
+                fullName: "",
+                phoneNumber: ""
+            }
+        },
+        doctorId: {
+            _id: "",
+            userId: {
+                _id: "",
+                fullName: ""
+            }
+        },
+        appointmentId: {
+            _id: "",
+            appointmentDate: ""
+        },
+        diagnosis: "",
+        note: ""
+    }]
+    const [medicalrecords, setMedicalRecords] = useState(ininitialMedical)
+    const pageSize = 10;
 
-    const indexOfLastRecord = currentPage * recordsPerPage;
-    const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
-    const currentRecords = filteredRecords.slice(indexOfFirstRecord, indexOfLastRecord);
-
-    const totalPages = Math.ceil(filteredRecords.length / recordsPerPage);
+    const fetchMedicalRecord = async () => {
+        try {
+            const res = await axiosInstance.get(`http://localhost:8080/api/v1/medical-records?current=${currentPage}&pageSize=${pageSize}`)
+            const { result, totalPages } = res.data
+            setMedicalRecords(result)
+            setTotalPages(totalPages);
+        } catch (error: any) {
+            console.log('Error from fetchPatient', error);
+            toast.error(error.response.data.message)
+        }
+    }
 
     const handleNextPage = () => {
         if (currentPage < totalPages) {
@@ -52,9 +68,13 @@ const MedicalRecordList = () => {
 
     const router = useRouter();
 
-    const navigateToDetail = () => {
-        router.push('/medicalrecord/MedicalRecordDetail');
+    const navigateToDetail = (medicalrecordId: string) => {
+        router.push(`/medicalrecord/MedicalRecordDetail?id=${medicalrecordId}`);
     };
+
+    useEffect(() => {
+        fetchMedicalRecord();
+    }, [])
 
     return (
         <div className='flex'>
@@ -84,37 +104,32 @@ const MedicalRecordList = () => {
                             <th className="px-6 py-3 text-left">Patient Name</th>
                             <th className="px-6 py-3 text-left">Phone</th>
                             <th className="px-6 py-3 text-left">Doctor</th>
-                            <th className="px-6 py-3 text-left">Symptom</th>
-                            <th className="px-6 py-3 text-left">Disease</th>
+                            <th className="px-6 py-3 text-left">Note</th>
+                            <th className="px-6 py-3 text-left">Diagnosis</th>
                             <th className="px-6 py-3 text-left">Date of Visit</th>
-                            <th className="px-6 py-3 text-left">Medicine</th>
+                            {/* <th className="px-6 py-3 text-left">Medicine</th>
                             <th className="px-6 py-3 text-left">Quantity</th>
-                            <th className="px-6 py-3 text-left">Price</th>
+                            <th className="px-6 py-3 text-left">Price</th> */}
+                            <th className="px-6 py-3 text-left">View Detail</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {currentRecords.map((record, index) => (
-                            <tr key={record.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                        {medicalrecords.map((record, index) => (
+                            <tr key={record._id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                                <td className="px-6 py-4 ">{record._id}</td>
+                                <td className="px-6 py-4 ">{record.patientId.userId.fullName}</td>
+                                <td className="px-6 py-4">{record.patientId.userId.phoneNumber}</td>
+                                <td className="px-6 py-4">{record.doctorId.userId.fullName}</td>
+                                <td className="px-6 py-4">{record.note}</td>
+                                <td className="px-6 py-4">{record.diagnosis}</td>
+                                <td className="px-6 py-4">{record.appointmentId.appointmentDate}</td>
                                 <td
                                     className="px-6 py-4 text-blue-500 cursor-pointer"
-                                    onClick={() => navigateToDetail()}
-                                >
-                                    {record.id}
-                                </td>
-                                <td
-                                    className="px-6 py-4 text-blue-500 cursor-pointer"
-                                    onClick={() => navigateToDetail()}
-                                >
-                                    {record.patientName}
-                                </td>
-                                <td className="px-6 py-4">{record.patientPhone}</td>
-                                <td className="px-6 py-4">{record.doctorName}</td>
-                                <td className="px-6 py-4">{record.symptom}</td>
-                                <td className="px-6 py-4">{record.disease}</td>
-                                <td className="px-6 py-4">{record.dateOfVisit}</td>
-                                <td className="px-6 py-4">{record.medicine}</td>
+                                    onClick={() => navigateToDetail(record._id)}
+                                >View</td>
+                                {/* <td className="px-6 py-4">{record.medicine}</td>
                                 <td className="px-6 py-4">{record.quantity}</td>
-                                <td className="px-6 py-4">{record.price}</td>
+                                <td className="px-6 py-4">{record.price}</td> */}
                             </tr>
                         ))}
                     </tbody>

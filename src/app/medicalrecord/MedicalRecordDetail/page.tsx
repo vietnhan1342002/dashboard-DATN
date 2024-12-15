@@ -62,7 +62,7 @@ const MedicalRecordDetail = () => {
     const totalPages = Math.ceil(medicalRecords.length / recordsPerPage);
 
     const handleCancel = () => {
-        router.push("/appointment/AppointmentList");
+        router.back();
     };
 
     const handleNextPage = () => {
@@ -156,9 +156,6 @@ const MedicalRecordDetail = () => {
                 </div>
             </section>
 
-            <button className="mt-6 bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600">
-                QUAY LẠI
-            </button>
             <button
                 onClick={handleCancel}
                 className="mt-6 bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600"
