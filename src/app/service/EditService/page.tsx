@@ -2,132 +2,115 @@
 
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "@/redux/store";
 import { setServices, setLoading } from "@/redux/store/serviceSlice";
 import axios from "axios";
+import axiosInstance from "@/app/utils/axios";
+import { toast } from "sonner";
 
-// Định nghĩa kiểu dữ liệu cho Department
-interface Department {
-    _id: string;
-    departmentName: string;
-}
-
-// Loại dữ liệu tạm thời cho chỉnh sửa dịch vụ
-interface EditServiceData {
-    name: string;
-    departmentId: string;
-    description: string;
-}
 
 const EditService = () => {
-    const [serviceData, setServiceData] = useState<EditServiceData>({
+    const [serviceData, setServiceData] = useState({
+        _id: "",
         name: "",
-        departmentId: "",
-        description: "",
+        description: {
+            introduction: "",
+            qualifications: "",
+            relatedDiseases: ""
+        },
+        departmentId: {
+            _id: "",
+            departmentName: ""
+        }
     });
 
-    const [specialties, setSpecialty] = useState<Department[]>([]); // Danh sách departments để chọn
+
+    const [departments, setDeparment] = useState<any[]>([]); // Danh sách departments để chọn
     const [error, setError] = useState<string | null>(null);
 
     const router = useRouter();
     const searchParams = useSearchParams();
-    const _id = searchParams.get("id");
 
-    const dispatch = useDispatch();
-    const { services, loading } = useSelector((state: RootState) => state.services);
+    const specialtyId = searchParams.get("id");
 
-    // Lấy danh sách departments và thông tin service từ API
+    const fetchDepartment = async () => {
+        const res = await axiosInstance.get('/departments')
+        setDeparment(res.data.result)
+    }
+
+    const fetchSpecialDetail = async (specialtyId: string) => {
+        const res = await axiosInstance.get(`/specialties/${specialtyId}`)
+        console.log(res.data);
+        setServiceData(res.data)
+    }
+
     useEffect(() => {
-        const fetchData = async () => {
-            if (!_id) {
-                setError("Invalid service ID.");
-                return;
-            }
-            try {
-                dispatch(setLoading(true));
+        fetchDepartment()
+        if (specialtyId) {
+            fetchSpecialDetail(specialtyId)
+        }
+    }, [])
 
-                // Fetch danh sách departments và service theo ID
-                const [departmentsResponse, serviceResponse] = await Promise.all([
-                    axios.get("http://localhost:8080/api/v1/departments"),
-                    axios.get(`http://localhost:8080/api/v1/specialties/${_id}`),
-                ]);
 
-                console.log("Departments Response:", departmentsResponse.data);
-                console.log("Service Response:", serviceResponse.data);
-
-                // Set danh sách departments
-                setSpecialty(Array.isArray(departmentsResponse.data) ? departmentsResponse.data : []);
-
-                // Kiểm tra xem serviceResponse có dữ liệu không và cập nhật form
-                if (serviceResponse.data) {
-                    const { name, departmentId, description } = serviceResponse.data;
-                    setServiceData({
-                        name: name || "",
-                        departmentId: departmentId?._id || "", // Đảm bảo departmentId là chuỗi
-                        description: description || "", // Đảm bảo description không bị undefined
-                    });
-                } else {
-                    setError("Service not found.");
-                }
-
-            } catch (err) {
-                console.error("Error fetching data:", err);
-                setError("Failed to fetch data.");
-            } finally {
-                dispatch(setLoading(false));
-            }
-        };
-
-        fetchData();
-    }, [_id, dispatch]);
-
-    // Xử lý thay đổi input
     const handleChange = (
         e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
     ) => {
         const { name, value } = e.target;
-        setServiceData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
+
+        if (name === "departmentId") {
+            const selectedDepartment = departments.find((dept) => dept._id === value);
+            setServiceData((prev) => ({
+                ...prev,
+                departmentId: selectedDepartment || { _id: "", departmentName: "" },
+            }));
+        } else if (name.startsWith("description.")) {
+            const fieldName = name.split(".")[1];
+            setServiceData((prev) => ({
+                ...prev,
+                description: {
+                    ...prev.description,
+                    [fieldName]: value,
+                },
+            }));
+        } else {
+            setServiceData((prev) => ({
+                ...prev,
+                [name]: value,
+            }));
+        }
     };
+
 
     // Xử lý submit form
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        if (!_id) {
-            setError("Invalid service ID.");
-            return;
+        const qualificationsArray: string[] = Array.isArray(serviceData.description.qualifications)
+            ? serviceData.description.qualifications // Nếu đã là mảng thì giữ nguyên
+            : serviceData.description.qualifications.split("\n").map((item) => item.trim()).filter((item) => item !== "");
+
+        const relatedDiseasesArray: string[] = Array.isArray(serviceData.description.relatedDiseases)
+            ? serviceData.description.relatedDiseases // Nếu đã là mảng thì giữ nguyên
+            : serviceData.description.relatedDiseases.split("\n").map((item) => item.trim()).filter((item) => item !== "");
+
+
+        const res = await axiosInstance.patch(`/specialties/${specialtyId}`, {
+            name: serviceData.name,
+            departmentId: serviceData.departmentId._id,
+            description: {
+                introduction: serviceData.description.introduction,
+                qualifications: qualificationsArray,  // Đảm bảo gửi mảng chuỗi
+                relatedDiseases: relatedDiseasesArray  // Đảm bảo gửi mảng chuỗi
+            }
+        })
+        if (res) {
+            toast.success('update successfully')
+            setTimeout(() => {
+                router.back();
+            }, 2000);
         }
-
-        dispatch(setLoading(true));
-        try {
-            const response = await axios.put(
-                `http://localhost:8080/api/v1/specialties/${_id}`,
-                serviceData
-            );
-
-            console.log("Service updated:", response.data);
-
-            // Cập nhật Redux store
-            const updatedServices = services.map((service) =>
-                service._id === _id ? response.data : service
-            );
-            dispatch(setServices(updatedServices));
-
-            router.push("/service"); // Điều hướng sau khi cập nhật
-        } catch (err) {
-            console.error("Error updating service:", err);
-            setError("Failed to update service.");
-        } finally {
-            dispatch(setLoading(false));
-        }
+        console.log('res', res);
+        console.log(serviceData);
     };
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
 
     return (
         <div className="flex">
@@ -152,38 +135,51 @@ const EditService = () => {
                         <label className="block text-sm font-medium">Specialty</label>
                         <select
                             name="departmentId"
-                            value={serviceData.departmentId}
+                            value={serviceData.departmentId._id}
                             onChange={handleChange}
                             required
                             className="border rounded p-2 w-full"
                         >
-                            <option value="">Select Specialty</option>
-                            {specialties.map((dept) => (
-                                <option key={dept._id} value={dept._id}>
-                                    {dept.departmentName}
-                                </option>
+                            <option value="" disabled>Select specialty</option>
+                            {departments.map((item) => (
+                                <option key={item._id} value={item._id}>{item.departmentName}</option>
                             ))}
                         </select>
                     </div>
-
                     <div>
                         <label className="block text-sm font-medium">Description</label>
                         <textarea
-                            name="description"
-                            value={serviceData.description}
+                            name="description.introduction" // Đảm bảo cập nhật đúng trường con trong description
+                            value={serviceData.description.introduction}
                             onChange={handleChange}
                             required
                             className="border rounded p-2 w-full"
-                            rows={4}
+                            rows={2}
+                        />
+                        <label className="block text-sm font-medium">Qualifications</label>
+                        <textarea
+                            name="description.qualifications" // Cập nhật name đúng cho qualifications
+                            value={serviceData.description.qualifications}
+                            onChange={handleChange}
+                            required
+                            className="border rounded p-2 w-full"
+                            rows={2}
+                        />
+                        <label className="block text-sm font-medium">Related Diseases</label>
+                        <textarea
+                            name="description.relatedDiseases" // Cập nhật name đúng cho relatedDiseases
+                            value={serviceData.description.relatedDiseases}
+                            onChange={handleChange}
+                            required
+                            className="border rounded p-2 w-full"
+                            rows={2}
                         />
                     </div>
-
                     <button
                         type="submit"
-                        className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 ${loading && "opacity-50"}`}
-                        disabled={loading}
+                        className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 `}
                     >
-                        {loading ? "Updating..." : "Update Service"}
+                        Update Service
                     </button>
                 </form>
             </div>
