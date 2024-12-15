@@ -13,38 +13,24 @@ const AppointmentList = () => {
     // Lấy dữ liệu và trạng thái loading từ Redux store
     const { appointments, loading } = useSelector((state: RootState) => state.appointments);
     const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
-    const itemsPerPage = 10;
+    const pageSize = 6;
 
     // Lấy danh sách cuộc hẹn từ API
+    const fetchAppointments = async (currentPage: number) => {
+        try {
+            const response = await axios.get(`http://localhost:8080/api/v1/appointments/pending?current=${currentPage}&pageSize=${pageSize}`);
+            const { result, totalPages } = response.data
+            setTotalPages(totalPages)
+            dispatch(setAppointments(result)); // Lưu dữ liệu vào Redux store
+        } catch (error) {
+            console.error("Error fetching appointments:", error);
+        }
+    };
     useEffect(() => {
-        const fetchAppointments = async () => {
-            dispatch(setLoading(true)); // Bắt đầu loading
-            try {
-                const response = await axios.get("http://localhost:8080/api/v1/appointments");
-                dispatch(setAppointments(response.data.result)); // Lưu dữ liệu vào Redux store
-            } catch (error) {
-                console.error("Error fetching appointments:", error);
-            } finally {
-                dispatch(setLoading(false)); // Kết thúc loading
-            }
-        };
-
-        fetchAppointments();
-    }, [dispatch]);
-
-    // Lọc dữ liệu theo từ khóa tìm kiếm
-    const filteredAppointments = appointments.filter((appointment) =>
-        Object.values(appointment).some((value) =>
-            value.toString().toLowerCase().includes(searchQuery.toLowerCase())
-        )
-    );
-
-    // Phân trang
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentAppointments = filteredAppointments.slice(indexOfFirstItem, indexOfLastItem);
-    const totalPages = Math.ceil(filteredAppointments.length / itemsPerPage);
+        fetchAppointments(currentPage);
+    }, [dispatch, currentPage]);
 
     const goToNextPage = () => {
         if (currentPage < totalPages) setCurrentPage(currentPage + 1);
@@ -54,7 +40,6 @@ const AppointmentList = () => {
         if (currentPage > 1) setCurrentPage(currentPage - 1);
     };
 
-    // Nếu đang loading, hiển thị thông báo loading
     if (loading) {
         return <div>Loading...</div>;
     }
@@ -108,7 +93,7 @@ const AppointmentList = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {currentAppointments.map((appointment, index) => (
+                    {appointments.map((appointment, index) => (
                         <tr key={appointment._id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                             <td className="px-6 py-4">{appointment._id}</td>
                             <td className="px-6 py-4">{appointment.patientId?.userId?.fullName}</td>
