@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { setEmployees, setLoading, setError } from '@/redux/store/employeeSlice';
-import axios from 'axios';
+import axiosInstance from '@/app/utils/axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -17,44 +17,29 @@ const EmployeeList = () => {
     const error = useSelector((state: RootState) => state.employees.error);
 
     const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
     const [searchQuery, setSearchQuery] = useState('');
 
-    const itemsPerPage = 5;
+    const pageSize = 5;
+
+    const fetchEmployees = async (currentPage: number) => {
+        dispatch(setLoading(true));
+        dispatch(setError(null)); // Reset lỗi trước khi fetch
+        try {
+            const response = await axiosInstance.get(`/user-auth/employee?current=${currentPage}&pageSize=${pageSize}`);
+            const { result, totalPages } = response.data; // Truy cập vào dữ liệu trả về từ API
+            setTotalPages(totalPages);
+            dispatch(setEmployees(result));
+        } catch (err) {
+            dispatch(setError('Failed to fetch employees'));
+        } finally {
+            dispatch(setLoading(false));
+        }
+    };
 
     useEffect(() => {
-        const fetchEmployees = async () => {
-            dispatch(setLoading(true));
-            dispatch(setError(null)); // Reset lỗi trước khi fetch
-
-            try {
-                const token = localStorage.getItem('accessToken');  // Hoặc lấy từ Redux Store
-
-                if (!token) {
-                    dispatch(setError('No access token found.'));
-                    return;
-                }
-
-                // Gửi request với token trong Authorization header
-                const response = await axios.get('http://localhost:8080/api/v1/user-auth', {
-                    headers: {
-                        Authorization: `Bearer ${token}`, // Thêm token vào header
-                    },
-                });
-
-                const employeeList = response.data.result; // Truy cập vào trường `result`
-                console.log('Employee API Response:', employeeList);
-                dispatch(setEmployees(employeeList));
-            } catch (err) {
-                console.error('Error fetching employees:', err);
-                dispatch(setError('Failed to fetch employees'));
-            } finally {
-                dispatch(setLoading(false));
-            }
-        };
-
-        fetchEmployees();
-    }, [dispatch]);
-
+        fetchEmployees(currentPage);
+    }, [dispatch, currentPage]);
 
     const handleEdit = (employeeId: string) => {
         router.push(`/employee/EditEmployee?id=${employeeId}`);
@@ -71,14 +56,8 @@ const EmployeeList = () => {
     const filteredEmployees = employees.filter((employee) =>
         employee.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         employee.phoneNumber.includes(searchQuery) ||
-        employee.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        employee.roleId.roleName.toLowerCase().includes(searchQuery.toLowerCase())
+        employee.roleId?.nameRole?.toLowerCase().includes(searchQuery.toLowerCase())
     );
-
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentEmployees = filteredEmployees.slice(indexOfFirstItem, indexOfLastItem);
-    const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
 
     const goToNextPage = () => {
         if (currentPage < totalPages) setCurrentPage(currentPage + 1);
@@ -89,10 +68,9 @@ const EmployeeList = () => {
     };
 
     return (
-        <div className='flex'>
+        <div className="flex">
             <div className="p-4 flex-1">
                 <h2 className="text-2xl font-semibold mb-4">Employees</h2>
-
                 {loading && <p>Loading employees...</p>}
                 {error && <p className="text-red-500">{error}</p>} {/* Hiển thị lỗi nếu có */}
 
@@ -115,21 +93,17 @@ const EmployeeList = () => {
                                     <th className="px-6 py-3 text-left">ID</th>
                                     <th className="px-6 py-3 text-left">Full Name</th>
                                     <th className="px-6 py-3 text-left">Phone</th>
-                                    <th className="px-6 py-3 text-left">Email</th>
-                                    <th className="px-6 py-3 text-left">DOB</th>
                                     <th className="px-6 py-3 text-left">Role</th>
                                     <th className="px-6 py-3 text-left">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {currentEmployees.map((employee, index) => (
+                                {filteredEmployees.map((employee, index) => (
                                     <tr key={employee._id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                                         <td className="px-6 py-4">{employee._id}</td>
                                         <td className="px-6 py-4">{employee.fullName}</td>
                                         <td className="px-6 py-4">{employee.phoneNumber}</td>
-                                        <td className="px-6 py-4">{employee.email}</td>
-                                        <td className="px-6 py-4">{employee.dob || 'N/A'}</td>
-                                        <td className="px-6 py-4">{employee.roleId.roleName}</td>
+                                        <td className="px-6 py-4">{employee.roleId?.nameRole || 'N/A'}</td>
                                         <td className="px-6 py-4 flex space-x-2">
                                             <button
                                                 onClick={() => handleEdit(employee._id)}

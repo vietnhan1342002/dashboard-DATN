@@ -6,6 +6,18 @@ import { RootState } from '@/redux/store';
 import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import axiosInstance from '@/app/utils/axios';
+import { toast } from 'sonner';
+
+interface Doctor {
+    _id: string;
+    fullName: string;
+    phoneNumber: string;
+    specialtyId: string;
+    licenseNumber: string;
+    yearsOfExperience: string;
+}
+
 
 const DoctorList = () => {
 
@@ -17,12 +29,10 @@ const DoctorList = () => {
     const doctors = useSelector((state: RootState) => state.doctors.doctors);
     const loading = useSelector((state: RootState) => state.doctors.loading);
     const [error, setError] = useState<string | null>(null); // Quản lý lỗi khi gọi API
-
-
+    const [doctorList, setDoctorList] = useState<Doctor[]>([]);
 
     useEffect(() => {
         const fetchDoctors = async () => {
-            // console.log("Fetching doctors...");
             dispatch(setLoading(true));
             try {
                 const response = await axios.get(`http://localhost:8080/api/v1/doctors?current=1&pageSize=${pageSize}`);
@@ -46,9 +56,17 @@ const DoctorList = () => {
         router.push(`/doctor/EditDoctor?id=${doctorId}`); // Chuyển hướng tới trang chỉnh sửa
     };
 
-    const handleDelete = (doctorId: string) => {
-        console.log('Delete doctor with ID:', doctorId);
-        // Bạn có thể thêm logic để thực hiện việc xóa bác sĩ từ API ở đây
+    const handleDelete = async (doctorId: string) => {
+        try {
+            const res = await axiosInstance.delete(`/doctors/${doctorId}`);
+            if (res) {
+                toast.success('Delete Success');
+                // Tạo bản sao mới và cập nhật state
+                setDoctorList(prevDoctors => prevDoctors.filter(doctor => doctor._id !== doctorId));
+            }
+        } catch (error) {
+            toast.error('Delete Failed');
+        }
     };
 
     return (
@@ -66,7 +84,6 @@ const DoctorList = () => {
                                 <th className="px-6 py-3 text-left">ID</th>
                                 <th className="px-6 py-3 text-left">Full Name</th>
                                 <th className="px-6 py-3 text-left">Phone</th>
-                                <th className="px-6 py-3 text-left">Email</th>
                                 <th className="px-6 py-3 text-left">Specialty</th>
                                 <th className="px-6 py-3 text-left">License</th>
                                 <th className="px-6 py-3 text-left">Years of Experience</th>
@@ -79,8 +96,7 @@ const DoctorList = () => {
                                     <td className="px-6 py-4">{doctor._id}</td>
                                     <td className="px-6 py-4">{doctor.userId.fullName}</td>
                                     <td className="px-6 py-4">{doctor.userId.phoneNumber}</td>
-                                    <td className="px-6 py-4">{doctor.userId.email}</td>
-                                    <td className="px-6 py-4">{doctor.specialtyId.name}</td>
+                                    <td className="px-6 py-4">{doctor.specialtyId?.name || 'NAN'}</td>
                                     <td className="px-6 py-4">{doctor.licenseNumber}</td>
                                     <td className="px-6 py-4">{doctor.yearsOfExperience}</td>
                                     <td className="px-6 py-4 flex space-x-2">
@@ -101,12 +117,6 @@ const DoctorList = () => {
                             ))}
                         </tbody>
                     </table>
-
-                    <div className="mt-4 flex justify-end">
-                        <Link href="/doctor/AddDoctor">
-                            <button className="bg-blue-500 text-white px-4 py-2 rounded">+ Add Doctor</button>
-                        </Link>
-                    </div>
                 </>
             )}
         </div>

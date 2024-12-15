@@ -1,35 +1,66 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React, { useState, ChangeEvent, FormEvent } from 'react';
-
+import axiosInstance from '@/app/utils/axios';
+import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
+import { toast } from 'sonner';
 
 const EditEmployee = () => {
+    const searchParams = useSearchParams();
+    const userId = searchParams.get('id');
+    const router = useRouter();
+
+    const [roles, setRoles] = useState<any[]>([]);
+
     const [employee, setEmployee] = useState({
-        id: '',
+        _id: '',
         fullName: '',
-        phone: '',
-        email: '',
-        dob: '',
-        role: 'admin',
+        phoneNumber: '',
+        roleId: {
+            _id: '',
+            nameRole: ''
+        }
     });
 
-    const [loading, setLoading] = useState(false);
+    const fetchEmployeeDetail = async (userId: string) => {
+        const res = await axiosInstance.get(`user-auth/${userId}`)
+        setEmployee(res.data)
+    }
+    const fetchRole = async () => {
+        const res = await axiosInstance.get('/roles')
+        setRoles(res.data)
+    }
 
+    useEffect(() => {
+        fetchRole()
+        if (userId) { fetchEmployeeDetail(userId) }
+    }, [])
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setEmployee((prevEmployee) => ({
-            ...prevEmployee,
-            [name]: name === "experienceYears" ? Number(value) : value,
-        }));
+
+        setEmployee({
+            ...employee,
+            [name]: value,
+        });
     };
 
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        setLoading(true);
-
+        console.log(employee);
+        const user = await axiosInstance.patch(`/user-auth/${employee._id}`, {
+            fullName: employee.fullName,
+            phoneNumber: employee.phoneNumber,
+            roleId: employee.roleId,
+        });
+        if (user) {
+            toast.success('update successfully')
+            setTimeout(() => {
+                router.back();
+            }, 1500);
+        }
     };
 
     return (
@@ -54,32 +85,8 @@ const EditEmployee = () => {
                         <label className="block text-sm font-medium">Phone</label>
                         <input
                             type="text"
-                            name="phone"
-                            value={employee.phone}
-                            onChange={handleChange}
-                            required
-                            className="border rounded p-2 w-full"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium">Email</label>
-                        <input
-                            type="email"
-                            name="email"
-                            value={employee.email}
-                            onChange={handleChange}
-                            required
-                            className="border rounded p-2 w-full"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium">Date of Birth</label>
-                        <input
-                            type="date"
-                            name="dob"
-                            value={employee.dob}
+                            name="phoneNumer"
+                            value={employee.phoneNumber}
                             onChange={handleChange}
                             required
                             className="border rounded p-2 w-full"
@@ -89,24 +96,24 @@ const EditEmployee = () => {
                     <div>
                         <label className="block text-sm font-medium">Role</label>
                         <select
-                            name="role"
-                            value={employee.role}
+                            name="roleId"
+                            value={employee.roleId._id}
                             onChange={handleChange}
                             required
                             className="border rounded p-2 w-full"
                         >
-                            <option value="admin">Admin</option>
-                            <option value="doctor">Doctor</option>
-                            <option value="receptionist">Receptionist</option>
+                            <option value="" disabled>Select role</option>
+                            {roles.map((item) => (
+                                <option key={item._id} value={item._id}>{item.nameRole}</option>
+                            ))}
                         </select>
                     </div>
 
                     <button
                         type="submit"
-                        className={`bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 ${loading && "opacity-50"}`}
-                        disabled={loading}
+                        className={`bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 `}
                     >
-                        {loading ? "Updating..." : "Update Employee"}
+                        Update Employee
                     </button>
                 </form>
             </div>

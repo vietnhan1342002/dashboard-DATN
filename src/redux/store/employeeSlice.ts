@@ -8,6 +8,7 @@ interface Employee {
     email: string;
     dob: string;
     roleId: {
+        nameRole: string;
         roleName: string
     }
 }
