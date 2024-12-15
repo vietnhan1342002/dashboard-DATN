@@ -21,8 +21,6 @@ interface Doctor {
 
 const DoctorList = () => {
 
-    const pageSize = 10;
-
     const dispatch = useDispatch();
     const router = useRouter(); // Dùng router để điều hướng
 
@@ -31,23 +29,28 @@ const DoctorList = () => {
     const [error, setError] = useState<string | null>(null); // Quản lý lỗi khi gọi API
     const [doctorList, setDoctorList] = useState<Doctor[]>([]);
 
-    useEffect(() => {
-        const fetchDoctors = async () => {
-            dispatch(setLoading(true));
-            try {
-                const response = await axios.get(`http://localhost:8080/api/v1/doctors?current=1&pageSize=${pageSize}`);
-                const doctorList = response.data.result; // Truy cập vào trường `result`
-                console.log("API Response:", doctorList);
-                dispatch(setDoctors(doctorList)); // Cập nhật Redux với mảng từ `result`
-            } catch (err) {
-                console.error('Error fetching doctors:', err);
-                setError('Failed to fetch doctors');
-            } finally {
-                dispatch(setLoading(false));
-            }
-        };
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
+    const [searchQuery, setSearchQuery] = useState('');
+    const pageSize = 5;
 
-        fetchDoctors();
+    const fetchDoctors = async (currentPage: number) => {
+        dispatch(setLoading(true));
+        try {
+            const response = await axiosInstance.get(`http://localhost:8080/api/v1/doctors?current=${currentPage}&pageSize=${pageSize}`);
+            const { result, totalPages } = response.data; // Truy cập vào trường `result`
+            setTotalPages(totalPages);
+            dispatch(setDoctors(result)); // Cập nhật Redux với mảng từ `result`
+        } catch (err) {
+            console.error('Error fetching doctors:', err);
+            setError('Failed to fetch doctors');
+        } finally {
+            dispatch(setLoading(false));
+        }
+    };
+
+    useEffect(() => {
+        fetchDoctors(currentPage);
     }, [dispatch])
 
 
@@ -67,6 +70,14 @@ const DoctorList = () => {
         } catch (error) {
             toast.error('Delete Failed');
         }
+    };
+
+    const goToNextPage = () => {
+        if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+    };
+
+    const goToPreviousPage = () => {
+        if (currentPage > 1) setCurrentPage(currentPage - 1);
     };
 
     return (
@@ -117,6 +128,25 @@ const DoctorList = () => {
                             ))}
                         </tbody>
                     </table>
+                    <div className="mt-4 flex justify-between items-center">
+                        <button
+                            onClick={goToPreviousPage}
+                            disabled={currentPage === 1}
+                            className="bg-gray-300 text-gray-700 px-3 py-1 rounded disabled:opacity-50"
+                        >
+                            Previous
+                        </button>
+
+                        <span>Page {currentPage} of {totalPages}</span>
+
+                        <button
+                            onClick={goToNextPage}
+                            disabled={currentPage === totalPages}
+                            className="bg-gray-300 text-gray-700 px-3 py-1 rounded disabled:opacity-50"
+                        >
+                            Next
+                        </button>
+                    </div>
                 </>
             )}
         </div>
