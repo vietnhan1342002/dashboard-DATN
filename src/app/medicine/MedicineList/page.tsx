@@ -1,37 +1,53 @@
 "use client";
 
+import axiosInstance from '@/app/utils/axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
-
+import React, { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 const MedicineList = () => {
 
-    const medicines = [
-        { id: 1, name: "Paracetamol", stockDate: "01/11/2024", manufactureDate: "01/10/2024", expiryDate: "01/11/2025", price: "30,000 ₫", quantity: 100 },
-        { id: 2, name: "Ibuprofen", stockDate: "05/11/2024", manufactureDate: "05/10/2024", expiryDate: "05/11/2025", price: "45,000 ₫", quantity: 50 },
-        { id: 3, name: "Amoxicillin", stockDate: "10/11/2024", manufactureDate: "10/10/2024", expiryDate: "10/11/2025", price: "60,000 ₫", quantity: 200 },
-    ];
+
+    const initialMedicine = [{
+        _id: "",
+        name: "",
+        description: "",
+        usageInstructions: "",
+        sideEffects: "",
+        quantity: 0,
+        minQuantity: 0,
+        price: 0,
+        unit: ""
+    }
+    ]
 
     const [currentPage, setCurrentPage] = useState(1);
-    const recordsPerPage = 5;
+    const [totalPages, setTotalPages] = useState(0);
+    const router = useRouter();
     const [searchQuery, setSearchQuery] = useState("");
 
-    const router = useRouter();
+    const pageSize = 5;
+    const [medicines, setMedicines] = useState(initialMedicine);
 
-    const filteredMedicines = medicines.filter(medicine =>
-        medicine.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        medicine.stockDate.includes(searchQuery) ||
-        medicine.manufactureDate.includes(searchQuery) ||
-        medicine.expiryDate.includes(searchQuery) ||
-        medicine.price.includes(searchQuery) ||
-        medicine.quantity.toString().includes(searchQuery)
-    );
+    const fetchMedicines = async (currentPage: number) => {
 
-    const indexOfLastRecord = currentPage * recordsPerPage;
-    const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
-    const currentItems = filteredMedicines.slice(indexOfFirstRecord, indexOfLastRecord);
+        try {
+            const response = await axiosInstance.get(`/medications?current=${currentPage}&pageSize=${pageSize}`);
+            const { result, totalPages } = response.data;
+            console.log(result);
+            if (result.dateOfBirth) {
+                const formattedDate = result.dateOfBirth.split('T')[0];
+                result.dateOfBirth = formattedDate;
+                console.log('patient.dateOfBirth', result.dateOfBirth);
+            }
 
-    const totalPages = Math.ceil(filteredMedicines.length / recordsPerPage);
+            setTotalPages(totalPages);
+            setMedicines(result)
+        } catch (err: any) {
+            console.log('Error from fetchPatient', err);
+            toast.error(err.response.data.message)
+        }
+    };
 
     const handleNextPage = () => {
         if (currentPage < totalPages) {
@@ -45,13 +61,17 @@ const MedicineList = () => {
         }
     };
 
-    const handleEdit = (medicineId: number) => {
+    const handleEdit = (medicineId: string) => {
         router.push(`/medicine/EditMedicine?id=${medicineId}`);
     };
 
     const handleDelete = () => {
         console.log('Deleting medicine with ID: ');
     };
+
+    useEffect(() => {
+        fetchMedicines(currentPage)
+    }, [currentPage])
 
     return (
         <div className="p-4 flex-1">
@@ -72,27 +92,31 @@ const MedicineList = () => {
                     <tr className="bg-gray-100">
                         <th className="px-6 py-3 text-left">ID</th>
                         <th className="px-6 py-3 text-left">Tên</th>
-                        <th className="px-6 py-3 text-left">Ngày Nhập Kho</th>
-                        <th className="px-6 py-3 text-left">Ngày Sản Xuất</th>
-                        <th className="px-6 py-3 text-left">Ngày Hết Hạn</th>
+                        <th className="px-6 py-3 text-left">description</th>
+                        <th className="px-6 py-3 text-left">usageInstructions</th>
+                        <th className="px-6 py-3 text-left">sideEffects</th>
                         <th className="px-6 py-3 text-left">Giá</th>
                         <th className="px-6 py-3 text-left">Số Lượng</th>
+                        <th className="px-6 py-3 text-left">Số Lượng giới hạn</th>
+                        <th className="px-6 py-3 text-left">Unit</th>
                         <th className="px-6 py-3 text-left">Hành Động</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {currentItems.map((medicine, index) => (
-                        <tr key={medicine.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                            <td className="px-6 py-4">{medicine.id}</td>
+                    {medicines.map((medicine, index) => (
+                        <tr key={medicine._id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                            <td className="px-6 py-4">{medicine._id}</td>
                             <td className="px-6 py-4">{medicine.name}</td>
-                            <td className="px-6 py-4">{medicine.stockDate}</td>
-                            <td className="px-6 py-4">{medicine.manufactureDate}</td>
-                            <td className="px-6 py-4">{medicine.expiryDate}</td>
+                            <td className="px-6 py-4">{medicine.description}</td>
+                            <td className="px-6 py-4">{medicine.usageInstructions}</td>
+                            <td className="px-6 py-4">{medicine.sideEffects}</td>
                             <td className="px-6 py-4">{medicine.price}</td>
                             <td className="px-6 py-4">{medicine.quantity}</td>
-                            <td className="px-6 py-4 flex space-x-2">
+                            <td className="px-6 py-4">{medicine.minQuantity}</td>
+                            <td className="px-6 py-4">{medicine.unit}</td>
+                            <td className="px-6 py-4 flex justify-center items-center space-x-2 h-full align-middle">
                                 <button
-                                    onClick={() => handleEdit(medicine.id)}
+                                    onClick={() => handleEdit(medicine._id)}
                                     className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
                                 >
                                     Edit
