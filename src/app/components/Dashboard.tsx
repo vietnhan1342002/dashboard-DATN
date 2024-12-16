@@ -15,7 +15,14 @@ const Dashboard = () => {
 
     const [appointments, setAppointments] = useState<any[]>([])
 
-    const userId = localStorage.getItem('userId')
+    const [userId, setUserId] = useState<string | null>()
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const storedUserId = localStorage.getItem('userId');
+            setUserId(storedUserId);
+        }
+    }, [userId]);
 
     const fetchUser = async (userId: string) => {
         try {

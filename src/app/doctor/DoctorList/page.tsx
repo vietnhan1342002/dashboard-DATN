@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 
 interface Doctor {
     _id: string;
+    avatar: string;
     userId: {
         _id: string;
         fullName: string;
@@ -101,6 +102,7 @@ const DoctorList = () => {
                         <thead>
                             <tr className="bg-gray-100">
                                 <th className="px-6 py-3 text-left">ID</th>
+                                <th className="px-6 py-3 text-left">Avatar</th>
                                 <th className="px-6 py-3 text-left">Full Name</th>
                                 <th className="px-6 py-3 text-left">Phone</th>
                                 <th className="px-6 py-3 text-left">Specialty</th>
@@ -113,6 +115,11 @@ const DoctorList = () => {
                             {doctors.map((doctor, index) => (
                                 <tr key={doctor._id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                                     <td className="px-6 py-4">{doctor._id}</td>
+                                    <img
+                                        src={doctor.avatar}  // Use the avatar URL directly
+                                        alt="Avatar Preview"
+                                        className="w-32 h-32 object-cover rounded mb-4"
+                                    />
                                     <td className="px-6 py-4">{doctor.userId?.fullName || 'N/A'}</td>
                                     <td className="px-6 py-4">{doctor.userId?.phoneNumber || 'N/A'}</td>
                                     <td className="px-6 py-4">{doctor.specialtyId?.name || 'NAN'}</td>

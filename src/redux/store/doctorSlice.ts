@@ -4,6 +4,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 // Định nghĩa kiểu dữ liệu cho bác sĩ
 interface Doctor {
     _id: string; // ID từ MongoDB
+    avatar: string;
     userId: {
         fullName: string;
         phoneNumber: string;

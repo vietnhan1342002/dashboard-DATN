@@ -9,7 +9,7 @@ const EditDoctor = () => {
     const _id = searchParams.get('id');
 
     const [formData, setFormData] = useState({
-        avata: '',
+        avatar: '' as string | File, // Lưu file hoặc URL
         userId: {
             _id: "",
             fullName: "",
@@ -23,31 +23,36 @@ const EditDoctor = () => {
     });
 
     const [specialties, setSpecialties] = useState<any[]>([]);
-
     const router = useRouter();
 
-    const fetchSpecialties = async () => {
-        const res = await axiosInstance.get('/specialties?pageSize=30');
-        console.log(res.data.result);
-        setSpecialties(res.data.result)
-    }
-
-    const fetchDoctor = async (doctorId: string) => {
-        const res = await axiosInstance.get(`/doctors/${doctorId}`);
-        setFormData(res.data);
-    }
-
     useEffect(() => {
+        const fetchSpecialties = async () => {
+            const res = await axiosInstance.get('/specialties?pageSize=30');
+            setSpecialties(res.data.result);
+        };
+
+        const fetchDoctor = async (doctorId: string) => {
+            const res = await axiosInstance.get(`/doctors/${doctorId}`);
+            console.log(res.data);
+
+            setFormData(res.data);
+        };
         fetchSpecialties();
-        if (_id) {
-            fetchDoctor(_id)
-        }
-    }, []);
+        if (_id) fetchDoctor(_id);
+    }, [_id]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
 
-        if (name === 'fullName' || name === 'phoneNumber') {
+        if (name === 'avatar' && e.target instanceof HTMLInputElement) {
+            const files = e.target.files;
+            if (files && files[0]) {
+                setFormData({
+                    ...formData,
+                    avatar: files[0], // Lưu tệp avatar vào formData
+                });
+            }
+        } else if (name === 'fullName' || name === 'phoneNumber') {
             setFormData({
                 ...formData,
                 userId: {
@@ -56,11 +61,10 @@ const EditDoctor = () => {
                 },
             });
         } else if (name === 'specialtyId') {
-            // Cập nhật specialtyId khi chọn specialty mới
             setFormData({
                 ...formData,
                 specialtyId: {
-                    _id: value, // Gán _id của specialty đã chọn
+                    _id: value,
                 },
             });
         } else {
@@ -73,37 +77,40 @@ const EditDoctor = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
-        if (formData.yearsOfExperience.length == 0) {
-            toast.error('ao ba ba')
-            return false
+        if (!formData.yearsOfExperience || Number(formData.yearsOfExperience) <= 0) {
+            toast.error('Years of experience must be a positive number');
+            return;
         }
 
-        const dataDoctor = {
-            specialtyId: formData.specialtyId._id,
-            licenseNumber: formData.licenseNumber,
-            yearsOfExperience: Number(formData.yearsOfExperience),
+        const formDataToSend = new FormData();
+        if (formData.avatar) {
+            formDataToSend.append('avatar', formData.avatar); // Thêm file avatar
         }
 
-        const dataUser = {
+        formDataToSend.append('specialtyId', formData.specialtyId._id);
+        formDataToSend.append('licenseNumber', formData.licenseNumber);
+        formDataToSend.append('yearsOfExperience', String(formData.yearsOfExperience));
+
+        const userData = {
             phoneNumber: formData.userId.phoneNumber,
-            fullName: formData.userId.fullName
-        }
+            fullName: formData.userId.fullName,
+        };
 
         try {
-            const doctor = await axiosInstance.patch(`/doctors/${_id}`, dataDoctor);
-            const user = await axiosInstance.patch(`/user-auth/${formData.userId._id}`, dataUser);
-            if (doctor && user) {
-                toast.success('update successfully')
-                setTimeout(() => {
-                    router.back();
-                }, 1000);
+            const doctorResponse = await axiosInstance.patch(`/doctors/${_id}`, formDataToSend, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            const userResponse = await axiosInstance.patch(`/user-auth/${formData.userId._id}`, userData);
+            if (doctorResponse && userResponse) {
+                toast.success('Update successfully');
             }
+            router.back()
         } catch (err: any) {
-            toast.error(err.response.data.message)
+            toast.error(err.response?.data?.message || 'Something went wrong');
         }
     };
-
 
     return (
         <div className="flex">
@@ -112,10 +119,18 @@ const EditDoctor = () => {
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                         <label className="block text-sm font-medium">Avatar</label>
+                        {/* Hiển thị ảnh nếu có avatar */}
+                        {formData.avatar && (
+                            <img
+                                src={formData.avatar as string}  // Use the avatar URL directly
+                                alt="Avatar Preview"
+                                className="w-32 h-32 object-cover rounded mb-4"
+                            />
+                        )}
                         <input
                             type="file"
                             name="avatar"
-                            value={formData.avata}
+                            accept="image/jpeg, image/jpg"
                             onChange={handleChange}
                             className="border rounded p-2 w-full"
                         />
@@ -131,7 +146,6 @@ const EditDoctor = () => {
                             className="border rounded p-2 w-full"
                         />
                     </div>
-
                     <div>
                         <label className="block text-sm font-medium">Phone </label>
                         <input
@@ -143,7 +157,6 @@ const EditDoctor = () => {
                             className="border rounded p-2 w-full"
                         />
                     </div>
-
                     <div>
                         <label className="block text-sm font-medium">Specialty</label>
                         <select
@@ -159,7 +172,6 @@ const EditDoctor = () => {
                             ))}
                         </select>
                     </div>
-
                     <div>
                         <label className="block text-sm font-medium">License (Giấy Phép Hành Nghề)</label>
                         <input
@@ -167,11 +179,9 @@ const EditDoctor = () => {
                             name="licenseNumber"
                             value={formData.licenseNumber}
                             onChange={handleChange}
-
                             className="border rounded p-2 w-full"
                         />
                     </div>
-
                     <div>
                         <label className="block text-sm font-medium">Years of Experience (Số Năm Kinh Nghiệm)</label>
                         <input
@@ -179,22 +189,19 @@ const EditDoctor = () => {
                             name="yearsOfExperience"
                             value={formData.yearsOfExperience}
                             onChange={handleChange}
-
                             className="border rounded p-2 w-full"
                         />
                     </div>
-
                     <button
                         type="submit"
-                        className={`bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 `}
-
+                        className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
                     >
                         Update Doctor
                     </button>
                 </form>
-            </div >
+            </div>
             <Toaster position='top-center' />
-        </div >
+        </div>
     );
 };
 
