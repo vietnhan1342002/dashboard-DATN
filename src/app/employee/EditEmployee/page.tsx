@@ -25,6 +25,8 @@ const EditEmployee = () => {
 
     const fetchEmployeeDetail = async (userId: string) => {
         const res = await axiosInstance.get(`user-auth/${userId}`)
+        console.log(res.data);
+
         setEmployee(res.data)
     }
     const fetchRole = async () => {
@@ -40,10 +42,24 @@ const EditEmployee = () => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
 
-        setEmployee({
-            ...employee,
-            [name]: value,
-        });
+        if (name === 'roleId') {
+            const selectedRole = roles.find(role => role._id === value);
+
+            if (selectedRole) {
+                setEmployee((prevEmployee) => ({
+                    ...prevEmployee,
+                    roleId: {
+                        _id: value,
+                        nameRole: selectedRole.nameRole,
+                    },
+                }));
+            }
+        } else {
+            setEmployee((prevEmployee) => ({
+                ...prevEmployee,
+                [name]: value,
+            }));
+        }
     };
 
 
@@ -53,7 +69,7 @@ const EditEmployee = () => {
         const user = await axiosInstance.patch(`/user-auth/${employee._id}`, {
             fullName: employee.fullName,
             phoneNumber: employee.phoneNumber,
-            roleId: employee.roleId,
+            roleId: employee.roleId._id,
         });
         if (user) {
             toast.success('update successfully')
@@ -69,6 +85,7 @@ const EditEmployee = () => {
                 <h2 className="text-2xl font-semibold mb-4">Edit Employee</h2>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
+
                     <div>
                         <label className="block text-sm font-medium">Full Name</label>
                         <input
@@ -92,6 +109,7 @@ const EditEmployee = () => {
                             className="border rounded p-2 w-full"
                         />
                     </div>
+
 
                     <div>
                         <label className="block text-sm font-medium">Role</label>

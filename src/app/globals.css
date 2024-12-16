@@ -25,3 +25,38 @@ body {
     text-wrap: balance;
   }
 }
+
+/* Tùy chỉnh thanh cuộn cho toàn bộ trang */
+::-webkit-scrollbar {
+  width: 8px;
+  /* Độ rộng của thanh cuộn */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #4c9aff;
+  /* Màu sắc thanh cuộn */
+  border-radius: 10px;
+  /* Bo tròn thanh cuộn */
+  transition: background-color 0.3s ease;
+  /* Hiệu ứng chuyển màu khi hover */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #3182ce;
+  /* Màu khi hover */
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  /* Màu nền của track */
+  border-radius: 10px;
+  /* Bo tròn track */
+}
+
+/* Tùy chỉnh thanh cuộn trong sidebar */
+.sidebar {
+  overflow-y: auto;
+  /* Cho phép cuộn trong sidebar */
+  height: 100vh;
+  /* Đảm bảo sidebar có chiều cao đầy đủ */
+}

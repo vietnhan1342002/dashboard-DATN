@@ -4,7 +4,7 @@
 import axiosInstance from '@/app/utils/axios';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { toast } from 'sonner';
+import { toast, Toaster } from 'sonner';
 
 const medicalRecordsData = [
     { id: 1, patientName: 'Nguyen Van A', patientPhone: '0912345678', doctorName: 'Dr. A', symptom: 'Cough', disease: 'Flu', dateOfVisit: '01/01/2024', medicine: 'Paracetamol', quantity: 2, price: 100000 },
@@ -71,7 +71,14 @@ const MedicalRecordList = () => {
     const navigateToDetail = (medicalrecordId: string) => {
         router.push(`/medicalrecord/MedicalRecordDetail?id=${medicalrecordId}`);
     };
-
+    const handleDelete = async (medicalrecordId: string) => {
+        const res = await axiosInstance.delete(`/medical-records/${medicalrecordId}`)
+        console.log(res.data);
+        if (res) {
+            toast.success("Successfully Deleted!")
+            fetchMedicalRecord();
+        }
+    }
     useEffect(() => {
         fetchMedicalRecord();
     }, [])
@@ -110,26 +117,36 @@ const MedicalRecordList = () => {
                             {/* <th className="px-6 py-3 text-left">Medicine</th>
                             <th className="px-6 py-3 text-left">Quantity</th>
                             <th className="px-6 py-3 text-left">Price</th> */}
-                            <th className="px-6 py-3 text-left">View Detail</th>
+                            {/* <th className="px-6 py-3 text-left">View Detail</th> */}
+                            <th className="px-6 py-3 text-left">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {medicalrecords.map((record, index) => (
                             <tr key={record._id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                                 <td className="px-6 py-4 ">{record._id}</td>
-                                <td className="px-6 py-4 ">{record.patientId.userId.fullName}</td>
-                                <td className="px-6 py-4">{record.patientId.userId.phoneNumber}</td>
-                                <td className="px-6 py-4">{record.doctorId.userId.fullName}</td>
-                                <td className="px-6 py-4">{record.note}</td>
-                                <td className="px-6 py-4">{record.diagnosis}</td>
-                                <td className="px-6 py-4">{record.appointmentId.appointmentDate}</td>
-                                <td
+                                <td className="px-6 py-4 ">{record?.patientId?.userId?.fullName || ''}</td>
+                                <td className="px-6 py-4">{record?.patientId?.userId?.phoneNumber || ''}</td>
+                                <td className="px-6 py-4">{record?.doctorId?.userId?.fullName || ''}</td>
+                                <td className="px-6 py-4">{record?.note || ''}</td>
+                                <td className="px-6 py-4">{record?.diagnosis || ''}</td>
+                                <td className="px-6 py-4">{record?.appointmentId?.appointmentDate || ''}</td>
+                                {/* <td
                                     className="px-6 py-4 text-blue-500 cursor-pointer"
                                     onClick={() => navigateToDetail(record._id)}
-                                >View</td>
+                                >View</td> */}
                                 {/* <td className="px-6 py-4">{record.medicine}</td>
                                 <td className="px-6 py-4">{record.quantity}</td>
                                 <td className="px-6 py-4">{record.price}</td> */}
+                                <td className="px-6 py-4 flex space-x-2">
+
+                                    <button
+                                        onClick={() => handleDelete(record._id)} // Hàm handleCancel thay thế cho handleDelete
+                                        className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+                                    >
+                                        Delete
+                                    </button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
@@ -153,6 +170,7 @@ const MedicalRecordList = () => {
                     </button>
                 </div>
             </div>
+            <Toaster position='top-center' />
         </div>
     );
 };

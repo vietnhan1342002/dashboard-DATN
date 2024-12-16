@@ -65,8 +65,20 @@ const MedicineList = () => {
         router.push(`/medicine/EditMedicine?id=${medicineId}`);
     };
 
-    const handleDelete = () => {
-        console.log('Deleting medicine with ID: ');
+
+    const fetchDeleteMedicine = async (medicineId: string) => {
+        const res = await axiosInstance.delete(`http://localhost:8080/api/v1/medications/${medicineId}`);
+        if (res) {
+            toast.success("Successfully deleted")
+            setTimeout(function () {
+                location.reload();  // Tự động reload trang sau 2 giây
+            }, 1000);
+        }
+    }
+
+    const handleDelete = (medicineId: string) => {
+        console.log('Deleting medicine with ID: ', medicineId);
+        fetchDeleteMedicine(medicineId)
     };
 
     useEffect(() => {
@@ -105,15 +117,15 @@ const MedicineList = () => {
                 <tbody>
                     {medicines.map((medicine, index) => (
                         <tr key={medicine._id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                            <td className="px-6 py-4">{medicine._id}</td>
-                            <td className="px-6 py-4">{medicine.name}</td>
-                            <td className="px-6 py-4">{medicine.description}</td>
-                            <td className="px-6 py-4">{medicine.usageInstructions}</td>
-                            <td className="px-6 py-4">{medicine.sideEffects}</td>
-                            <td className="px-6 py-4">{medicine.price}</td>
-                            <td className="px-6 py-4">{medicine.quantity}</td>
-                            <td className="px-6 py-4">{medicine.minQuantity}</td>
-                            <td className="px-6 py-4">{medicine.unit}</td>
+                            <td className="px-6 py-4">{medicine?._id || 'NAN'}</td>
+                            <td className="px-6 py-4">{medicine?.name || 'NAN'}</td>
+                            <td className="px-6 py-4">{medicine?.description || 'NAN'}</td>
+                            <td className="px-6 py-4">{medicine?.usageInstructions || 'NAN'}</td>
+                            <td className="px-6 py-4">{medicine?.sideEffects || 'NAN'}</td>
+                            <td className="px-6 py-4">{medicine?.price || 'NAN'}</td>
+                            <td className="px-6 py-4">{medicine?.quantity || 'NAN'}</td>
+                            <td className="px-6 py-4">{medicine?.minQuantity || 'NAN'}</td>
+                            <td className="px-6 py-4">{medicine?.unit || 'NAN'}</td>
                             <td className="px-6 py-4 flex justify-center items-center space-x-2 h-full align-middle">
                                 <button
                                     onClick={() => handleEdit(medicine._id)}
@@ -122,7 +134,7 @@ const MedicineList = () => {
                                     Edit
                                 </button>
                                 <button
-                                    onClick={() => handleDelete()}
+                                    onClick={() => handleDelete(medicine._id)}
                                     className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
                                 >
                                     Delete

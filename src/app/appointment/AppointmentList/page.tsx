@@ -6,6 +6,8 @@ import { RootState } from "@/redux/store";
 import { setAppointments, setLoading } from "@/redux/store/appointmentSlice"; // Giả sử bạn có slice cho cuộc hẹn
 import axios from "axios";
 import Link from "next/link";
+import axiosInstance from "@/app/utils/axios";
+import { toast, Toaster } from "sonner";
 
 const AppointmentList = () => {
     const dispatch = useDispatch();
@@ -40,19 +42,41 @@ const AppointmentList = () => {
         if (currentPage > 1) setCurrentPage(currentPage - 1);
     };
 
-    if (loading) {
-        return <div>Loading...</div>;
+    const fetchConfirmedAppointment = async (appointmentId: string) => {
+        try {
+            const res = await axiosInstance.patch(`/appointments/status/${appointmentId}`, {
+                status: 'confirmed'
+            });
+
+            if (res.status === 200) {
+                alert('Appointment confirmed successfully');
+                fetchAppointments(currentPage);
+            }
+        } catch (error) {
+            console.error('Error confirming appointment:', error);
+        }
+    };
+
+    const handleConfirm = (appointmentId: string) => {
+        console.log("Confirmed!");
+        fetchConfirmedAppointment(appointmentId)
+    };
+
+    const fetchCanceledAppointment = async (appointmentId: string) => {
+        const response = await axiosInstance.delete(`/appointments/${appointmentId}`)
+        console.log(response.data);
+        if (response) {
+            toast.success("Successfully Canceled!")
+            fetchAppointments(currentPage);
+        }
     }
 
-    const handleConfirm = () => {
-        // Logic xử lý khi bấm Confirm
-        console.log("Confirmed!");
+    const handleCancel = (appointmentId: string) => {
+        console.log("Canceled!");
+        fetchCanceledAppointment(appointmentId)
     };
 
-    const handleCancel = () => {
-        // Logic xử lý khi bấm Cancel
-        console.log("Canceled!");
-    };
+
 
     return (
         <div className="p-4 flex-1">
@@ -101,18 +125,18 @@ const AppointmentList = () => {
                                 {appointment.patientId?.userId?.phoneNumber || 'N/A'}
                             </td>
                             <td className="px-6 py-4">{appointment.doctorId?.userId?.fullName}</td>
-                            <td className="px-6 py-4">{appointment.appointmentDate.split(' ')[0]}</td>
-                            <td className="px-6 py-4">{appointment.appointmentDate.split(' ')[1]}</td>
-                            <td className="px-6 py-4">{appointment.reason}</td>
+                            <td className="px-6 py-4">{appointment?.appointmentDate?.split(' ')[0]}</td>
+                            <td className="px-6 py-4">{appointment?.appointmentDate?.split(' ')[1]}</td>
+                            <td className="px-6 py-4">{appointment?.reason}</td>
                             <td className="px-6 py-4 flex space-x-2">
                                 <button
-                                    onClick={() => handleConfirm()} // Hàm handleConfirm thay thế cho handleEdit
+                                    onClick={() => handleConfirm(appointment._id)} // Hàm handleConfirm thay thế cho handleEdit
                                     className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
                                 >
                                     Confirm
                                 </button>
                                 <button
-                                    onClick={() => handleCancel()} // Hàm handleCancel thay thế cho handleDelete
+                                    onClick={() => handleCancel(appointment._id)} // Hàm handleCancel thay thế cho handleDelete
                                     className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
                                 >
                                     Cancel
@@ -125,13 +149,13 @@ const AppointmentList = () => {
             </table>
 
             {/* Thêm cuộc hẹn */}
-            <div className="mt-4 flex justify-end">
+            {/* <div className="mt-4 flex justify-end">
                 <Link href="/appointment/AddAppointment">
                     <button className="bg-blue-500 text-white px-4 py-2 rounded">
                         + Add Appointment
                     </button>
                 </Link>
-            </div>
+            </div> */}
 
             {/* Phân trang */}
             <div className="mt-4 flex justify-between items-center">
@@ -153,6 +177,7 @@ const AppointmentList = () => {
                     Next
                 </button>
             </div>
+            <Toaster position="top-center" />
         </div>
     );
 };

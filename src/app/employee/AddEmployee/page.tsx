@@ -33,28 +33,55 @@ const AddEmployee = () => {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setEmployee((prevEmployee) => ({
-            ...prevEmployee,
-            [name]: value,
-        }));
+
+        if (name === 'roleId') {
+            const selectedRole = roles.find(role => role._id === value);
+
+            if (selectedRole) {
+                setEmployee((prevEmployee) => ({
+                    ...prevEmployee,
+                    roleId: {
+                        _id: value,
+                        nameRole: selectedRole.nameRole,
+                    },
+                }));
+            }
+        } else {
+            setEmployee((prevEmployee) => ({
+                ...prevEmployee,
+                [name]: value,
+            }));
+        }
     };
+
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const res = await axiosInstance.post('/user-auth', {
-            fullName: employee.fullName,
-            phoneNumber: employee.phoneNumber,
-            password: employee.password,
-            roleId: employee.roleId
-        })
-        const doctor = await axiosInstance.get(`/doctors/user/${res.data._id}`)
-        if (doctor) {
-            toast.success('update successfully')
-            setTimeout(() => {
-                router.push(`/doctor/EditDoctor?id=${doctor.data._id}`)
-            }, 2000)
+        try {
+
+            const res = await axiosInstance.post('/user-auth', {
+                fullName: employee.fullName,
+                phoneNumber: employee.phoneNumber,
+                password: employee.password,
+                roleId: employee.roleId._id
+            })
+        } catch (error) {
+
         }
+        // if (employee.roleId.nameRole === 'doctor') {
+        //     const doctor = await axiosInstance.get(`/doctors/user/${res.data._id}`)
+        //     if (doctor) {
+        //         toast.success('update successfully')
+        //         setTimeout(() => {
+        //             router.push(`/doctor/EditDoctor?id=${doctor.data._id}`)
+        //         }, 2000)
+        //     }
+        // }
+        router.back()
     };
+
+
 
     return (
         <div className="flex">

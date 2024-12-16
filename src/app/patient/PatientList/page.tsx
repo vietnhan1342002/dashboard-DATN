@@ -70,14 +70,25 @@ const PatientList = () => {
 
     const router = useRouter();
 
-    const handleEdit = (patientId: number) => {
+    const handleEdit = (patientId: string) => {
         router.push(`/patient/EditPatient?id=${patientId}`);
     };
 
-    const handleDelete = () => {
-        console.log('Deleting patient with ID: ');
-    };
 
+    const fetchDeletePatient = async (patientId: string) => {
+        const res = await axiosInstance.delete(`http://localhost:8080/api/v1/patients/${patientId}`);
+        if (res) {
+            toast.success("Successfully deleted")
+            setTimeout(function () {
+                location.reload();  // Tự động reload trang sau 2 giây
+            }, 1000);
+        }
+    }
+
+    const handleDelete = (patientId: string) => {
+        console.log('Deleting medicine with ID: ', patientId);
+        fetchDeletePatient(patientId)
+    };
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value); // Update search term
 
@@ -115,8 +126,8 @@ const PatientList = () => {
                         {patients.map((patient, index) => (
                             <tr key={patient._id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                                 <td className="px-6 py-4">{patient._id}</td>
-                                <td className="px-6 py-4">{patient.userId.fullName}</td>
-                                <td className="px-6 py-4">{patient.userId.phoneNumber}</td>
+                                <td className="px-6 py-4">{patient.userId?.fullName}</td>
+                                <td className="px-6 py-4">{patient.userId?.phoneNumber}</td>
                                 <td className="px-6 py-4"> {new Date(patient.dateOfBirth).toLocaleDateString('en-GB') || '01/01/1990'}</td>
                                 <td className="px-6 py-4">{patient.address}</td>
                                 <td className="px-6 py-4">{patient.gender}</td>
@@ -128,7 +139,7 @@ const PatientList = () => {
                                         Edit
                                     </button>
                                     <button
-                                        onClick={() => handleDelete()}
+                                        onClick={() => handleDelete(patient._id)}
                                         className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
                                     >
                                         Delete

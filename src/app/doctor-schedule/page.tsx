@@ -1,6 +1,69 @@
 'use client'
 
+import { useEffect, useState } from "react";
+import axiosInstance from "../utils/axios";
+import { useSearchParams } from "next/navigation";
+
 export default function DoctorSchedule() {
+    const initialSchedule = {
+        doctorId: {
+            _id: "",
+            userId: {
+                _id: "",
+                fullName: "",
+                phoneNumber: ""
+            }
+        },
+        shiftId: {
+            _id: "",
+            name: ""
+        },
+        date: ""
+    }
+    const [schedule, setSchedule] = useState(initialSchedule)
+    const [shifts, setShifts] = useState<any[]>([]);
+
+    const searchParams = useSearchParams();
+    const userId = searchParams.get('id');
+
+    const fetchShift = async () => {
+        const res = await axiosInstance.get('/shifts')
+        setShifts(res.data.result);
+    }
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+
+        if (name === 'shiftId') {
+            const selectedShift = shifts.find(shift => shift._id === value);
+
+            if (selectedShift) {
+                setSchedule((prevSchedule) => ({
+                    ...prevSchedule,
+                    shiftId: {
+                        _id: value,
+                        name: selectedShift.name,
+                    },
+                }));
+            }
+        } else {
+            // Cập nhật cho các trường khác (bao gồm cả date)
+            setSchedule((prevSchedule) => ({
+                ...prevSchedule,
+                [name]: value,
+            }));
+        }
+    };
+
+    useEffect(() => {
+        fetchShift()
+    }, [])
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        console.log('schedule', schedule);
+    };
+
     return (
         <div className="min-h-screen bg-gray-50 p-8">
             {/* Header */}
@@ -11,22 +74,7 @@ export default function DoctorSchedule() {
             {/* Form Section */}
             <div className="max-w-3xl mx-auto bg-white p-6 shadow-md rounded-lg">
                 <h2 className="text-xl font-semibold text-blue-700 mb-4">Create a New Schedule</h2>
-                <form className="space-y-4">
-                    {/* Doctor Name */}
-                    <div>
-                        <label className="block text-gray-700 font-medium mb-2" htmlFor="doctorName">
-                            Doctor Name
-                        </label>
-                        <input
-                            type="text"
-                            id="doctorName"
-                            name="doctorName"
-                            className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="Enter doctor's name"
-                            required
-                        />
-                    </div>
-
+                <form className="space-y-4" onSubmit={handleSubmit}>
                     {/* Date */}
                     <div>
                         <label className="block text-gray-700 font-medium mb-2" htmlFor="date">
@@ -36,50 +84,28 @@ export default function DoctorSchedule() {
                             type="date"
                             id="date"
                             name="date"
+                            value={schedule.date} // Gắn giá trị từ state
+                            onChange={handleChange} // Xử lý sự kiện thay đổi
                             className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                             required
                         />
                     </div>
 
                     {/* Time Range */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-gray-700 font-medium mb-2" htmlFor="startTime">
-                                Start Time
-                            </label>
-                            <input
-                                type="time"
-                                id="startTime"
-                                name="startTime"
-                                className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-gray-700 font-medium mb-2" htmlFor="endTime">
-                                End Time
-                            </label>
-                            <input
-                                type="time"
-                                id="endTime"
-                                name="endTime"
-                                className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                                required
-                            />
-                        </div>
-                    </div>
-
-                    {/* Notes */}
                     <div>
-                        <label className="block text-gray-700 font-medium mb-2" htmlFor="notes">
-                            Notes
-                        </label>
-                        <textarea
-                            id="notes"
-                            name="notes"
-                            className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="Optional notes"
-                        />
+                        <label className="block text-sm font-medium">Time</label>
+                        <select
+                            name="shiftId"
+                            value={schedule.shiftId._id}
+                            onChange={handleChange}
+                            required
+                            className="border rounded p-2 w-full"
+                        >
+                            <option value="" disabled>Select Shift</option>
+                            {shifts.map((item) => (
+                                <option key={item._id} value={item._id}>{item.name}</option>
+                            ))}
+                        </select>
                     </div>
 
                     {/* Submit Button */}

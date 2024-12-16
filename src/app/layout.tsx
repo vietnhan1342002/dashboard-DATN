@@ -4,8 +4,6 @@ import Sidebar from "./components/Sidebar";
 import StoreProvider from "./components/StoreProvider";
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from "react";
-import { makeStore } from "@/redux/store";
-
 
 export default function RootLayout({
   children,
@@ -14,20 +12,27 @@ export default function RootLayout({
 }>) {
   const path = usePathname();
   const router = useRouter();
+
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     if (!token && path !== '/login') {
       router.push('/login');
     }
   }, [path, router]);
+
   const showSidebar = path !== '/login';
+
   return (
-    <StoreProvider >
+    <StoreProvider>
       <html lang="en">
         <body>
-          <div className="flex">
-            {showSidebar && <Sidebar />}
-            <main className="flex-1">
+          <div className="flex h-screen">
+            {showSidebar && (
+              <div className="flex-shrink-0">
+                <Sidebar />
+              </div>
+            )}
+            <main className={`flex-1 overflow-y-auto ${showSidebar ? 'ml-20' : ''}`}> {/* Thêm ml-20 để tạo khoảng cách cho phần nội dung khi có sidebar */}
               {children}
             </main>
           </div>

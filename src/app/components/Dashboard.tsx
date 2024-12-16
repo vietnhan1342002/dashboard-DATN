@@ -35,13 +35,39 @@ const Dashboard = () => {
         setAppointmentCount(appointment.data)
         setDoctorCount(doctor.data)
     }
+    const fetchCompletedAppointment = async (appointmentId: string) => {
+        try {
+            const res = await axiosInstance.patch(`/appointments/status/${appointmentId}`, {
+                status: 'completed'
+            });
 
-    const handleCompleted = () => {
-        console.log("Confirmed!");
+            if (res.status === 200) {
+                alert('Appointment confirmed successfully');
+                fetchAppointment();
+            }
+        } catch (error) {
+            console.error('Error confirming appointment:', error);
+        }
+    };
+    const handleCompleted = (appointmentId: string) => {
+        fetchCompletedAppointment(appointmentId)
     };
 
-    const handleCancel = () => {
-        console.log("Canceled!");
+    const fetchCanceledAppointment = async (appointmentId: string) => {
+        try {
+            const res = await axiosInstance.patch(`/appointments/status/${appointmentId}`, {
+                status: 'canceled'
+            });
+            if (res.status === 200) {
+                alert('Appointment confirmed successfully');
+                fetchAppointment();
+            }
+        } catch (error) {
+            console.error('Error confirming appointment:', error);
+        }
+    };
+    const handleCancel = (appointmentId: string) => {
+        fetchCanceledAppointment(appointmentId)
     };
 
     const fetchAppointment = async () => {
@@ -64,6 +90,9 @@ const Dashboard = () => {
         }
     };
 
+
+
+
     useEffect(() => {
         if (userId) {
             fetchUser(userId)
@@ -73,7 +102,7 @@ const Dashboard = () => {
     }, [userId])
 
     return (
-        <div className="ml-[70px] p-4 bg-blue-50 h-full absolute top-0 left-0 z-20 rounded-l-2xl overflow-hidden" style={{ width: 'calc(100vw - 70px)' }}>
+        <div className="ml-[80px] p-4 bg-blue-50 h-full absolute top-0 left-0 z-20 rounded-l-2xl overflow-hidden" style={{ width: 'calc(100vw - 70px)' }}>
             {/* Header Section */}
             <div className="flex space-x-4 mb-6">
                 {/* Greeting Card */}
@@ -122,23 +151,23 @@ const Dashboard = () => {
                         {appointments.length > 0 ? (
                             appointments.map((appointment) => (
                                 <tr key={appointment._id}>
-                                    <td className="p-3 border">{appointment.detail.patientId.userId.fullName}</td>
-                                    <td className="p-3 border">{appointment.detail.patientId.userId.phoneNumber}</td>
-                                    <td className="p-3 border">{appointment.detail.appointmentDate}</td>
-                                    <td className="p-3 border">{appointment.detail.doctorId.userId.fullName} </td>
-                                    <td className="p-3 border">{appointment.detail.reason}</td>
+                                    <td className="p-3 border">{appointment?.detail?.patientId?.userId?.fullName || 'NAN'}</td>
+                                    <td className="p-3 border">{appointment?.detail?.patientId?.userId?.phoneNumber || 'NAN'}</td>
+                                    <td className="p-3 border">{appointment?.detail?.appointmentDate || 'NAN'}</td>
+                                    <td className="p-3 border">{appointment?.detail?.doctorId?.userId?.fullName || 'NAN'} </td>
+                                    <td className="p-3 border">{appointment?.detail?.reason || 'NAN'}</td>
                                     <td className="p-3 border">
                                         {appointment.detail.status}
                                     </td>
                                     <td className="px-6 py-4 flex space-x-2 border">
                                         <button
-                                            onClick={() => handleCompleted()}
+                                            onClick={() => handleCompleted(appointment._id)}
                                             className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
                                         >
                                             Completed
                                         </button>
                                         <button
-                                            onClick={() => handleCancel()}
+                                            onClick={() => handleCancel(appointment._id)}
                                             className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 border"
                                         >
                                             Cancel

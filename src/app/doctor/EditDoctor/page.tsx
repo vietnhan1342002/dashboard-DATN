@@ -9,6 +9,7 @@ const EditDoctor = () => {
     const _id = searchParams.get('id');
 
     const [formData, setFormData] = useState({
+        avata: '',
         userId: {
             _id: "",
             fullName: "",
@@ -109,6 +110,16 @@ const EditDoctor = () => {
             <div className="p-4 flex-1">
                 <h2 className="text-2xl font-semibold mb-4">Edit Doctor</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium">Avatar</label>
+                        <input
+                            type="file"
+                            name="avatar"
+                            value={formData.avata}
+                            onChange={handleChange}
+                            className="border rounded p-2 w-full"
+                        />
+                    </div>
                     <div>
                         <label className="block text-sm font-medium">Full Name</label>
                         <input

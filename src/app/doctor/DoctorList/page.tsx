@@ -11,9 +11,15 @@ import { toast } from 'sonner';
 
 interface Doctor {
     _id: string;
-    fullName: string;
-    phoneNumber: string;
-    specialtyId: string;
+    userId: {
+        _id: string;
+        fullName: string;
+        phoneNumber: string;
+    },
+    specialtyId: {
+        _id: string;
+        name: string;
+    };
     licenseNumber: string;
     yearsOfExperience: string;
 }
@@ -39,6 +45,8 @@ const DoctorList = () => {
         try {
             const response = await axiosInstance.get(`http://localhost:8080/api/v1/doctors?current=${currentPage}&pageSize=${pageSize}`);
             const { result, totalPages } = response.data; // Truy cập vào trường `result`
+            console.log(result);
+
             setTotalPages(totalPages);
             dispatch(setDoctors(result)); // Cập nhật Redux với mảng từ `result`
         } catch (err) {
@@ -51,7 +59,7 @@ const DoctorList = () => {
 
     useEffect(() => {
         fetchDoctors(currentPage);
-    }, [dispatch])
+    }, [dispatch, currentPage])
 
 
 
@@ -63,7 +71,7 @@ const DoctorList = () => {
         try {
             const res = await axiosInstance.delete(`/doctors/${doctorId}`);
             if (res) {
-                toast.success('Delete Success');
+                toast.success('Successfully deleted');
                 // Tạo bản sao mới và cập nhật state
                 setDoctorList(prevDoctors => prevDoctors.filter(doctor => doctor._id !== doctorId));
             }
@@ -105,8 +113,8 @@ const DoctorList = () => {
                             {doctors.map((doctor, index) => (
                                 <tr key={doctor._id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                                     <td className="px-6 py-4">{doctor._id}</td>
-                                    <td className="px-6 py-4">{doctor.userId.fullName}</td>
-                                    <td className="px-6 py-4">{doctor.userId.phoneNumber}</td>
+                                    <td className="px-6 py-4">{doctor.userId?.fullName || 'N/A'}</td>
+                                    <td className="px-6 py-4">{doctor.userId?.phoneNumber || 'N/A'}</td>
                                     <td className="px-6 py-4">{doctor.specialtyId?.name || 'NAN'}</td>
                                     <td className="px-6 py-4">{doctor.licenseNumber}</td>
                                     <td className="px-6 py-4">{doctor.yearsOfExperience}</td>
