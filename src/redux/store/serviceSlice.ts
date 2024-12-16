@@ -11,6 +11,7 @@ interface ServiceDescription {
 interface Service {
     _id: string;
     name: string;
+    icon: string;
     departmentId: {
         _id: string;
         departmentName: string;

@@ -17,34 +17,30 @@ const SpecialtyList = () => {
         router.push(`/specialty/EditSpecialty?id=${id}`);
     };
 
-
-    // Get specialties and loading state from the Redux store
     const { specialties, loading } = useSelector((state: RootState) => state.specialties);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchQuery, setSearchQuery] = useState("");
     const itemsPerPage = 10;
 
-    // Fetch specialties from the API when the component mounts
     useEffect(() => {
         const fetchSpecialties = async () => {
-            dispatch(setLoading(true)); // Start loading state
+            dispatch(setLoading(true)); // Bắt đầu trạng thái loading
             try {
                 const response = await axios.get("http://localhost:8080/api/v1/departments");
-                dispatch(setSpecialties(response.data.result)); // Store specialties in Redux
+                dispatch(setSpecialties(response.data.result)); // Lưu specialties vào Redux
             } catch (error) {
                 console.error("Error fetching specialties:", error);
             } finally {
-                dispatch(setLoading(false)); // End loading state
+                dispatch(setLoading(false)); // Kết thúc trạng thái loading
             }
         };
 
         fetchSpecialties();
     }, [dispatch]);
 
-    // Filter specialties based on search query
     const filteredSpecialties = specialties.filter((specialty) => {
-        const departmentName = specialty.departmentName?.toLowerCase() || ''; // Thêm điều kiện kiểm tra
-        const description = specialty.description?.toLowerCase() || ''; // Thêm điều kiện kiểm tra
+        const departmentName = specialty.departmentName?.toLowerCase() || '';
+        const description = specialty.description?.toLowerCase() || '';
 
         return departmentName.includes(searchQuery.toLowerCase()) || description.includes(searchQuery.toLowerCase());
     });
@@ -62,19 +58,18 @@ const SpecialtyList = () => {
         if (currentPage > 1) setCurrentPage(currentPage - 1);
     };
 
-    // Show loading state while data is being fetched
+    // Hiển thị trạng thái loading khi dữ liệu đang được tải
     if (loading) {
         return <div>Loading...</div>;
     }
 
-    // Handle deletion of a specialty
     const handleDelete = async (id: string) => {
         try {
-            // Add logic to delete specialty (e.g., API request)
+            // Thêm logic để xóa specialty (ví dụ: yêu cầu API)
             await axios.delete(`http://localhost:8080/api/v1/specialties/${id}`);
-            // After deletion, re-fetch specialties
+            // Sau khi xóa, lại tải lại specialties
             dispatch(setLoading(true));
-            const response = await axios.get("http://localhost:8080/api/v1/departments");
+            const response = await axios.get("http://localhost:8080/api/v1/departments?current=1&pageSize=30");
             dispatch(setSpecialties(response.data.result));
             dispatch(setLoading(false));
         } catch (error) {
@@ -86,7 +81,6 @@ const SpecialtyList = () => {
         <div className="p-4 flex-1">
             <h2 className="text-2xl font-semibold mb-4">Specialties</h2>
 
-            {/* Search input */}
             <div className="flex items-center mb-4">
                 <input
                     type="text"
@@ -94,7 +88,7 @@ const SpecialtyList = () => {
                     value={searchQuery}
                     onChange={(e) => {
                         setSearchQuery(e.target.value);
-                        setCurrentPage(1); // Reset to the first page when searching
+                        setCurrentPage(1); // Reset lại trang khi tìm kiếm
                     }}
                     className="border rounded p-2 flex-grow mr-2"
                 />
@@ -106,7 +100,6 @@ const SpecialtyList = () => {
                 </button>
             </div>
 
-            {/* Specialties table */}
             <table className="min-w-full bg-white shadow rounded-lg overflow-hidden">
                 <thead>
                     <tr className="bg-gray-100">
@@ -144,7 +137,6 @@ const SpecialtyList = () => {
                 </tbody>
             </table>
 
-            {/* Add Specialty button */}
             <div className="mt-4 flex justify-end">
                 <Link href="/specialty/AddSpecialty">
                     <button className="bg-blue-500 text-white px-4 py-2 rounded">
@@ -153,7 +145,6 @@ const SpecialtyList = () => {
                 </Link>
             </div>
 
-            {/* Pagination */}
             <div className="mt-4 flex justify-between items-center">
                 <button
                     onClick={goToPreviousPage}

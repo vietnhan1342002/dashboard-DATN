@@ -21,7 +21,7 @@ const ServiceList = () => {
         const fetchServices = async () => {
             dispatch(setLoading(true)); // Bắt đầu trạng thái loading
             try {
-                const response = await axios.get('http://localhost:8080/api/v1/specialties');
+                const response = await axios.get(`http://localhost:8080/api/v1/specialties?current=1&pageSize=30`);
                 dispatch(setServices(response.data.result)); // Lưu dữ liệu vào Redux store
             } catch (error) {
                 console.error("Error fetching services:", error);
@@ -101,6 +101,7 @@ const ServiceList = () => {
                     <tr className="bg-gray-100">
                         <th className="px-6 py-3 text-left">ID</th>
                         <th className="px-6 py-3 text-left">Service Name</th>
+                        <th className="px-6 py-3 text-left">Icon</th>
                         <th className="px-6 py-3 text-left">Department</th>
                         <th className="px-6 py-3 text-left">Description</th>
                         <th className="px-6 py-3 text-left">Action</th>
@@ -111,9 +112,15 @@ const ServiceList = () => {
                         <tr key={service._id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                             <td className="px-6 py-4">{service._id}</td>
                             <td className="px-6 py-4">{service.name}</td>
+                            <td className="px-6 py-4 flex justify-center">
+                                <img
+                                    src={service.icon}
+                                    alt="Icon Preview"
+                                    className="w-32 h-32 object-cover rounded mb-4"
+                                />
+                            </td>
                             <td className="px-6 py-4">{service.departmentId?.departmentName}</td>
                             <td className="px-6 py-4">
-                                {/* Render các thông tin mô tả */}
                                 <div>
                                     <strong>Introduction:</strong> {service.description.introduction}
                                 </div>

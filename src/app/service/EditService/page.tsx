@@ -12,6 +12,7 @@ const EditService = () => {
     const [serviceData, setServiceData] = useState({
         _id: "",
         name: "",
+        icon: '' as string | File,
         description: {
             introduction: "",
             qualifications: "",
@@ -56,7 +57,15 @@ const EditService = () => {
     ) => {
         const { name, value } = e.target;
 
-        if (name === "departmentId") {
+        if (name === 'icon' && e.target instanceof HTMLInputElement) {
+            const files = e.target.files;
+            if (files && files[0]) {
+                setServiceData({
+                    ...serviceData,
+                    icon: files[0],
+                });
+            }
+        } else if (name === "departmentId") {
             const selectedDepartment = departments.find((dept) => dept._id === value);
             setServiceData((prev) => ({
                 ...prev,
@@ -80,7 +89,6 @@ const EditService = () => {
     };
 
 
-    // Xử lý submit form
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         const qualificationsArray: string[] = Array.isArray(serviceData.description.qualifications)
@@ -119,6 +127,23 @@ const EditService = () => {
                 {error && <p className="text-red-500">{error}</p>}
 
                 <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium">icon</label>
+                        {serviceData.icon && (
+                            <img
+                                src={serviceData.icon as string}
+                                alt="Icon"
+                                className="w-32 h-32 object-cover rounded mb-4"
+                            />
+                        )}
+                        <input
+                            type="file"
+                            name="icon"
+                            accept="image/jpeg, image/jpg"
+                            onChange={handleChange}
+                            className="border rounded p-2 w-full"
+                        />
+                    </div>
                     <div>
                         <label className="block text-sm font-medium">Service Name</label>
                         <input
