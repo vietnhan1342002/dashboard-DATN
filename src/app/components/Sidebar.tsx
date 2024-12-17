@@ -1,6 +1,6 @@
 'use client';
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { TiHome } from "react-icons/ti";
 import { FaUserDoctor, FaUser } from "react-icons/fa6";
@@ -10,10 +10,62 @@ import { RiLogoutBoxFill } from "react-icons/ri";
 import { GiHealthNormal } from "react-icons/gi";
 import { FaFileMedical, FaClipboardList, FaFileInvoiceDollar, FaChartBar, FaPills } from "react-icons/fa";
 import { usePathname, useRouter } from 'next/navigation';
+import axiosInstance from "../utils/axios";
+
+const routesByRole = {
+    admin: [
+        { href: "/", icon: TiHome, label: "Home" },
+        { href: "/doctor/DoctorList", icon: FaUserDoctor, label: "Doctors" },
+        { href: "/doctor-schedule", icon: FaUserDoctor, label: "Doctor Schedule" },
+        { href: "/employee/EmployeeList", icon: IoPersonAddSharp, label: "Employees" },
+        { href: "/specialty/SpecialtyList", icon: GiHealthNormal, label: "Specialties" },
+        { href: "/service/ServiceList", icon: MdAddModerator, label: "Services" },
+        { href: "/patient/PatientList", icon: FaUser, label: "Patients" },
+        { href: "/appointment/AppointmentList", icon: FaClipboardList, label: "Appointments" },
+        { href: "/medicalrecord/MedicalRecordList", icon: FaFileMedical, label: "Medical Records" },
+        { href: "/medicine/MedicineList", icon: FaPills, label: "Medicine" },
+        { href: "/bill/BillList", icon: FaFileInvoiceDollar, label: "Bills" },
+        { href: "/revenuereport/RevenueReport", icon: FaChartBar, label: "Revenue" },
+    ],
+    doctor: [
+        { href: "/", icon: TiHome, label: "Home" },
+        { href: "/doctor-schedule/ScheduleList", icon: FaUserDoctor, label: "List Schedule" },
+        { href: "/medicalrecord/MedicalRecordList", icon: FaFileMedical, label: "Medical Records" },
+        { href: "/appointment/AppointmentDoctor", icon: FaClipboardList, label: "Appointment" },
+    ],
+    receptionist: [
+        { href: "/", icon: TiHome, label: "Home" },
+        { href: "/appointment/AppointmentList", icon: FaClipboardList, label: "Appointments" },
+        { href: "/patient/PatientList", icon: FaUser, label: "Patients" },
+    ],
+} as const;
+
+type UserRole = keyof typeof routesByRole; // 'admin' | 'doctor' | 'receptionist'
 
 const Sidebar = () => {
-    const pathname = usePathname(); // Lấy đường dẫn hiện tại từ `usePathname`
+    const pathname = usePathname();
     const router = useRouter();
+    const userId = localStorage.getItem('userId');
+    const [userRole, setUserRole] = useState<UserRole | null>(null);
+
+    const getRole = async (userId: string) => {
+        try {
+            const res = await axiosInstance.get(`user-auth/${userId}`);
+            const nameRole = res.data.roleId.nameRole as UserRole; // Explicit type assertion
+            console.log(nameRole);
+            setUserRole(nameRole);
+        } catch (error) {
+            console.error("Failed to fetch role", error);
+        }
+    };
+
+    useEffect(() => {
+        if (userId) {
+            getRole(userId);
+        }
+    }, [userId]);
+
+    const routes = userRole ? routesByRole[userRole] : [];
 
     const handleLogout = () => {
         localStorage.removeItem('accessToken');
@@ -34,58 +86,27 @@ const Sidebar = () => {
 
     return (
         <div className="h-screen w-20 bg-blue-600 fixed top-0 left-0 flex flex-col justify-between items-center py-8 text-white overflow-y-auto shadow-xl transition-all duration-300 ease-in-out sidebar">
-
-            {/* Các link trong sidebar */}
-            <Link href="/" className={`flex flex-col items-center justify-center ${isActive('/')}`}>
-                <TiHome className="w-8 h-8 cursor-pointer transition-all duration-300 ease-in-out" title="Home" />
-                <span className="text-xs">Home</span>
-            </Link>
-            <Link href="/doctor/DoctorList" className={`flex flex-col items-center justify-center mt-4 ${isActive('doctor/DoctorList')}`}>
-                <FaUserDoctor className="w-8 h-8 cursor-pointer transition-all duration-300 ease-in-out" title="Doctors" />
-                <span className="text-xs">Doctors</span>
-            </Link>
-            <Link href="/doctor-schedule" className={`flex flex-col items-center justify-center mt-4 ${isActive('doctor/DoctorList')}`}>
-                <FaUserDoctor className="w-8 h-8 cursor-pointer transition-all duration-300 ease-in-out" title="Doctor-schedule" />
-                <span className="text-xs">Doctor schedule</span>
-            </Link>
-            <Link href="/employee/EmployeeList" className={`flex flex-col items-center justify-center mt-4 ${isActive('employee/EmployeeList')}`}>
-                <IoPersonAddSharp className="w-8 h-8 cursor-pointer transition-all duration-300 ease-in-out" title="Employees" />
-                <span className="text-xs">Employees</span>
-            </Link>
-            <Link href="/specialty/SpecialtyList" className={`flex flex-col items-center justify-center mt-4 ${isActive('specialty/SpecialtyList')}`}>
-                <GiHealthNormal className="w-8 h-8 cursor-pointer transition-all duration-300 ease-in-out" title="Specialties" />
-                <span className="text-xs">Specialties</span>
-            </Link>
-            <Link href="/service/ServiceList" className={`flex flex-col items-center justify-center mt-4 ${isActive('service/ServiceList')}`}>
-                <MdAddModerator className="w-8 h-8 cursor-pointer transition-all duration-300 ease-in-out" title="Services" />
-                <span className="text-xs">Services</span>
-            </Link>
-            <Link href="/patient/PatientList" className={`flex flex-col items-center justify-center mt-4 ${isActive('patient/PatientList')}`}>
-                <FaUser className="w-8 h-8 cursor-pointer transition-all duration-300 ease-in-out" title="Patients" />
-                <span className="text-xs">Patients</span>
-            </Link>
-            <Link href="/appointment/AppointmentList" className={`flex flex-col items-center justify-center mt-4 ${isActive('appointment/AppointmentList')}`}>
-                <FaClipboardList className="w-8 h-8 cursor-pointer transition-all duration-300 ease-in-out" title="Appointments" />
-                <span className="text-xs">Appointments</span>
-            </Link>
-            <Link href="/medicalrecord/MedicalRecordList" className={`flex flex-col items-center justify-center mt-4 ${isActive('medicalrecord/MedicalRecordList')}`}>
-                <FaFileMedical className="w-8 h-8 cursor-pointer transition-all duration-300 ease-in-out" title="Medical Records" />
-                <span className="text-xs">Medical Records</span>
-            </Link>
-            <Link href="/medicine/MedicineList" className={`flex flex-col items-center justify-center mt-4 ${isActive('medicine/MedicineList')}`}>
-                <FaPills className="w-8 h-8 cursor-pointer transition-all duration-300 ease-in-out" title="Medicine Management" />
-                <span className="text-xs">Medicine</span>
-            </Link>
-            <Link href="/bill/BillList" className={`flex flex-col items-center justify-center mt-4 ${isActive('bill/BillList')}`}>
-                <FaFileInvoiceDollar className="w-8 h-8 cursor-pointer transition-all duration-300 ease-in-out" title="Bills" />
-                <span className="text-xs">Bills</span>
-            </Link>
-            <Link href="/revenuereport/RevenueReport" className={`flex flex-col items-center justify-center mt-4 ${isActive('revenuereport/RevenueReport')}`}>
-                <FaChartBar className="w-8 h-8 cursor-pointer transition-all duration-300 ease-in-out" title="Revenue Report" />
-                <span className="text-xs">Revenue</span>
-            </Link>
-            <div onClick={handleLogout} className="cursor-pointer flex flex-col items-center justify-center mt-auto hover:bg-red-600 p-2 rounded-lg transition-all duration-300 ease-in-out">
-                <RiLogoutBoxFill className="w-8 h-8 cursor-pointer transition-all duration-300 ease-in-out" title="Logout" />
+            {routes.map((route, index) => (
+                <Link
+                    key={index}
+                    href={route.href}
+                    className={`flex flex-col items-center justify-center mt-4 ${isActive(route.href)}`}
+                >
+                    <route.icon
+                        className="w-8 h-8 cursor-pointer transition-all duration-300 ease-in-out"
+                        title={route.label}
+                    />
+                    <span className="text-xs">{route.label}</span>
+                </Link>
+            ))}
+            <div
+                onClick={handleLogout}
+                className="cursor-pointer flex flex-col items-center justify-center mt-auto hover:bg-red-600 p-2 rounded-lg transition-all duration-300 ease-in-out"
+            >
+                <RiLogoutBoxFill
+                    className="w-8 h-8 cursor-pointer transition-all duration-300 ease-in-out"
+                    title="Logout"
+                />
                 <span className="text-xs">Logout</span>
             </div>
         </div>
