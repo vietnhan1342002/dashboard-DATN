@@ -4,10 +4,11 @@ import Sidebar from "./components/Sidebar";
 export default function Home() {
   return (
     <main className="flex h-screen">
-      <div className="flex-shrink-0 w-64">  {/* Đặt chiều rộng cố định cho Sidebar */}
+      <div className="bg-blue-600 text-white flex-shrink-0">
         <Sidebar />
       </div>
-      <div className="flex-1 overflow-y-auto">
+
+      <div className="flex-1 bg-blue-50">
         <Dashboard />
       </div>
     </main>

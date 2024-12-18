@@ -23,7 +23,7 @@ const routesByRole = {
         { href: "/patient/PatientList", icon: FaUser, label: "Patients" },
         { href: "/appointment/AppointmentList", icon: FaClipboardList, label: "Appointments" },
         { href: "/medicalrecord/MedicalRecordList", icon: FaFileMedical, label: "Medical Records" },
-        { href: "/medicine/MedicineList", icon: FaPills, label: "Medicine" },
+        { href: "/medicine/MedicalRecordList/MedicineList", icon: FaPills, label: "Medicine" },
         { href: "/bill/BillList", icon: FaFileInvoiceDollar, label: "Bills" },
         { href: "/revenuereport/RevenueReport", icon: FaChartBar, label: "Revenue" },
     ],
@@ -85,7 +85,7 @@ const Sidebar = () => {
     };
 
     return (
-        <div className="h-screen w-20 bg-blue-600 fixed top-0 left-0 flex flex-col justify-between items-center py-8 text-white overflow-y-auto shadow-xl transition-all duration-300 ease-in-out sidebar">
+        <div className="h-screen w-30 bg-blue-600 fixed top-0 left-0 flex flex-col justify-between items-center py-8 text-white overflow-y-auto shadow-xl transition-all duration-300 ease-in-out sidebar">
             {routes.map((route, index) => (
                 <Link
                     key={index}

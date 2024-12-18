@@ -3,18 +3,21 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../utils/axios";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const Dashboard = () => {
+
+    const router = useRouter()
+
     const initialData = {
         fullName: '',
         phoneNumber: ''
     }
     const [user, setUser] = useState(initialData)
+    const [role, setRole] = useState("")
     const [appointmentCount, setAppointmentCount] = useState(0)
     const [doctorCount, setDoctorCount] = useState(0)
-
     const [appointments, setAppointments] = useState<any[]>([])
-
     const [userId, setUserId] = useState<string | null>()
 
     useEffect(() => {
@@ -28,8 +31,8 @@ const Dashboard = () => {
         try {
             const res = await axiosInstance.get(`/user-auth/${userId}`)
             const user = res.data
-            console.log(user);
-
+            const role = user.roleId.nameRole
+            setRole(role)
             setUser(user)
         } catch (error) {
             toast.error('Error')
@@ -37,11 +40,22 @@ const Dashboard = () => {
     }
 
     const fetchSumDoctor = async () => {
-        const appointment = await axiosInstance.get('/filter/count/appointments')
         const doctor = await axiosInstance.get('/filter/count/doctors')
-        setAppointmentCount(appointment.data)
         setDoctorCount(doctor.data)
+    };
+
+    const fetchSumAppointment = async () => {
+        let appointment;
+        const doctorId = await axiosInstance.get(`/doctors/user/${userId}`)
+        if (role === "doctor") {
+            console.log(1);
+            appointment = await axiosInstance.get(`filter/count/appointments?doctorId=${doctorId.data._id}`);
+        } else {
+            appointment = await axiosInstance.get('/filter/count/appointments');
+        }
+        setAppointmentCount(appointment.data)
     }
+
     const fetchCompletedAppointment = async (appointmentId: string) => {
         try {
             const res = await axiosInstance.patch(`/appointments/status/${appointmentId}`, {
@@ -56,6 +70,7 @@ const Dashboard = () => {
             console.error('Error confirming appointment:', error);
         }
     };
+
     const handleCompleted = (appointmentId: string) => {
         fetchCompletedAppointment(appointmentId)
     };
@@ -66,50 +81,64 @@ const Dashboard = () => {
                 status: 'canceled'
             });
             if (res.status === 200) {
-                alert('Appointment confirmed successfully');
+                alert('Appointment canceled successfully');
                 fetchAppointment();
             }
         } catch (error) {
-            console.error('Error confirming appointment:', error);
+            console.error('Error canceling appointment:', error);
         }
     };
+
     const handleCancel = (appointmentId: string) => {
         fetchCanceledAppointment(appointmentId)
     };
 
+    const handleEdit = (appointmentId: string) => {
+        router.push(`/medicalrecord/MedicalRecordList/EditMedical?id=${appointmentId}`)
+    };
+
     const fetchAppointment = async () => {
         try {
-            const confirmed = await axiosInstance.get('/filter/appointment-confirmed');
+            let confirmed;
+            const doctorId = await axiosInstance.get(`/doctors/user/${userId}`)
+            if (role === "doctor") {
+                confirmed = await axiosInstance.get(`/filter/appointment-confirmed?doctorId=${doctorId.data._id}`);
+            } else {
+                confirmed = await axiosInstance.get('/filter/appointment-confirmed');
+            }
             const appointments = confirmed.data;
 
             const mappedAppointments = await Promise.all(
                 appointments.map(async (appointment: any) => {
                     const detail = await axiosInstance.get(`appointments/${appointment._id}`);
                     return {
+                        ...appointment,
                         detail: detail.data.result,
                     };
                 })
             );
-            console.log(mappedAppointments);
             setAppointments(mappedAppointments);
         } catch (error) {
             console.error('Error fetching appointments:', error);
         }
     };
 
-
-
-
     useEffect(() => {
         if (userId) {
             fetchUser(userId)
         }
         fetchSumDoctor()
-        fetchAppointment()
     }, [userId])
 
+    useEffect(() => {
+        if (role) {
+            fetchAppointment();
+            fetchSumAppointment()
+        }
+    }, [role]);
+
     return (
-        <div className="ml-[80px] p-4 bg-blue-50 h-full absolute top-0 left-0 z-20 rounded-l-2xl overflow-hidden" style={{ width: 'calc(100vw - 70px)' }}>
+        <div className="p-4 bg-blue-50 rounded-l-2xl w-full">
             {/* Header Section */}
             <div className="flex space-x-4 mb-6">
                 {/* Greeting Card */}
@@ -130,12 +159,15 @@ const Dashboard = () => {
                             <p className="text-2xl font-semibold">{appointmentCount}</p>
                         </div>
                     </div>
-                    <div className="bg-white text-black p-16 rounded-lg shadow-lg flex items-center justify-center">
+                    {role === "admin" ? <div className="bg-white text-black p-16 rounded-lg shadow-lg flex items-center justify-center">
                         <div className="text-center">
                             <p>Registered Doctors</p>
                             <p className="text-2xl font-semibold">{doctorCount}</p>
                         </div>
-                    </div>
+                    </div> : <div className="bg-white text-black p-16 rounded-lg shadow-lg flex items-center justify-center">
+                        Hello
+                    </div>}
+
                 </div>
             </div>
 
@@ -151,25 +183,34 @@ const Dashboard = () => {
                             <th className="p-3 border">Doctor</th>
                             <th className="p-3 border">Reason</th>
                             <th className="p-3 border">Status</th>
+                            <th className="p-3 border">Medical</th>
                             <th className="p-3 border">Visited</th>
+
                         </tr>
                     </thead>
                     <tbody>
                         {appointments.length > 0 ? (
-                            appointments.map((appointment) => (
-                                <tr key={appointment._id}>
+                            appointments.map((appointment, index) => (
+                                <tr key={appointment._id || index}>
                                     <td className="p-3 border">{appointment?.detail?.patientId?.userId?.fullName || 'NAN'}</td>
                                     <td className="p-3 border">{appointment?.detail?.patientId?.userId?.phoneNumber || 'NAN'}</td>
                                     <td className="p-3 border">{appointment?.detail?.appointmentDate || 'NAN'}</td>
                                     <td className="p-3 border">{appointment?.detail?.doctorId?.userId?.fullName || 'NAN'} </td>
                                     <td className="p-3 border">{appointment?.detail?.reason || 'NAN'}</td>
+                                    <td className="p-3 border">{appointment.detail.status}</td>
                                     <td className="p-3 border">
-                                        {appointment.detail.status}
+                                        <button
+                                            onClick={() => handleEdit(appointment._id)}
+                                            className="bg-blue-400 text-white px-2 py-1 rounded hover:bg-blue-500 border"
+                                        >
+                                            Edit Medical
+                                        </button>
                                     </td>
+
                                     <td className="px-6 py-4 flex space-x-2 border">
                                         <button
                                             onClick={() => handleCompleted(appointment._id)}
-                                            className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
+                                            className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
                                         >
                                             Completed
                                         </button>
@@ -179,6 +220,7 @@ const Dashboard = () => {
                                         >
                                             Cancel
                                         </button>
+
                                     </td>
                                 </tr>
                             ))
