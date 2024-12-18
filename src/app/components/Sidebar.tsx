@@ -52,7 +52,6 @@ const Sidebar = () => {
         try {
             const res = await axiosInstance.get(`user-auth/${userId}`);
             const nameRole = res.data.roleId.nameRole as UserRole; // Explicit type assertion
-            console.log(nameRole);
             setUserRole(nameRole);
         } catch (error) {
             console.error("Failed to fetch role", error);

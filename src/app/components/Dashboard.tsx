@@ -46,11 +46,13 @@ const Dashboard = () => {
 
     const fetchSumAppointment = async () => {
         let appointment;
-        const doctorId = await axiosInstance.get(`/doctors/user/${userId}`)
+        console.log(role);
+
         if (role === "doctor") {
-            console.log(1);
+            const doctorId = await axiosInstance.get(`/doctors/user/${userId}`)
             appointment = await axiosInstance.get(`filter/count/appointments?doctorId=${doctorId.data._id}`);
         } else {
+            console.log(1);
             appointment = await axiosInstance.get('/filter/count/appointments');
         }
         setAppointmentCount(appointment.data)
@@ -100,8 +102,8 @@ const Dashboard = () => {
     const fetchAppointment = async () => {
         try {
             let confirmed;
-            const doctorId = await axiosInstance.get(`/doctors/user/${userId}`)
             if (role === "doctor") {
+                const doctorId = await axiosInstance.get(`/doctors/user/${userId}`)
                 confirmed = await axiosInstance.get(`/filter/appointment-confirmed?doctorId=${doctorId.data._id}`);
             } else {
                 confirmed = await axiosInstance.get('/filter/appointment-confirmed');

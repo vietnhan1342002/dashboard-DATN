@@ -55,7 +55,7 @@ const MedicalRecordDetail = () => {
                         treatmentPlan: detailMedicalRecord.treatmentPlan,
                     }
                 );
-                console.log(response.data);
+                console.log("response.data", response.data);
                 if (response.data) {
                     toast.success("Update successfully")
                     const prescription = await axiosInstance.post(`/prescriptions/`, {
@@ -63,7 +63,7 @@ const MedicalRecordDetail = () => {
                     })
 
                     if (prescription.data) {
-                        router.push(`/medicalrecord/MedicalRecordDetail/PrescriptionForm?id=${record._id}`);
+                        router.push(`/medicalrecord/MedicalRecordDetail/PrescriptionForm?prescriptionId=${prescription.data._id}&id=${record._id}`);
                     }
                 }
 
