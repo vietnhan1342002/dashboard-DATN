@@ -56,8 +56,6 @@ const PrescriptionForm = () => {
     const fetchMedicationsInPrescription = async (prescriptionDetailId: string) => {
         try {
             const response = await axiosInstance.get(`/prescription-details/prescription/${prescriptionDetailId}`);
-            console.log(response.data);
-
             setMedicationsInPrescription(response.data); // Lưu dữ liệu vào state
         } catch (error) {
             console.error('Error fetching medications by prescription ID', error);
@@ -242,18 +240,18 @@ const PrescriptionForm = () => {
                 {/* Right */}
                 <div className="flex-1">
                     <h3 className="text-2xl font-semibold text-green-700 mb-4">Medications in Prescription</h3>
-                    {medicationsInPrescription.length > 0 ? (
+                    {medicationsInPrescription && medicationsInPrescription.length > 0 ? (
                         <ul className="space-y-4">
                             <div className="mt-6">
                                 <ul className="mt-4 space-y-4">
                                     {medicationsInPrescription.map((medication) => (
-                                        <li key={medication.medicationId._id} className="p-4 border border-gray-200 rounded-lg">
-                                            <h4 className="text-lg font-semibold">{medication.medicationId.name}</h4>
-                                            <p><strong>Usage Instructions:</strong> {medication.medicationId.usageInstructions}</p>
-                                            <p><strong>Side Effects:</strong> {medication.medicationId.sideEffects}</p>
-                                            <p><strong>Price:</strong> {medication.medicationId.price}</p>
-                                            <p><strong>Quantity:</strong>{medication.quantityPrescribed}</p>
-                                            <p><strong>Total:</strong>{medication.quantityPrescribed * medication.medicationId.price}</p>
+                                        <li key={medication?.medicationId?._id} className="p-4 border border-gray-200 rounded-lg">
+                                            <h4 className="text-lg font-semibold">{medication?.medicationId?.name}</h4>
+                                            <p><strong>Usage Instructions:</strong> {medication?.medicationId?.usageInstructions}</p>
+                                            <p><strong>Side Effects:</strong> {medication?.medicationId?.sideEffects}</p>
+                                            <p><strong>Price:</strong> {medication?.medicationId?.price}</p>
+                                            <p><strong>Quantity:</strong>{medication?.quantityPrescribed}</p>
+                                            <p><strong>Total:</strong>{medication?.quantityPrescribed * medication?.medicationId?.price}</p>
                                         </li>
                                     ))}
                                 </ul>
