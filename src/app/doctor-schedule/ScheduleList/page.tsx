@@ -4,7 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { ScheduleComponent, Day, Week, WorkWeek, Month, Agenda, Inject } from '@syncfusion/ej2-react-schedule';
 import axiosInstance from '@/app/utils/axios';
 import { toast, Toaster } from 'sonner';
-import ReactLoading from 'react-loading';
+import { registerLicense } from '@syncfusion/ej2-base';
+
+registerLicense("Ngo9BigBOggjHTQxAR8/V1NMaF5cXmBCf0x3Qnxbf1x1ZFxMYl1bRXRPIiBoS35RckRhWHdccXBWRmhfWUR2")
 
 const SchedulePage = () => {
     const [events, setEvents] = useState([]);

@@ -166,10 +166,8 @@ const Dashboard = () => {
                             <p>Registered Doctors</p>
                             <p className="text-2xl font-semibold">{doctorCount}</p>
                         </div>
-                    </div> : <div className="bg-white text-black p-16 rounded-lg shadow-lg flex items-center justify-center">
-                        Hello
-                    </div>}
-
+                    </div> : <></>
+                    }
                 </div>
             </div>
 
@@ -200,15 +198,15 @@ const Dashboard = () => {
                                     <td className="p-3 border">{appointment?.detail?.doctorId?.userId?.fullName || 'NAN'} </td>
                                     <td className="p-3 border">{appointment?.detail?.reason || 'NAN'}</td>
                                     <td className="p-3 border">{appointment.detail.status}</td>
-                                    <td className="p-3 border">
+                                    {role === "doctor" ? <td className="p-3 border">
                                         <button
                                             onClick={() => handleEdit(appointment._id)}
                                             className="bg-blue-400 text-white px-2 py-1 rounded hover:bg-blue-500 border"
                                         >
                                             Edit Medical
                                         </button>
-                                    </td>
-
+                                    </td> : <></>
+                                    }
                                     <td className="px-6 py-4 flex space-x-2 border">
                                         <button
                                             onClick={() => handleCompleted(appointment._id)}

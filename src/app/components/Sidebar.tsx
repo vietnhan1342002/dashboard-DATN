@@ -29,9 +29,9 @@ const routesByRole = {
     ],
     doctor: [
         { href: "/", icon: TiHome, label: "Home" },
-        { href: "/doctor-schedule/ScheduleList", icon: FaUserDoctor, label: "List Schedule" },
+        { href: "/doctor/DoctorProfile", icon: FaUserDoctor, label: "Profile" },
+        { href: "/doctor-schedule/ScheduleList", icon: FaUserDoctor, label: "Schedule" },
         { href: "/medicalrecord/MedicalRecordList", icon: FaFileMedical, label: "Medical Records" },
-        { href: "/appointment/AppointmentDoctor", icon: FaClipboardList, label: "Appointment" },
     ],
     receptionist: [
         { href: "/", icon: TiHome, label: "Home" },

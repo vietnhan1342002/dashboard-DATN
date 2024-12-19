@@ -72,9 +72,6 @@ const MedicalRecordList = () => {
 
     const router = useRouter();
 
-    const navigateToDetail = (medicalrecordId: string) => {
-        router.push(`/medicalrecord/MedicalRecordDetail?id=${medicalrecordId}`);
-    };
 
     const handleDelete = async (medicalrecordId: string) => {
         try {
@@ -87,6 +84,10 @@ const MedicalRecordList = () => {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleEdit = (appointmentId: string) => {
+        router.push(`/medicalrecord/MedicalRecordList/EditMedical?id=${appointmentId}`)
     };
 
     useEffect(() => {
@@ -142,11 +143,18 @@ const MedicalRecordList = () => {
                                     <td className="px-6 py-4">{record?.appointmentId?.appointmentDate || ''}</td>
                                     <td className="px-6 py-4 flex space-x-2">
                                         <button
+                                            onClick={() => handleEdit(record.appointmentId._id)}
+                                            className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
                                             onClick={() => handleDelete(record._id)}
                                             className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
                                         >
                                             Delete
                                         </button>
+
                                     </td>
                                 </tr>
                             ))}

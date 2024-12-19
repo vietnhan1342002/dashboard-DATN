@@ -121,6 +121,9 @@ const PrescriptionForm = () => {
             toast.success("Create Successfully")
             setPrescriptions([...prescriptions, response.data]);
             setMedicationsInPrescription(prev => [...prev, response.data]);
+            if (prescriptionId) {
+                fetchMedicationsInPrescription(prescriptionId);
+            }
             setMedicationId('');
             setQuantityPrescribed(1);
         } catch (error: any) {
@@ -142,6 +145,10 @@ const PrescriptionForm = () => {
             setSelectedMedication(null); // Reset selected medication when search is cleared
         }
     }, [searchTerm]);
+
+    const handleDeleteMedication = async (medicationId: string) => {
+        toast.success("delete");
+    };
 
     return (
         <div className="max-w-8xl mx-auto p-8 bg-gradient-to-r from-green-100 to-white shadow-lg rounded-lg">
@@ -243,24 +250,31 @@ const PrescriptionForm = () => {
                 <div className="flex-1">
                     <h3 className="text-2xl font-semibold text-green-700 mb-4">Medications in Prescription</h3>
                     {medicationsInPrescription && medicationsInPrescription.length > 0 ? (
-                        <ul className="space-y-4">
-                            <div className="mt-6">
-                                <ul className="mt-4 space-y-4">
-                                    {medicationsInPrescription.map((medication) => (
-                                        <li key={medication?.medicationId?._id} className="p-4 border border-gray-200 rounded-lg">
-                                            <h4 className="text-lg font-semibold text-center">{medication?.medicationId?.name}</h4>
-                                            <p><strong>Usage Instructions:</strong> {medication?.medicationId?.usageInstructions}</p>
-                                            <p><strong>Side Effects:</strong> {medication?.medicationId?.sideEffects}</p>
-                                            <p><strong>Price:</strong> {medication?.medicationId?.price}</p>
-                                            <p><strong>QuantityPrescribed:</strong>{medication?.quantityPrescribed}</p>
-                                            <p><strong>Total:</strong>{medication?.quantityPrescribed * medication?.medicationId?.price}</p>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
+                        <ul className="mt-4 space-y-4">
+                            {medicationsInPrescription.map((medication, index) => (
+                                <li
+                                    key={medication?.medicationId?._id || `medication-${index}`}
+                                    className="p-4 border border-gray-200 rounded-lg flex justify-between items-center"
+                                >
+                                    <div>
+                                        <h4 className="text-lg font-semibold">{medication?.medicationId?.name}</h4>
+                                        <p><strong>Usage Instructions:</strong> {medication?.medicationId?.usageInstructions}</p>
+                                        <p><strong>Side Effects:</strong> {medication?.medicationId?.sideEffects}</p>
+                                        <p><strong>Price:</strong> {medication?.medicationId?.price}</p>
+                                        <p><strong>Quantity:</strong> {medication?.quantityPrescribed}</p>
+                                        <p><strong>Total:</strong> {medication?.quantityPrescribed * medication?.medicationId?.price}</p>
+                                    </div>
+                                    <button
+                                        onClick={() => handleDeleteMedication(medication.medicationId._id)}
+                                        className="text-red-600 hover:text-red-800 bg-gray-100 hover:bg-gray-200 rounded-md px-4 py-2"
+                                    >
+                                        Delete
+                                    </button>
+                                </li>
+                            ))}
                         </ul>
                     ) : (
-                        <p className="text-center text-lg text-gray-500">No medications found for this prescription.</p> // Thông báo khi không có thuốc
+                        <p className="text-center text-lg text-gray-500">No medications found for this prescription.</p>
                     )}
                 </div>
 
