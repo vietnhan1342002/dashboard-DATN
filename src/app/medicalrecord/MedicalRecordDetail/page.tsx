@@ -46,34 +46,30 @@ const MedicalRecordDetail = () => {
         e.preventDefault();
         if (record) {
             try {
-                console.log("detailMedicalRecord", detailMedicalRecord);
                 const response = await axiosInstance.put(`/detail-medical-record/${detailMedicalRecord._id}`, {
                     symptoms: detailMedicalRecord.symptoms,
                     disease: detailMedicalRecord.disease,
                     treatmentPlan: detailMedicalRecord.treatmentPlan,
                 });
 
-                console.log("response.data", response.data);
+
                 if (response.data) {
                     try {
                         const existingPrescription = await axiosInstance.get(`/prescriptions/detail-medical-record/${detailMedicalRecord._id}`);
-                        if (existingPrescription.status === 400) {
-                            console.log('existingPrescription.data', existingPrescription.data);
-                        }
                         if (existingPrescription.data.length > 0) {
                             const prescriptionId = existingPrescription.data[0]._id;
                             router.push(`/medicalrecord/MedicalRecordDetail/PrescriptionForm?prescriptionId=${prescriptionId}&id=${record._id}`);
+                        } else {
+                            const prescription = await axiosInstance.post(`/prescriptions/`, {
+                                detailMedicalRecordId: detailMedicalRecord._id,
+                            });
+                            if (prescription.data) {
+                                router.push(`/medicalrecord/MedicalRecordDetail/PrescriptionForm?prescriptionId=${prescription.data._id}&id=${record._id}`);
+                            }
                         }
                         toast.success("Update successfully");
                     } catch (error: any) {
-                        const prescription = await axiosInstance.post(`/prescriptions/`, {
-                            detailMedicalRecordId: detailMedicalRecord._id,
-                        });
-                        if (prescription.data) {
-                            router.push(`/medicalrecord/MedicalRecordDetail/PrescriptionForm?prescriptionId=${prescription.data._id}&id=${record._id}`);
-                        }
-                        toast.success("Update successfully");
-                        // toast.error(error.response.data.message)
+                        toast.error(error.response.data.message)
                     }
 
                 }
