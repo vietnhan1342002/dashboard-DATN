@@ -45,9 +45,10 @@ type UserRole = keyof typeof routesByRole; // 'admin' | 'doctor' | 'receptionist
 const Sidebar = () => {
     const pathname = usePathname();
     const router = useRouter();
-    const userId = localStorage.getItem('userId');
+    const [userId, setUserId] = useState<string | null>(null); // Add userId state
     const [userRole, setUserRole] = useState<UserRole | null>(null);
 
+    // Function to fetch user role based on userId
     const getRole = async (userId: string) => {
         try {
             const res = await axiosInstance.get(`user-auth/${userId}`);
@@ -58,11 +59,17 @@ const Sidebar = () => {
         }
     };
 
+    // UseEffect to check if we are on the client-side
     useEffect(() => {
-        if (userId) {
-            getRole(userId);
+        if (typeof window !== "undefined") {
+            // This block will only execute on the client
+            const storedUserId = localStorage.getItem('userId');
+            if (storedUserId) {
+                setUserId(storedUserId);
+                getRole(storedUserId); // Fetch user role if userId exists
+            }
         }
-    }, [userId]);
+    }, []); // Empty dependency array ensures this runs only once after mount
 
     const routes = userRole ? routesByRole[userRole] : [];
 

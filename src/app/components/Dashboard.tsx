@@ -106,6 +106,7 @@ const Dashboard = () => {
                 const doctorId = await axiosInstance.get(`/doctors/user/${userId}`)
                 confirmed = await axiosInstance.get(`/filter/appointment-confirmed?doctorId=${doctorId.data._id}`);
             } else {
+                console.log("admin appointment", role);
                 confirmed = await axiosInstance.get('/filter/appointment-confirmed');
             }
             const appointments = confirmed.data;
@@ -183,8 +184,13 @@ const Dashboard = () => {
                             <th className="p-3 border">Doctor</th>
                             <th className="p-3 border">Reason</th>
                             <th className="p-3 border">Status</th>
-                            <th className="p-3 border">Medical</th>
-                            <th className="p-3 border">Visited</th>
+                            {
+                                role === "doctor" ? <>
+                                    <th className="p-3 border">Medical</th>
+                                    <th className="p-3 border">Visited</th>
+                                </> : <></>
+                            }
+
 
                         </tr>
                     </thead>
@@ -198,30 +204,33 @@ const Dashboard = () => {
                                     <td className="p-3 border">{appointment?.detail?.doctorId?.userId?.fullName || 'NAN'} </td>
                                     <td className="p-3 border">{appointment?.detail?.reason || 'NAN'}</td>
                                     <td className="p-3 border">{appointment.detail.status}</td>
-                                    {role === "doctor" ? <td className="p-3 border">
-                                        <button
-                                            onClick={() => handleEdit(appointment._id)}
-                                            className="bg-blue-400 text-white px-2 py-1 rounded hover:bg-blue-500 border"
-                                        >
-                                            Edit Medical
-                                        </button>
-                                    </td> : <></>
+                                    {role === "doctor" ?
+                                        <>
+                                            <td className="p-3 border">
+                                                <button
+                                                    onClick={() => handleEdit(appointment._id)}
+                                                    className="bg-blue-400 text-white px-2 py-1 rounded hover:bg-blue-500 border"
+                                                >
+                                                    Edit Medical
+                                                </button>
+                                            </td>
+                                            <td className="px-6 py-4 flex space-x-2 border">
+                                                <button
+                                                    onClick={() => handleCompleted(appointment._id)}
+                                                    className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
+                                                >
+                                                    Completed
+                                                </button>
+                                                <button
+                                                    onClick={() => handleCancel(appointment._id)}
+                                                    className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 border"
+                                                >
+                                                    Cancel
+                                                </button>
+                                            </td>
+                                        </>
+                                        : <></>
                                     }
-                                    <td className="px-6 py-4 flex space-x-2 border">
-                                        <button
-                                            onClick={() => handleCompleted(appointment._id)}
-                                            className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
-                                        >
-                                            Completed
-                                        </button>
-                                        <button
-                                            onClick={() => handleCancel(appointment._id)}
-                                            className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 border"
-                                        >
-                                            Cancel
-                                        </button>
-
-                                    </td>
                                 </tr>
                             ))
                         ) : (
