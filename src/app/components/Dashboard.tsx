@@ -5,6 +5,7 @@ import axiosInstance from "../utils/axios";
 import { toast, Toaster } from "sonner";
 import { useRouter } from "next/navigation";
 import useSocket from "@/hooks/useSocket";
+import { formatDateTime } from "../utils/format";
 
 const Dashboard = () => {
     const socket = useSocket("http://localhost:8080");
@@ -216,11 +217,11 @@ const Dashboard = () => {
                         {appointments.length > 0 ? (
                             appointments.map((appointment, index) => (
                                 <tr key={appointment._id || index}>
-                                    <td className="p-3 border">{appointment?.detail?.patientId?.userId?.fullName || 'NAN'}</td>
-                                    <td className="p-3 border">{appointment?.detail?.patientId?.userId?.phoneNumber || 'NAN'}</td>
-                                    <td className="p-3 border">{appointment?.detail?.appointmentDate || 'NAN'}</td>
-                                    <td className="p-3 border">{appointment?.detail?.doctorId?.userId?.fullName || 'NAN'} </td>
-                                    <td className="p-3 border">{appointment?.detail?.reason || 'NAN'}</td>
+                                    <td className="p-3 border">{appointment?.detail?.patientId?.userId?.fullName || 'No data available'}</td>
+                                    <td className="p-3 border">{appointment?.detail?.patientId?.userId?.phoneNumber || 'No data available'}</td>
+                                    <td className="p-3 border">{formatDateTime(appointment?.detail?.appointmentDate) || 'No data available'}</td>
+                                    <td className="p-3 border">{appointment?.detail?.doctorId?.userId?.fullName || 'No data available'} </td>
+                                    <td className="p-3 border">{appointment?.detail?.reason || 'No data available'}</td>
                                     <td className="p-3 border">{appointment.detail.status}</td>
                                     {role === "doctor" ?
                                         <>
