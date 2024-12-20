@@ -33,9 +33,9 @@ const routesByRole = {
         { href: "/medicalrecord/MedicalRecordList", icon: FaFileMedical, label: "Medical Records" },
     ],
     receptionist: [
-        { href: "/", icon: TiHome, label: "Home" },
         { href: "/appointment/AppointmentList", icon: FaClipboardList, label: "Appointments" },
-        { href: "/patient/PatientList", icon: FaUser, label: "Patients" },
+        { href: "/doctor/DoctorList", icon: FaUserDoctor, label: "Doctors" },
+        { href: "/bill/BillList", icon: FaFileInvoiceDollar, label: "Bills" },
     ],
 } as const;
 
@@ -68,6 +68,12 @@ const Sidebar = () => {
         }
     }, []);
 
+    useEffect(() => {
+        if (userRole === "receptionist") {
+            router.push("/appointment/AppointmentList"); // Redirect to AppointmentList for receptionist
+        }
+    }, [userRole, router]);
+
     const routes = userRole ? routesByRole[userRole] : [];
 
     const handleLogout = () => {
@@ -77,34 +83,38 @@ const Sidebar = () => {
     };
 
     const isActive = (path: string) => {
+        const baseClass = "flex flex-col items-center justify-center mt-4 p-3 rounded-lg transition-all duration-300 ease-in-out w-full"; // Thêm w-full để chiếm hết chiều ngang
         if (path === '/') {
             return pathname === path
-                ? "bg-blue-700 text-white scale-110 shadow-lg"
-                : "text-gray-300 hover:text-blue-500";
+                ? `${baseClass} bg-blue-800 text-white scale-110 shadow-md`
+                : `${baseClass} text-gray-300 hover:bg-blue-500 hover:text-white`;
         }
         return pathname.includes(path)
-            ? "bg-blue-700 text-white scale-110 shadow-lg"
-            : "text-gray-300 hover:text-blue-500";
+            ? `${baseClass} bg-blue-800 text-white scale-110 shadow-md`
+            : `${baseClass} text-gray-300 hover:bg-blue-500 hover:text-white`;
     };
 
     return (
-        <div className="h-screen w-30 bg-blue-600 fixed top-0 left-0 flex flex-col justify-between items-center py-8 text-white overflow-y-auto shadow-xl transition-all duration-300 ease-in-out sidebar">
-            {routes.map((route, index) => (
-                <Link
-                    key={index}
-                    href={route.href}
-                    className={`flex flex-col items-center justify-center mt-4 ${isActive(route.href)}`}
-                >
-                    <route.icon
-                        className="w-8 h-8 cursor-pointer transition-all duration-300 ease-in-out"
-                        title={route.label}
-                    />
-                    <span className="text-xs">{route.label}</span>
-                </Link>
-            ))}
+        <div className="h-screen w-32 bg-blue-600 fixed top-0 left-0 flex flex-col justify-between items-center py-8 text-white overflow-y-auto overflow-x-hidden shadow-xl transition-all duration-300 ease-in-out sidebar">
+            <div className="flex-grow w-full">
+                {routes.map((route, index) => (
+                    <Link
+                        key={index}
+                        href={route.href}
+                        className={`flex flex-col items-center justify-center mt-4 ${isActive(route.href)}`}
+                    >
+                        <route.icon
+                            className="w-6 h-6 cursor-pointer transition-all duration-300 ease-in-out"
+                            title={route.label}
+                        />
+                        <span className="text-base text-center">{route.label}</span>
+                    </Link>
+                ))}
+            </div>
+            {/* Sticky Logout button */}
             <div
                 onClick={handleLogout}
-                className="cursor-pointer flex flex-col items-center justify-center mt-auto hover:bg-red-600 p-2 rounded-lg transition-all duration-300 ease-in-out"
+                className="cursor-pointer flex flex-col items-center justify-center mt-auto sticky bottom-0 p-3 rounded-lg transition-all duration-300 ease-in-out w-full bg-red-600 hover:bg-red-700"
             >
                 <RiLogoutBoxFill
                     className="w-8 h-8 cursor-pointer transition-all duration-300 ease-in-out"

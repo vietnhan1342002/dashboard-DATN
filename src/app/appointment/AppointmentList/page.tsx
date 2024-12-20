@@ -26,8 +26,8 @@ const AppointmentList = () => {
             const { result, totalPages } = response.data
             setTotalPages(totalPages)
             dispatch(setAppointments(result)); // Lưu dữ liệu vào Redux store
-        } catch (error) {
-            console.error("Error fetching appointments:", error);
+        } catch (error: any) {
+            toast.error(error.response.data.message)
         }
     };
     useEffect(() => {

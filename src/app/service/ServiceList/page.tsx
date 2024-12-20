@@ -100,7 +100,6 @@ const ServiceList = () => {
                 <thead>
                     <tr className="bg-gray-100">
                         <th className="px-6 py-3 text-left">Service Name</th>
-                        <th className="px-6 py-3 text-left">Icon</th>
                         <th className="px-6 py-3 text-left">Department</th>
                         <th className="px-6 py-3 text-left">Description</th>
                         <th className="px-6 py-3 text-left">Action</th>
@@ -110,13 +109,7 @@ const ServiceList = () => {
                     {currentServices.map((service, index) => (
                         <tr key={service._id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                             <td className="px-6 py-4">{service.name}</td>
-                            <td className="px-6 py-4 flex justify-center">
-                                <img
-                                    src={service.icon}
-                                    alt="Icon Preview"
-                                    className="w-32 h-32 object-cover rounded mb-4"
-                                />
-                            </td>
+
                             <td className="px-6 py-4">{service.departmentId?.departmentName}</td>
                             <td className="px-6 py-4">
                                 <div>
