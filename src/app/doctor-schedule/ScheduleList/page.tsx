@@ -49,6 +49,8 @@ const SchedulePage = () => {
             const doctorId = doctor.data._id;
             setDoctorId(doctorId);
             const res = await axiosInstance.get(`/filter/doctor-schedules?doctorId=${doctorId}`);
+            console.log(res.data);
+
             const today = new Date().setHours(0, 0, 0, 0);
 
             const filteredEvents = res.data.filter((schedule: any) => {
@@ -62,10 +64,11 @@ const SchedulePage = () => {
                 const { StartTime, EndTime } = convertToEvent(date, shiftId.name);
                 return {
                     Id: schedule._id,
-                    Subject: 'Scheduled Shift',
+                    Subject: schedule.status,
                     StartTime,
                     EndTime,
                     Status: schedule.status,
+                    Color: schedule.status === 'active' ? 'green' : 'red',
                 };
             });
 
@@ -189,9 +192,23 @@ const SchedulePage = () => {
                     <h2 className="text-3xl font-semibold text-indigo-600 mb-4">Your Schedule</h2>
                     <ScheduleComponent
                         height="500px"
-                        eventSettings={{ dataSource: events }}
+                        eventSettings={{
+                            dataSource: events,
+                            fields: {
+                                id: 'Id',
+                                subject: 'Subject',
+                                startTime: 'StartTime',
+                                endTime: 'EndTime',
+                                color: 'Color', // Liên kết màu sắc với thuộc tính Color
+                            },
+                        }}
                         currentView="Week"
                         selectedDate={new Date()}
+                        eventRendered={(args) => {
+                            if (args.data.Color) {
+                                args.element.style.backgroundColor = args.data.Color;
+                            }
+                        }}
                     >
                         <Inject services={[Day, Week, WorkWeek, Month, Agenda]} />
                     </ScheduleComponent>
