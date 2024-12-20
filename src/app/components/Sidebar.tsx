@@ -34,7 +34,7 @@ const routesByRole = {
     ],
     receptionist: [
         { href: "/appointment/AppointmentList", icon: FaClipboardList, label: "Appointments" },
-        { href: "/doctor/DoctorList", icon: FaUserDoctor, label: "Doctors" },
+        { href: "/schedules", icon: FaUserDoctor, label: "Doctor Schedule" },
         { href: "/bill/BillList", icon: FaFileInvoiceDollar, label: "Bills" },
     ],
 } as const;
@@ -70,7 +70,8 @@ const Sidebar = () => {
 
     useEffect(() => {
         if (userRole === "receptionist") {
-            router.push("/appointment/AppointmentList"); // Redirect to AppointmentList for receptionist
+            router.push("/schedules"); // Redirect to AppointmentList for receptionist
+            // router.push("/appointment/AppointmentList"); // Redirect to AppointmentList for receptionist
         }
     }, [userRole, router]);
 
