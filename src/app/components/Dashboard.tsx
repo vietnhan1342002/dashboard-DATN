@@ -35,27 +35,32 @@ const Dashboard = () => {
             setRole(role)
             setUser(user)
         } catch (error) {
-            toast.error('Error')
+            toast.error('Error fetching user details');
         }
     }
 
     const fetchSumDoctor = async () => {
-        const doctor = await axiosInstance.get('/filter/count/doctors')
-        setDoctorCount(doctor.data)
+        try {
+            const doctor = await axiosInstance.get('/filter/count/doctors')
+            setDoctorCount(doctor.data)
+        } catch (error) {
+            toast.error('Error fetching doctor count');
+        }
     };
 
     const fetchSumAppointment = async () => {
-        let appointment;
-        console.log(role);
-
-        if (role === "doctor") {
-            const doctorId = await axiosInstance.get(`/doctors/user/${userId}`)
-            appointment = await axiosInstance.get(`filter/count/appointments?doctorId=${doctorId.data._id}`);
-        } else {
-            console.log(1);
-            appointment = await axiosInstance.get('/filter/count/appointments');
+        try {
+            let appointment;
+            if (role === "doctor") {
+                const doctorId = await axiosInstance.get(`/doctors/user/${userId}`)
+                appointment = await axiosInstance.get(`filter/count/appointments?doctorId=${doctorId.data._id}`);
+            } else {
+                appointment = await axiosInstance.get('/filter/count/appointments');
+            }
+            setAppointmentCount(appointment.data)
+        } catch (error) {
+            toast.error('Error fetching appointment count');
         }
-        setAppointmentCount(appointment.data)
     }
 
     const fetchCompletedAppointment = async (appointmentId: string) => {
@@ -65,11 +70,11 @@ const Dashboard = () => {
             });
 
             if (res.status === 200) {
-                alert('Appointment confirmed successfully');
+                toast.success('Appointment marked as completed successfully');
                 fetchAppointment();
             }
         } catch (error) {
-            console.error('Error confirming appointment:', error);
+            toast.error('Error marking appointment as completed');
         }
     };
 
@@ -83,11 +88,11 @@ const Dashboard = () => {
                 status: 'canceled'
             });
             if (res.status === 200) {
-                alert('Appointment canceled successfully');
+                toast.success('Appointment canceled successfully');
                 fetchAppointment();
             }
         } catch (error) {
-            console.error('Error canceling appointment:', error);
+            toast.error('Error canceling appointment');
         }
     };
 
@@ -106,7 +111,6 @@ const Dashboard = () => {
                 const doctorId = await axiosInstance.get(`/doctors/user/${userId}`)
                 confirmed = await axiosInstance.get(`/filter/appointment-confirmed?doctorId=${doctorId.data._id}`);
             } else {
-                console.log("admin appointment", role);
                 confirmed = await axiosInstance.get('/filter/appointment-confirmed');
             }
             const appointments = confirmed.data;
@@ -122,7 +126,7 @@ const Dashboard = () => {
             );
             setAppointments(mappedAppointments);
         } catch (error) {
-            console.error('Error fetching appointments:', error);
+            toast.error('Error fetching appointments');
         }
     };
 
@@ -138,7 +142,7 @@ const Dashboard = () => {
             fetchAppointment();
             fetchSumAppointment()
         }
-    }, [role]);
+    }, [role, appointmentCount]);
 
     return (
         <div className="p-4 bg-blue-50 rounded-l-2xl w-full">

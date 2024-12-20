@@ -22,7 +22,6 @@ const DoctorProfile = () => {
     });
 
     const [formData, setFormData] = useState({
-        avatar: "",
         userId: {
             fullName: "",
             phoneNumber: "",
@@ -43,7 +42,6 @@ const DoctorProfile = () => {
             const res = await axiosInstance.get(`/doctors/${doctorId}`);
             setDoctorData(res.data);
             setFormData({
-                avatar: res.data.avatar,
                 userId: {
                     fullName: res.data.userId.fullName,
                     phoneNumber: res.data.userId.phoneNumber,
@@ -76,26 +74,11 @@ const DoctorProfile = () => {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        const formDataToSend = new FormData();
-
-        if (formData.avatar) {
-            formDataToSend.append('avatar', formData.avatar);
-        }
-
-        console.log(doctorId);
-
-
         try {
-            const doctorResponse = await axiosInstance.patch(`/doctors/${doctorId}`, formDataToSend, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-
             const user = await axiosInstance.patch(`/user-auth/${userId}`, {
                 fullName: formData.userId.fullName,
                 phoneNumber: formData.userId.phoneNumber,
-                roleId: ''
+                roleId: '673d935335e97c832bfa6356'
             });
 
             if (user) {
@@ -112,8 +95,6 @@ const DoctorProfile = () => {
             }
         }
     };
-
-
 
     useEffect(() => {
         if (userId) fetchDoctorId(userId);
@@ -136,9 +117,9 @@ const DoctorProfile = () => {
                     <div className="flex flex-col lg:flex-row gap-10">
                         {/* Avatar */}
                         <div className="flex-shrink-0 flex justify-center lg:justify-start">
-                            {formData.avatar ? (
+                            {doctorData.avatar ? (
                                 <img
-                                    src={formData.avatar}
+                                    src={doctorData.avatar}
                                     alt="Doctor Avatar"
                                     className="w-52 h-52 lg:w-72 lg:h-72 object-cover rounded-full shadow-lg"
                                 />

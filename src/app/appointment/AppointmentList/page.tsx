@@ -82,7 +82,6 @@ const AppointmentList = () => {
         <div className="p-4 flex-1">
             <h2 className="text-2xl font-semibold mb-4">Appointments</h2>
 
-            {/* Tìm kiếm */}
             <div className="flex items-center mb-4">
                 <input
                     type="text"
