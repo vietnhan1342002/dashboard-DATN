@@ -2,11 +2,12 @@
 "use client"
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../utils/axios";
-import { toast } from "sonner";
+import { toast, Toaster } from "sonner";
 import { useRouter } from "next/navigation";
+import useSocket from "@/hooks/useSocket";
 
 const Dashboard = () => {
-
+    const socket = useSocket("http://localhost:8080");
     const router = useRouter()
 
     const initialData = {
@@ -19,6 +20,19 @@ const Dashboard = () => {
     const [doctorCount, setDoctorCount] = useState(0)
     const [appointments, setAppointments] = useState<any[]>([])
     const [userId, setUserId] = useState<string | null>()
+
+    useEffect(() => {
+        if (socket) {
+            socket.on('doctor-notification', (message: string) => {
+                console.log('Received notification:', message);
+                toast.success(`New Notification: ${message}`);
+            });
+
+            return () => {
+                socket.off('doctor-notification');
+            };
+        }
+    }, [socket]);
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -247,6 +261,7 @@ const Dashboard = () => {
                     </tbody>
                 </table>
             </div>
+            <Toaster position="top-center" />
         </div>
     );
 };
