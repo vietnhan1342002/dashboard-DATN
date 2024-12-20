@@ -70,14 +70,14 @@ const Sidebar = () => {
         }
     }, []);
 
-    useEffect(() => {
-        if (userRole === "receptionist") {
-            router.push("/schedules"); // Redirect to AppointmentList for receptionist
-            // router.push("/appointment/AppointmentList"); // Redirect to AppointmentList for receptionist
-        } else {
-            router.push("/"); // Redirect to Doctor Profile or Home page
-        }
-    }, [userRole, router]);
+    // useEffect(() => {
+    //     if (userRole === "receptionist") {
+    //         router.push("/schedules"); // Redirect to AppointmentList for receptionist
+    //         // router.push("/appointment/AppointmentList"); // Redirect to AppointmentList for receptionist
+    //     } else {
+    //         router.push("/"); // Redirect to Doctor Profile or Home page
+    //     }
+    // }, [userRole, router]);
 
     const routes = userRole ? routesByRole[userRole] : [];
 

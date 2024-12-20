@@ -2,6 +2,7 @@
 "use client";
 
 import axiosInstance from '@/app/utils/axios';
+import { formatDateTime } from '@/app/utils/format';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { toast, Toaster } from 'sonner';
@@ -134,13 +135,14 @@ const MedicalRecordList = () => {
                         </thead>
                         <tbody>
                             {medicalrecords.map((record, index) => (
+
                                 <tr key={record._id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                                     <td className="px-6 py-4 ">{record?.patientId?.userId?.fullName || ''}</td>
                                     <td className="px-6 py-4">{record?.patientId?.userId?.phoneNumber || ''}</td>
-                                    <td className="px-6 py-4">{record?.doctorId?.userId?.fullName || ''}</td>
-                                    <td className="px-6 py-4">{record?.note || ''}</td>
+                                    <td className="px-6 py-4 ">{record?.doctorId?.userId?.fullName || ''}</td>
+                                    <td className="px-6 h-14 py-4 w-72 overflow-hidden">{record?.note || ''}</td>
                                     <td className="px-6 py-4">{record?.diagnosis || ''}</td>
-                                    <td className="px-6 py-4">{record?.appointmentId?.appointmentDate || ''}</td>
+                                    <td className="px-6 py-4">{formatDateTime(record?.appointmentId?.appointmentDate) || ''}</td>
                                     <td className="px-6 py-4 flex space-x-2">
                                         <button
                                             onClick={() => handleEdit(record.appointmentId._id)}

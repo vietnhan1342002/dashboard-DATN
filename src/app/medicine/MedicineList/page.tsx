@@ -116,14 +116,14 @@ const MedicineList = () => {
                 <tbody>
                     {medicines.map((medicine, index) => (
                         <tr key={medicine._id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                            <td className="px-6 py-4">{medicine?.name || 'NAN'}</td>
-                            <td className="px-6 py-4">{medicine?.description || 'NAN'}</td>
-                            <td className="px-6 py-4">{medicine?.usageInstructions || 'NAN'}</td>
-                            <td className="px-6 py-4">{medicine?.sideEffects || 'NAN'}</td>
-                            <td className="px-6 py-4">{medicine?.price || 'NAN'}</td>
-                            <td className="px-6 py-4">{medicine?.quantity || 'NAN'}</td>
-                            <td className="px-6 py-4">{medicine?.minQuantity || 'NAN'}</td>
-                            <td className="px-6 py-4">{medicine?.unit || 'NAN'}</td>
+                            <td className="px-6 py-4">{medicine?.name || 'No data available'}</td>
+                            <td className="px-6 py-4">{medicine?.description || 'No data available'}</td>
+                            <td className="px-6 py-4">{medicine?.usageInstructions || 'No data available'}</td>
+                            <td className="px-6 py-4">{medicine?.sideEffects || 'No data available'}</td>
+                            <td className="px-6 py-4">{medicine?.price || 'No data available'}</td>
+                            <td className="px-6 py-4">{medicine?.quantity || 'No data available'}</td>
+                            <td className="px-6 py-4">{medicine?.minQuantity || 'No data available'}</td>
+                            <td className="px-6 py-4">{medicine?.unit || 'No data available'}</td>
                             <td className="px-6 py-4 flex justify-center items-center space-x-2 h-full align-middle">
                                 <button
                                     onClick={() => handleEdit(medicine._id)}

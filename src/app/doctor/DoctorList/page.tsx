@@ -119,8 +119,8 @@ const DoctorList = () => {
                                         alt="Avatar Preview"
                                         className="w-32 h-32 object-cover rounded mb-4"
                                     />
-                                    <td className="px-6 py-4">{doctor.userId?.phoneNumber || 'N/A'}</td>
-                                    <td className="px-6 py-4">{doctor.specialtyId?.name || 'NAN'}</td>
+                                    <td className="px-6 py-4">{doctor.userId?.phoneNumber || 'No data available'}</td>
+                                    <td className="px-6 py-4">{doctor.specialtyId?.name || 'No data available'}</td>
                                     <td className="px-6 py-4">{doctor.licenseNumber}</td>
                                     <td className="px-6 py-4">{doctor.yearsOfExperience}</td>
                                     <td className="px-6 py-4 flex space-x-2">
