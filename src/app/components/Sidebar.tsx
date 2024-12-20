@@ -16,14 +16,13 @@ const routesByRole = {
     admin: [
         { href: "/", icon: TiHome, label: "Home" },
         { href: "/doctor/DoctorList", icon: FaUserDoctor, label: "Doctors" },
-        { href: "/doctor-schedule", icon: FaUserDoctor, label: "Doctor Schedule" },
         { href: "/employee/EmployeeList", icon: IoPersonAddSharp, label: "Employees" },
         { href: "/specialty/SpecialtyList", icon: GiHealthNormal, label: "Specialties" },
         { href: "/service/ServiceList", icon: MdAddModerator, label: "Services" },
         { href: "/patient/PatientList", icon: FaUser, label: "Patients" },
         { href: "/appointment/AppointmentList", icon: FaClipboardList, label: "Appointments" },
         { href: "/medicalrecord/MedicalRecordList", icon: FaFileMedical, label: "Medical Records" },
-        { href: "/medicine/MedicalRecordList/MedicineList", icon: FaPills, label: "Medicine" },
+        { href: "/medicine/MedicineList", icon: FaPills, label: "Medicine" },
         { href: "/bill/BillList", icon: FaFileInvoiceDollar, label: "Bills" },
         { href: "/revenuereport/RevenueReport", icon: FaChartBar, label: "Revenue" },
     ],
@@ -59,17 +58,15 @@ const Sidebar = () => {
         }
     };
 
-    // UseEffect to check if we are on the client-side
     useEffect(() => {
         if (typeof window !== "undefined") {
-            // This block will only execute on the client
             const storedUserId = localStorage.getItem('userId');
             if (storedUserId) {
                 setUserId(storedUserId);
-                getRole(storedUserId); // Fetch user role if userId exists
+                getRole(storedUserId);
             }
         }
-    }, []); // Empty dependency array ensures this runs only once after mount
+    }, []);
 
     const routes = userRole ? routesByRole[userRole] : [];
 

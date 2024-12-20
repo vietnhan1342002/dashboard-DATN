@@ -83,7 +83,8 @@ const EditDoctor = () => {
         }
 
         const formDataToSend = new FormData();
-        if (formData.avatar) {
+        // Chỉ thêm avatar nếu người dùng đã thay đổi ảnh
+        if (formData.avatar && formData.avatar instanceof File) {
             formDataToSend.append('avatar', formData.avatar); // Thêm file avatar
         }
 
@@ -94,6 +95,7 @@ const EditDoctor = () => {
         const userData = {
             phoneNumber: formData.userId.phoneNumber,
             fullName: formData.userId.fullName,
+            roleId: "673d935335e97c832bfa6356"
         };
 
         try {
@@ -106,11 +108,12 @@ const EditDoctor = () => {
             if (doctorResponse && userResponse) {
                 toast.success('Update successfully');
             }
-            router.back()
+            router.back();
         } catch (err: any) {
             toast.error(err.response?.data?.message || 'Something went wrong');
         }
     };
+
 
     return (
         <div className="flex">

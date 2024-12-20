@@ -103,7 +103,6 @@ const SpecialtyList = () => {
             <table className="min-w-full bg-white shadow rounded-lg overflow-hidden">
                 <thead>
                     <tr className="bg-gray-100">
-                        <th className="px-6 py-3 text-left">ID</th>
                         <th className="px-6 py-3 text-left">Specialty Name</th>
                         <th className="px-6 py-3 text-left">Description</th>
                         <th className="px-6 py-3 text-left">Action</th>
@@ -115,7 +114,6 @@ const SpecialtyList = () => {
                             key={specialty._id}
                             className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
                         >
-                            <td className="px-6 py-4">{specialty._id}</td>
                             <td className="px-6 py-4">{specialty.departmentName}</td>
                             <td className="px-6 py-4">{specialty.description}</td>
                             <td className="px-6 py-4 flex space-x-2">

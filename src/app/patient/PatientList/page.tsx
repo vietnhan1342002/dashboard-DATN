@@ -113,7 +113,6 @@ const PatientList = () => {
                 <table className="min-w-full bg-white shadow rounded-lg overflow-hidden">
                     <thead>
                         <tr className="bg-gray-100">
-                            <th className="px-6 py-3 text-left">ID</th>
                             <th className="px-6 py-3 text-left">Name</th>
                             <th className="px-6 py-3 text-left">Phone</th>
                             <th className="px-6 py-3 text-left">Date of Birth</th>
@@ -125,7 +124,6 @@ const PatientList = () => {
                     <tbody>
                         {patients.map((patient, index) => (
                             <tr key={patient._id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                                <td className="px-6 py-4">{patient._id}</td>
                                 <td className="px-6 py-4">{patient.userId?.fullName}</td>
                                 <td className="px-6 py-4">{patient.userId?.phoneNumber}</td>
                                 <td className="px-6 py-4"> {new Date(patient.dateOfBirth).toLocaleDateString('en-GB') || '01/01/1990'}</td>

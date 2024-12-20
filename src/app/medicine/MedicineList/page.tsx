@@ -102,7 +102,6 @@ const MedicineList = () => {
             <table className="min-w-full bg-white shadow rounded-lg overflow-hidden">
                 <thead>
                     <tr className="bg-gray-100">
-                        <th className="px-6 py-3 text-left">ID</th>
                         <th className="px-6 py-3 text-left">Tên</th>
                         <th className="px-6 py-3 text-left">description</th>
                         <th className="px-6 py-3 text-left">usageInstructions</th>
@@ -117,7 +116,6 @@ const MedicineList = () => {
                 <tbody>
                     {medicines.map((medicine, index) => (
                         <tr key={medicine._id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                            <td className="px-6 py-4">{medicine?._id || 'NAN'}</td>
                             <td className="px-6 py-4">{medicine?.name || 'NAN'}</td>
                             <td className="px-6 py-4">{medicine?.description || 'NAN'}</td>
                             <td className="px-6 py-4">{medicine?.usageInstructions || 'NAN'}</td>

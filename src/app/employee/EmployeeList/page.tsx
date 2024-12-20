@@ -92,7 +92,6 @@ const EmployeeList = () => {
                 <table className="min-w-full bg-white shadow rounded-lg overflow-hidden">
                     <thead>
                         <tr className="bg-gray-100">
-                            <th className="px-6 py-3 text-left">ID</th>
                             <th className="px-6 py-3 text-left">Full Name</th>
                             <th className="px-6 py-3 text-left">Phone</th>
                             <th className="px-6 py-3 text-left">Role</th>
@@ -102,7 +101,6 @@ const EmployeeList = () => {
                     <tbody>
                         {filteredEmployees.map((employee, index) => (
                             <tr key={employee._id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                                <td className="px-6 py-4">{employee._id}</td>
                                 <td className="px-6 py-4">{employee.fullName}</td>
                                 <td className="px-6 py-4">{employee.phoneNumber}</td>
                                 <td className="px-6 py-4">{employee.roleId?.nameRole || 'N/A'}</td>

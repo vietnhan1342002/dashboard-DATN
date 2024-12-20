@@ -99,7 +99,6 @@ const ServiceList = () => {
             <table className="min-w-full bg-white shadow rounded-lg overflow-hidden">
                 <thead>
                     <tr className="bg-gray-100">
-                        <th className="px-6 py-3 text-left">ID</th>
                         <th className="px-6 py-3 text-left">Service Name</th>
                         <th className="px-6 py-3 text-left">Icon</th>
                         <th className="px-6 py-3 text-left">Department</th>
@@ -110,7 +109,6 @@ const ServiceList = () => {
                 <tbody>
                     {currentServices.map((service, index) => (
                         <tr key={service._id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                            <td className="px-6 py-4">{service._id}</td>
                             <td className="px-6 py-4">{service.name}</td>
                             <td className="px-6 py-4 flex justify-center">
                                 <img

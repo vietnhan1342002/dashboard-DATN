@@ -101,9 +101,8 @@ const DoctorList = () => {
                     <table className="min-w-full bg-white shadow rounded-lg overflow-hidden">
                         <thead>
                             <tr className="bg-gray-100">
-                                <th className="px-6 py-3 text-left">ID</th>
-                                <th className="px-6 py-3 text-left">Avatar</th>
                                 <th className="px-6 py-3 text-left">Full Name</th>
+                                <th className="px-6 py-3 text-left">Avatar</th>
                                 <th className="px-6 py-3 text-left">Phone</th>
                                 <th className="px-6 py-3 text-left">Specialty</th>
                                 <th className="px-6 py-3 text-left">License</th>
@@ -114,13 +113,12 @@ const DoctorList = () => {
                         <tbody>
                             {doctors.map((doctor, index) => (
                                 <tr key={doctor._id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                                    <td className="px-6 py-4">{doctor._id}</td>
+                                    <td className="px-6 py-4">{doctor.userId?.fullName || 'N/A'}</td>
                                     <img
                                         src={doctor.avatar}  // Use the avatar URL directly
                                         alt="Avatar Preview"
                                         className="w-32 h-32 object-cover rounded mb-4"
                                     />
-                                    <td className="px-6 py-4">{doctor.userId?.fullName || 'N/A'}</td>
                                     <td className="px-6 py-4">{doctor.userId?.phoneNumber || 'N/A'}</td>
                                     <td className="px-6 py-4">{doctor.specialtyId?.name || 'NAN'}</td>
                                     <td className="px-6 py-4">{doctor.licenseNumber}</td>
