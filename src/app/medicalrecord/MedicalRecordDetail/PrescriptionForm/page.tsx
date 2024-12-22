@@ -43,6 +43,7 @@ const PrescriptionForm = () => {
     const [medications, setMedications] = useState<Medication[]>([]);
     const [filteredMedications, setFilteredMedications] = useState<Medication[]>([]);
     const [searchTerm, setSearchTerm] = useState<string>('');
+    const [patientName, setPatientName] = useState<string>('');
     const [selectedMedication, setSelectedMedication] = useState<Medication | null>(null); // State for selected medication
     const [medicationsInPrescription, setMedicationsInPrescription] = useState<PrescriptionDetail[]>([]);
 
@@ -56,9 +57,8 @@ const PrescriptionForm = () => {
     const fetchMedicationsInPrescription = async (prescriptionDetailId: string) => {
         try {
             const response = await axiosInstance.get(`/prescription-details/prescription/${prescriptionDetailId}`);
-            console.log(response.data);
-
-            setMedicationsInPrescription(response.data); // Lưu dữ liệu vào state
+            console.log("MedicationsInPrescription", response.data);
+            setMedicationsInPrescription(response.data);
         } catch (error) {
             console.error('Error fetching medications by prescription ID', error);
         }
@@ -68,6 +68,8 @@ const PrescriptionForm = () => {
     const fetchMedicalRecord = async () => {
         try {
             const response = await axiosInstance.get(`/detail-medical-record/${medicalRecordId}`);
+            const patientName = await axiosInstance.get(`/medical-records/${response.data.medicalRecordId._id}`)
+            setPatientName(patientName.data.patientId.userId.fullName);
             setDetailMedicalRecord(response.data);
         } catch (error) {
             console.error('Error fetching medical record', error);
@@ -149,6 +151,41 @@ const PrescriptionForm = () => {
     const handleDeleteMedication = async (medicationId: string) => {
         toast.success("delete");
     };
+
+    const saveDone = async () => {
+        try {
+            const checkBill = await axiosInstance.get(`/bills/prescriptionId/${prescriptionId}`);
+            console.log(checkBill.data);
+            const billId = checkBill.data._id
+            console.log(billId);
+            if (!checkBill.data) {
+                const res = await axiosInstance.post(`/bills`, {
+                    prescriptionId: prescriptionId,
+                    patientName: patientName,
+                    totalPrice: totalAmount,
+                    status: "pending",
+                    paymentDate: new Date(),
+                });
+                console.log(res.data);
+
+                if (res.data) {
+                    router.push(`/bill/BillDetail?id=${res.data._id}`);
+                }
+            } else {
+                router.push(`/bill/BillDetail?id=${billId}`);
+            }
+        } catch (error) {
+            toast.error('Có lỗi xảy ra khi tạo hóa đơn');
+        }
+    };
+
+    const totalAmount = medicationsInPrescription.reduce((total, medication) => {
+        if (medication?.medicationId?.price && medication?.quantityPrescribed) {
+            return total + (medication?.medicationId?.price * medication?.quantityPrescribed);
+        }
+        return total;
+    }, 0);
+
 
     return (
         <div className="max-w-8xl mx-auto p-8 bg-gradient-to-r from-green-100 to-white shadow-lg rounded-lg">
@@ -240,7 +277,7 @@ const PrescriptionForm = () => {
             text-white font-semibold rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
         `}
                             >
-                                Create Prescription
+                                Add Prescription
                             </button>
                         </div>
                     </form>
@@ -250,34 +287,48 @@ const PrescriptionForm = () => {
                 <div className="flex-1">
                     <h3 className="text-2xl font-semibold text-green-700 mb-4">Medications in Prescription</h3>
                     {medicationsInPrescription && medicationsInPrescription.length > 0 ? (
-                        <ul className="mt-4 space-y-4">
-                            {medicationsInPrescription.map((medication, index) => (
-                                <li
-                                    key={medication?.medicationId?._id || `medication-${index}`}
-                                    className="p-4 border border-gray-200 rounded-lg flex justify-between items-center"
-                                >
-                                    <div>
-                                        <h4 className="text-lg font-semibold">{medication?.medicationId?.name}</h4>
-                                        <p><strong>Usage Instructions:</strong> {medication?.medicationId?.usageInstructions}</p>
-                                        <p><strong>Side Effects:</strong> {medication?.medicationId?.sideEffects}</p>
-                                        <p><strong>Price:</strong> {medication?.medicationId?.price}</p>
-                                        <p><strong>Quantity:</strong> {medication?.quantityPrescribed}</p>
-                                        <p><strong>Total:</strong> {medication?.quantityPrescribed * medication?.medicationId?.price}</p>
-                                    </div>
-                                    <button
-                                        onClick={() => handleDeleteMedication(medication.medicationId._id)}
-                                        className="text-red-600 hover:text-red-800 bg-gray-100 hover:bg-gray-200 rounded-md px-4 py-2"
+                        <>
+                            <ul className="mt-4 space-y-4">
+                                {medicationsInPrescription.map((medication, index) => (
+                                    <li
+                                        key={medication?.medicationId?._id || `medication-${index}`}
+                                        className="p-4 border border-gray-200 rounded-lg flex justify-between items-center"
                                     >
-                                        Delete
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
+                                        <div>
+                                            <h4 className="text-lg font-semibold">{medication?.medicationId?.name}</h4>
+                                            <p><strong>Usage Instructions:</strong> {medication?.medicationId?.usageInstructions}</p>
+                                            <p><strong>Side Effects:</strong> {medication?.medicationId?.sideEffects}</p>
+                                            <p><strong>Price:</strong> {medication?.medicationId?.price}</p>
+                                            <p><strong>Quantity:</strong> {medication?.quantityPrescribed}</p>
+                                            <p><strong>Total:</strong> {medication?.quantityPrescribed * medication?.medicationId?.price}</p>
+                                        </div>
+                                        <button
+                                            onClick={() => handleDeleteMedication(medication.medicationId._id)}
+                                            className="text-red-600 hover:text-red-800 bg-gray-100 hover:bg-gray-200 rounded-md px-4 py-2"
+                                        >
+                                            Delete
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                            <div className="flex justify-between items-center mt-4">
+                                <span className="font-semibold text-lg">Total Amount:</span>
+                                <span className="text-lg font-bold text-green-700">{totalAmount} VND</span>
+                            </div>
+                            {/* Button Done */}
+                            <div className="flex justify-center mt-6">
+                                <button
+                                    onClick={saveDone} // Thay '/dashboard' bằng route phù hợp
+                                    className="px-6 py-3 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                                >
+                                    Done
+                                </button>
+                            </div>
+                        </>
                     ) : (
                         <p className="text-center text-lg text-gray-500">No medications found for this prescription.</p>
                     )}
                 </div>
-
             </div> {/* End of flex container */}
             <Toaster position='top-center' />
         </div>

@@ -106,16 +106,21 @@ const DoctorProfile = () => {
 
     return (
         <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-indigo-400 to-blue-500">
-            <div className="w-full max-w-5xl bg-white border border-gray-300 rounded-lg p-8 shadow-2xl">
+            <div className="w-full max-w-5xl bg-white border border-gray-300 rounded-lg p-8 shadow-2xl relative">
+                {/* Back Button */}
+                <button
+                    onClick={() => router.back()}
+                    className="absolute top-4 left-4 bg-gray-200 text-gray-800 px-4 py-2 rounded-md shadow-md hover:bg-gray-300 transition"
+                >
+                    Back
+                </button>
+
                 <h2 className="text-4xl font-bold text-gray-800 mb-8 text-center">
                     Doctor Profile
                 </h2>
 
-                {/* Avatar và thông tin chung */}
                 <form onSubmit={handleSubmit}>
-                    {/* Avatar and information */}
                     <div className="flex flex-col lg:flex-row gap-10">
-                        {/* Avatar */}
                         <div className="flex-shrink-0 flex justify-center lg:justify-start">
                             {doctorData.avatar ? (
                                 <img
@@ -130,7 +135,6 @@ const DoctorProfile = () => {
                             )}
                         </div>
 
-                        {/* Details */}
                         <div className="flex-1">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
@@ -169,36 +173,24 @@ const DoctorProfile = () => {
                                 </div>
                             </div>
 
-                            {/* Highlighted Years of Experience */}
-                            <div className="mt-10">
-                                <div className="border border-blue-500 bg-blue-100 rounded-lg p-6 text-center shadow-md">
+                            <div className="mt-10 flex flex-col items-center gap-6">
+                                <div className="w-full max-w-2xl border border-blue-500 bg-blue-100 rounded-lg p-6 text-center shadow-md">
                                     <label className="block text-xl font-bold text-blue-700 mb-2 uppercase">
                                         Years of Experience
                                     </label>
                                     <p className="text-3xl font-extrabold text-blue-800">{doctorData.yearsOfExperience}</p>
                                 </div>
+
+                                <button
+                                    type="submit"
+                                    className="bg-indigo-600 text-white text-lg font-semibold px-8 py-4 rounded-lg shadow-lg hover:bg-indigo-700 transition duration-300"
+                                >
+                                    Update Profile
+                                </button>
                             </div>
                         </div>
                     </div>
-
-                    <div className="mt-12 flex justify-center">
-                        <button
-                            type="submit"
-                            className="bg-indigo-600 text-white text-lg font-semibold px-8 py-4 rounded-lg shadow-lg hover:bg-indigo-700 transition duration-300"
-                        >
-                            Update Profile
-                        </button>
-                    </div>
                 </form>
-
-                <div className="mt-12 flex justify-center">
-                    <button
-                        onClick={() => router.back()}
-                        className="bg-indigo-600 text-white text-lg font-semibold px-8 py-4 rounded-lg shadow-lg hover:bg-indigo-700 transition duration-300"
-                    >
-                        Back to Dashboard
-                    </button>
-                </div>
             </div>
             <Toaster position="top-center" />
         </div>

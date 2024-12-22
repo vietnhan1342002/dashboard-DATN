@@ -35,16 +35,17 @@ interface MedicalRecord {
     note: string;
 }
 
-
-
 const MedicalRecordList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
     const [loading, setLoading] = useState(false);
     const [medicalrecords, setMedicalRecords] = useState<MedicalRecord[]>([]);
+    const [selectedRecord, setSelectedRecord] = useState<MedicalRecord | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const pageSize = 10;
+    const router = useRouter();
 
     const fetchMedicalRecord = async () => {
         try {
@@ -54,30 +55,22 @@ const MedicalRecordList = () => {
             setTotalPages(totalPages);
         } catch (error: any) {
             console.log('Error from fetchMedicalRecord', error);
-            toast.error(error.response.data.message);
+            toast.error(error.response?.data?.message || "An error occurred");
         }
     };
 
-
     const handleNextPage = () => {
-        if (currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
-        }
+        if (currentPage < totalPages) setCurrentPage(currentPage + 1);
     };
 
     const handlePreviousPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
+        if (currentPage > 1) setCurrentPage(currentPage - 1);
     };
-
-    const router = useRouter();
-
 
     const handleDelete = async (medicalrecordId: string) => {
         try {
             setLoading(true);
-            const res = await axiosInstance.delete(`/medical-records/${medicalrecordId}`);
+            await axiosInstance.delete(`/medical-records/${medicalrecordId}`);
             toast.success("Successfully Deleted!");
             fetchMedicalRecord();
         } catch (error: any) {
@@ -88,7 +81,17 @@ const MedicalRecordList = () => {
     };
 
     const handleEdit = (appointmentId: string) => {
-        router.push(`/medicalrecord/MedicalRecordList/EditMedical?id=${appointmentId}`)
+        router.push(`/medicalrecord/MedicalRecordList/EditMedical?id=${appointmentId}`);
+    };
+
+    const handleViewMore = (recordId: string) => {
+        router.push(`/medicalrecord/MoreDetail?id=${recordId}`)
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setSelectedRecord(null);
     };
 
     useEffect(() => {
@@ -135,11 +138,10 @@ const MedicalRecordList = () => {
                         </thead>
                         <tbody>
                             {medicalrecords.map((record, index) => (
-
                                 <tr key={record._id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                                    <td className="px-6 py-4 ">{record?.patientId?.userId?.fullName || ''}</td>
+                                    <td className="px-6 py-4">{record?.patientId?.userId?.fullName || ''}</td>
                                     <td className="px-6 py-4">{record?.patientId?.userId?.phoneNumber || ''}</td>
-                                    <td className="px-6 py-4 ">{record?.doctorId?.userId?.fullName || ''}</td>
+                                    <td className="px-6 py-4">{record?.doctorId?.userId?.fullName || ''}</td>
                                     <td className="px-6 h-14 py-4 w-72 overflow-hidden">{record?.note || ''}</td>
                                     <td className="px-6 py-4">{record?.diagnosis || ''}</td>
                                     <td className="px-6 py-4">{formatDateTime(record?.appointmentId?.appointmentDate) || ''}</td>
@@ -156,7 +158,12 @@ const MedicalRecordList = () => {
                                         >
                                             Delete
                                         </button>
-
+                                        <button
+                                            onClick={() => handleViewMore(record._id)}
+                                            className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
+                                        >
+                                            View More
+                                        </button>
                                     </td>
                                 </tr>
                             ))}
@@ -183,6 +190,29 @@ const MedicalRecordList = () => {
                 </div>
             </div>
             <Toaster position='top-center' />
+
+            {/* Modal */}
+            {isModalOpen && selectedRecord && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                    <div className="bg-white rounded-lg shadow-lg p-6 w-1/2">
+                        <h2 className="text-xl font-bold mb-4">Record Details</h2>
+                        <p><strong>Patient Name:</strong> {selectedRecord.patientId.userId.fullName}</p>
+                        <p><strong>Phone:</strong> {selectedRecord.patientId.userId.phoneNumber}</p>
+                        <p><strong>Doctor:</strong> {selectedRecord.doctorId.userId.fullName}</p>
+                        <p><strong>Diagnosis:</strong> {selectedRecord.diagnosis}</p>
+                        <p><strong>Note:</strong> {selectedRecord.note}</p>
+                        <p><strong>Date of Visit:</strong> {formatDateTime(selectedRecord.appointmentId.appointmentDate)}</p>
+                        <div className="flex justify-end mt-4">
+                            <button
+                                onClick={closeModal}
+                                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
