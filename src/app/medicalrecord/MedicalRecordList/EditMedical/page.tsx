@@ -2,6 +2,7 @@
 "use client";
 
 import axiosInstance from '@/app/utils/axios';
+import { formatDateTime } from '@/app/utils/format';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { toast, Toaster } from 'sonner';
@@ -47,7 +48,10 @@ const MedicalRecordEdit = () => {
     const fetchMedicalRecord = async (id: string) => {
         try {
             const res = await axiosInstance.get(`/medical-records/appointment/${id}`);
+            console.log(res);
+
             const medicalId = res.data._id;
+            console.log("medicalId", medicalId);
             const medical = await axiosInstance.get(`/medical-records/${medicalId}`);
             console.log(medical);
             setMedicalRecord(medical.data);
@@ -77,6 +81,7 @@ const MedicalRecordEdit = () => {
                 router.push(`/medicalrecord/MedicalRecordDetail?id=${medicalRecordId}`);
             } else {
                 fetchCreateDetail(medicalRecordId);
+                router.push(`/medicalrecord/MedicalRecordDetail?id=${medicalRecordId}`);
             }
         } catch (error) {
             console.error('Error fetching detail medical record:', error);
@@ -152,7 +157,7 @@ const MedicalRecordEdit = () => {
                         <input
                             type="text"
                             className="border rounded p-2 w-full"
-                            value={medicalRecord.appointmentId.appointmentDate}
+                            value={formatDateTime(medicalRecord.appointmentId.appointmentDate)}
                             disabled
                         />
                     </div>
@@ -170,7 +175,7 @@ const MedicalRecordEdit = () => {
                             onClick={handleSave}
                             className="bg-blue-500 text-white px-4 py-2 rounded"
                         >
-                            Save
+                            Next
                         </button>
                     </div>
                 </form>

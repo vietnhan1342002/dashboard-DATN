@@ -6,10 +6,8 @@ export function formatDateTime(dateTimeString: string): string {
 
     console.log(dateTimeString);
 
-    // Tách ngày và giờ, đảm bảo giữ lại phần giờ phía sau
     const [datePart, ...timeParts] = dateTimeString.split(' ');
 
-    // Kết hợp lại phần giờ nếu có nhiều từ (đảm bảo giữ nguyên dấu cách nếu có)
     const timePart = timeParts.join(' ');
 
     if (!datePart || !timePart) {
@@ -18,6 +16,9 @@ export function formatDateTime(dateTimeString: string): string {
 
     // Chuyển phần ngày thành đối tượng Date bằng cách thêm "T00:00" để rõ ràng với thời gian
     const date = new Date(`${datePart}T00:00`);
+
+    console.log("date", date);
+
 
     // Kiểm tra xem đối tượng Date có hợp lệ không
     if (isNaN(date.getTime())) {
@@ -30,7 +31,7 @@ export function formatDateTime(dateTimeString: string): string {
     const year = date.getFullYear();
 
     // Trả về định dạng "DD-MM-YYYY HH:MM - HH:MM"
-    return `${day}-${month}-${year} : ${timePart}`;
+    return `${day}-${month}-${year} ${timePart}`;
 }
 
 export function convertDOBFormat(dateString: string): string {

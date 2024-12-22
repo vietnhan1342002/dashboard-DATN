@@ -14,7 +14,7 @@ import axiosInstance from "../utils/axios";
 
 const routesByRole = {
     admin: [
-        { href: "/", icon: TiHome, label: "Home" },
+        { href: "/home", icon: TiHome, label: "Home" },
         { href: "/doctor/DoctorList", icon: FaUserDoctor, label: "Doctors" },
         { href: "/employee/EmployeeList", icon: IoPersonAddSharp, label: "Employees" },
         { href: "/specialty/SpecialtyList", icon: GiHealthNormal, label: "Specialties" },
@@ -27,7 +27,7 @@ const routesByRole = {
         { href: "/revenuereport/RevenueReport", icon: FaChartBar, label: "Revenue" },
     ],
     doctor: [
-        { href: "/", icon: TiHome, label: "Home" },
+        { href: "/home", icon: TiHome, label: "Home" },
         { href: "/doctor/DoctorProfile", icon: FaUserDoctor, label: "Profile" },
         { href: "/doctor-schedule/ScheduleList", icon: FaUserDoctor, label: "Schedule" },
         { href: "/medicalrecord/MedicalRecordList", icon: FaFileMedical, label: "Medical Records" },
@@ -35,7 +35,7 @@ const routesByRole = {
     receptionist: [
         { href: "/appointment/AppointmentList", icon: FaClipboardList, label: "Appointments" },
         { href: "/schedules", icon: FaUserDoctor, label: "Doctor Schedule" },
-        { href: "/bill/BillList", icon: FaFileInvoiceDollar, label: "Bills" },
+        { href: "/bill", icon: FaFileInvoiceDollar, label: "Bills" },
     ],
 } as const;
 

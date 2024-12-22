@@ -22,7 +22,7 @@ const AppointmentList = () => {
     // Lấy danh sách cuộc hẹn từ API
     const fetchAppointments = async (currentPage: number) => {
         try {
-            const response = await axios.get(`http://localhost:8080/api/v1/appointments/pending?current=${currentPage}&pageSize=${pageSize}`);
+            const response = await axios.get(`http://localhost:8080/api/v1/appointments/status?status=pending&current=${currentPage}&pageSize=${pageSize}`);
             const { result, totalPages } = response.data
             setTotalPages(totalPages)
             dispatch(setAppointments(result)); // Lưu dữ liệu vào Redux store

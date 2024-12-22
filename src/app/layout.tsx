@@ -1,4 +1,3 @@
-// app/layout.tsx
 'use client';
 import "./globals.css";
 import Sidebar from "./components/Sidebar";
@@ -16,13 +15,22 @@ export default function RootLayout({
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    if (!token && path !== '/login') {
-      router.push('/login');
-      setIsAuthenticated(false);
-    } else {
-      setIsAuthenticated(!!token);
-    }
+    const checkAuthentication = () => {
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        setIsAuthenticated(false);
+        if (path !== '/login') {
+          router.push('/login');
+        }
+      } else {
+        setIsAuthenticated(true);
+        if (path === '/login') {
+          router.push('/');
+        }
+      }
+    };
+
+    checkAuthentication();
   }, [path, router]);
 
   if (isAuthenticated === null) {
@@ -38,20 +46,19 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`h-screen ${showSidebar ? 'flex' : ''}`}>
-        <>
-          <StoreProvider>
-            {showSidebar && (
-              <aside className="flex-shrink-0 bg-gray-800 text-white">
-                <Sidebar />
-              </aside>
-            )}
-            <main
-              className={`flex-1 overflow-y-auto bg-gray-100 ${showSidebar ? 'ml-32' : 'w-full'}`}
-            >
-              {children}
-            </main>
-          </StoreProvider>
-        </>
+        <StoreProvider>
+          {showSidebar && (
+            <aside className="flex-shrink-0 bg-gray-800 text-white">
+              <Sidebar />
+            </aside>
+          )}
+          <main
+            className={`flex-1 overflow-y-auto bg-gray-100 ${showSidebar ? 'ml-32' : 'w-full'
+              }`}
+          >
+            {children}
+          </main>
+        </StoreProvider>
       </body>
     </html>
   );
