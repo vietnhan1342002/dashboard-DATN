@@ -142,7 +142,6 @@ const MoreDetail = () => {
                         />
                     </div>
                 </div>
-
             </div>
 
             {/* Prescriptions List */}

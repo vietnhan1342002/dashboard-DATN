@@ -44,12 +44,15 @@ const SchedulePage = () => {
         setLoading(true);
         try {
             const resSchedules = await axiosInstance.get(`/doctorSchedules?current=1&pageSize=30`);
+
             console.log("resSchedule", resSchedules);
+
 
             const today = new Date().setHours(0, 0, 0, 0);
 
             const filteredEvents = resSchedules.data.result.filter((schedule: any) => {
                 const { date, shiftId } = schedule;
+
                 console.log("schedule", schedule);
 
                 const { StartTime } = convertToEvent(date, shiftId.name);

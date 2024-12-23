@@ -25,6 +25,7 @@ const routesByRole = {
         { href: "/medicine/MedicineList", icon: FaPills, label: "Medicine" },
         { href: "/bill", icon: FaFileInvoiceDollar, label: "Bills" },
         { href: "/bill/PaidBillsPage", icon: FaFileInvoiceDollar, label: "Bills Paid" },
+
     ],
     doctor: [
         { href: "/home", icon: TiHome, label: "Home" },
@@ -51,6 +52,7 @@ const Sidebar = () => {
     const getRole = async (userId: string) => {
         try {
             const res = await axiosInstance.get(`user-auth/${userId}`);
+
             const nameRole = res.data.roleId.nameRole as UserRole;
             console.log(nameRole);
 
@@ -69,6 +71,7 @@ const Sidebar = () => {
             }
         }
     }, []);
+
 
     const routes = userRole ? routesByRole[userRole] : [];
 
@@ -90,6 +93,7 @@ const Sidebar = () => {
             return pathname === path
                 ? `${baseClass} bg-blue-800 text-white scale-110 shadow-md`
                 : `${baseClass} text-gray-300 hover:bg-blue-500 hover:text-white`;
+
         }
 
         return pathname.includes(path)
@@ -119,6 +123,7 @@ const Sidebar = () => {
             <div
                 onClick={handleLogout}
                 className="cursor-pointer flex flex-col items-center justify-center mt-auto sticky bottom-0 p-3 transition-all duration-300 ease-in-out w-full bg-red-700 hover:bg-red-900"
+
             >
                 <RiLogoutBoxFill
                     className="w-8 h-8 cursor-pointer transition-all duration-300 ease-in-out"

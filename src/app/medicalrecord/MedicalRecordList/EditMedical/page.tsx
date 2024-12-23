@@ -49,6 +49,7 @@ const MedicalRecordEdit = () => {
         try {
             console.log(id);
             const res = await axiosInstance.get(`/medical-records/appointment/${id}`);
+
             if (res.data.length !== 0) {
                 console.log(res);
                 const medicalId = res.data._id;
@@ -59,6 +60,7 @@ const MedicalRecordEdit = () => {
                 setDiagnosis(medical.data.diagnosis);
                 setNote(medical.data.note);
             }
+
         } catch (error) {
             toast.error('Error fetching medical record');
         }

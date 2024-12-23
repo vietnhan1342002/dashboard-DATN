@@ -27,6 +27,7 @@ const Dashboard = () => {
                 console.log('Received notification:', message);
                 toast.success(`New Notification: ${message}`);
                 fetchAppointment();
+
             });
 
             return () => {
@@ -261,7 +262,9 @@ const Dashboard = () => {
                     </tbody>
                 </table>
             </div>
-            <Toaster />
+
+            <Toaster position="top-center" />
+
         </div>
     );
 };
