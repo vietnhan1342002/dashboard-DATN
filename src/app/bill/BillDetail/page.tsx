@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import axiosInstance from "@/app/utils/axios";
 import { formatDateTime } from "@/app/utils/format";
+import { toast } from "sonner";
 
 export interface Bill {
     _id: string;
@@ -65,8 +66,16 @@ const BillDetailPage = () => {
 
     const handlePayment = async () => {
         console.log("Payment process for bill", bill?._id);
+        const res = await axiosInstance.patch(`/bills/status/${bill?._id}`)
+        try {
+            if (res.data) {
+                toast.success("Paid Successfully!")
+                router.push('/bill/PaidBillsPage')
+            }
+        } catch (error: any) {
+            toast.error(error.response.data.message)
+        }
 
-        // Logic for payment can be added here
     };
 
     const handleBack = () => {
@@ -102,7 +111,7 @@ const BillDetailPage = () => {
 
                 {/* Right: Medication List */}
                 <div className="bg-gray-50 p-6 rounded-lg shadow-md border border-gray-200">
-                    <h2 className="text-2xl font-semibold text-gray-800 mb-4">Services Used</h2>
+                    <h2 className="text-2xl font-semibold text-gray-800 mb-4">Medications</h2>
                     <table className="w-full mt-4 table-auto text-gray-700 border-separate border-spacing-0.5">
                         <thead className="bg-gray-100">
                             <tr>

@@ -1,5 +1,4 @@
-/* eslint-disable @next/next/no-img-element */
-"use client"
+"use client";
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../utils/axios";
 import { toast, Toaster } from "sonner";
@@ -27,6 +26,7 @@ const Dashboard = () => {
             socket.on('doctor-notification', (message: string) => {
                 console.log('Received notification:', message);
                 toast.success(`New Notification: ${message}`);
+                fetchAppointment();
             });
 
             return () => {
@@ -116,6 +116,7 @@ const Dashboard = () => {
     };
 
     const handleEdit = (appointmentId: string) => {
+        console.log(appointmentId);
         router.push(`/medicalrecord/MedicalRecordList/EditMedical?id=${appointmentId}`)
     };
 
@@ -209,8 +210,6 @@ const Dashboard = () => {
                                     <th className="p-3 border">Visited</th>
                                 </> : <></>
                             }
-
-
                         </tr>
                     </thead>
                     <tbody>
@@ -262,7 +261,7 @@ const Dashboard = () => {
                     </tbody>
                 </table>
             </div>
-            <Toaster position="top-center" />
+            <Toaster />
         </div>
     );
 };

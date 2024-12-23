@@ -23,7 +23,9 @@ const BillsPage = () => {
         try {
             const response = await axiosInstance.get('/bills');
             console.log("Bills data:", response.data);
-            setBills(response.data);
+            // Lọc các hóa đơn có status là 'pending'
+            const pendingBills = response.data.filter((bill: Bill) => bill.status === 'pending');
+            setBills(pendingBills);
         } catch (error) {
             console.error("Error fetching bills:", error);
         }

@@ -25,7 +25,7 @@ export default function RootLayout({
       } else {
         setIsAuthenticated(true);
         if (path === '/login') {
-          router.push('/');
+          router.push('/home');
         }
       }
     };
@@ -33,6 +33,7 @@ export default function RootLayout({
     checkAuthentication();
   }, [path, router]);
 
+  // Nếu vẫn đang trong quá trình xác thực, hiển thị loading
   if (isAuthenticated === null) {
     return (
       <div className="flex h-screen justify-center items-center">
