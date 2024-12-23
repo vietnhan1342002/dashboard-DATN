@@ -49,11 +49,13 @@ const AppointmentList = () => {
             });
 
             if (res.status === 200) {
-                alert('Appointment confirmed successfully');
-                fetchAppointments(currentPage);
+                // Cập nhật lại state appointments sau khi xác nhận thành công
+                dispatch(setAppointments(appointments.filter(appointment => appointment._id !== appointmentId)));
+                toast.success('Appointment confirmed successfully');
             }
         } catch (error) {
             console.error('Error confirming appointment:', error);
+            toast.error('Error confirming appointment');
         }
     };
 

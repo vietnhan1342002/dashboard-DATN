@@ -23,8 +23,9 @@ const routesByRole = {
         { href: "/appointment/AppointmentList", icon: FaClipboardList, label: "Appointments" },
         { href: "/medicalrecord/MedicalRecordList", icon: FaFileMedical, label: "Medical Records" },
         { href: "/medicine/MedicineList", icon: FaPills, label: "Medicine" },
-        { href: "/bill/BillList", icon: FaFileInvoiceDollar, label: "Bills" },
-        { href: "/revenuereport/RevenueReport", icon: FaChartBar, label: "Revenue" },
+        { href: "/bill", icon: FaFileInvoiceDollar, label: "Bills" },
+        { href: "/bill/PaidBillsPage", icon: FaFileInvoiceDollar, label: "Bills Paid" },
+
     ],
     doctor: [
         { href: "/home", icon: TiHome, label: "Home" },
@@ -51,7 +52,8 @@ const Sidebar = () => {
     const getRole = async (userId: string) => {
         try {
             const res = await axiosInstance.get(`user-auth/${userId}`);
-            const nameRole = res.data.roleId.nameRole as UserRole; // Explicit type assertion
+
+            const nameRole = res.data.roleId.nameRole as UserRole;
             console.log(nameRole);
 
             setUserRole(nameRole);
@@ -70,14 +72,6 @@ const Sidebar = () => {
         }
     }, []);
 
-    // useEffect(() => {
-    //     if (userRole === "receptionist") {
-    //         router.push("/schedules"); // Redirect to AppointmentList for receptionist
-    //         // router.push("/appointment/AppointmentList"); // Redirect to AppointmentList for receptionist
-    //     } else {
-    //         router.push("/"); // Redirect to Doctor Profile or Home page
-    //     }
-    // }, [userRole, router]);
 
     const routes = userRole ? routesByRole[userRole] : [];
 
@@ -94,10 +88,19 @@ const Sidebar = () => {
                 ? `${baseClass} bg-blue-800 text-white scale-110 shadow-md`
                 : `${baseClass} text-gray-300 hover:bg-blue-500 hover:text-white`;
         }
+
+        if (path === '/bill') {
+            return pathname === path
+                ? `${baseClass} bg-blue-800 text-white scale-110 shadow-md`
+                : `${baseClass} text-gray-300 hover:bg-blue-500 hover:text-white`;
+
+        }
+
         return pathname.includes(path)
             ? `${baseClass} bg-blue-800 text-white scale-110 shadow-md`
             : `${baseClass} text-gray-300 hover:bg-blue-500 hover:text-white`;
     };
+
 
     return (
         <div className="h-screen w-32 bg-blue-600 fixed top-0 left-0 flex flex-col justify-between items-center py-8 text-white overflow-y-auto overflow-x-hidden shadow-xl transition-all duration-300 ease-in-out sidebar">
@@ -119,13 +122,14 @@ const Sidebar = () => {
             {/* Sticky Logout button */}
             <div
                 onClick={handleLogout}
-                className="cursor-pointer flex flex-col items-center justify-center mt-auto sticky bottom-0 p-3 rounded-lg transition-all duration-300 ease-in-out w-full bg-red-600 hover:bg-red-700"
+                className="cursor-pointer flex flex-col items-center justify-center mt-auto sticky bottom-0 p-3 transition-all duration-300 ease-in-out w-full bg-red-700 hover:bg-red-900"
+
             >
                 <RiLogoutBoxFill
                     className="w-8 h-8 cursor-pointer transition-all duration-300 ease-in-out"
                     title="Logout"
                 />
-                <span className="text-xs">Logout</span>
+                <span className="text-base">Logout</span>
             </div>
         </div>
     );

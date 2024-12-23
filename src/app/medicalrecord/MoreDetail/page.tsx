@@ -142,12 +142,6 @@ const MoreDetail = () => {
                         />
                     </div>
                 </div>
-                <button
-                    onClick={handleEditRecord}
-                    className="mt-4 inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-all duration-200"
-                >
-                    Edit Record
-                </button>
             </div>
 
             {/* Prescriptions List */}
@@ -178,12 +172,7 @@ const MoreDetail = () => {
                 ) : (
                     <p className="text-center text-lg text-gray-500">No medications in this prescription.</p>
                 )}
-                <button
-                    onClick={handleEditPrescription}
-                    className="mt-4 inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-all duration-200"
-                >
-                    Edit Prescription
-                </button>
+
             </div>
         </div>
     );

@@ -25,7 +25,9 @@ export default function RootLayout({
       } else {
         setIsAuthenticated(true);
         if (path === '/login') {
-          router.push('/');
+
+          router.push('/home');
+
         }
       }
     };

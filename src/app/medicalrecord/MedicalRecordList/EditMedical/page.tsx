@@ -43,20 +43,24 @@ const MedicalRecordEdit = () => {
     const router = useRouter();
 
     const searchParams = useSearchParams();
-    const _id = searchParams.get('id');
+    const id = searchParams.get('id');
 
     const fetchMedicalRecord = async (id: string) => {
         try {
+            console.log(id);
             const res = await axiosInstance.get(`/medical-records/appointment/${id}`);
-            console.log(res);
 
-            const medicalId = res.data._id;
-            console.log("medicalId", medicalId);
-            const medical = await axiosInstance.get(`/medical-records/${medicalId}`);
-            console.log(medical);
-            setMedicalRecord(medical.data);
-            setDiagnosis(medical.data.diagnosis);
-            setNote(medical.data.note);
+            if (res.data.length !== 0) {
+                console.log(res);
+                const medicalId = res.data._id;
+                console.log("medicalId", medicalId);
+                const medical = await axiosInstance.get(`/medical-records/${medicalId}`);
+                console.log(medical);
+                setMedicalRecord(medical.data);
+                setDiagnosis(medical.data.diagnosis);
+                setNote(medical.data.note);
+            }
+
         } catch (error) {
             toast.error('Error fetching medical record');
         }
@@ -106,10 +110,10 @@ const MedicalRecordEdit = () => {
     };
 
     useEffect(() => {
-        if (_id) {
-            fetchMedicalRecord(_id);
+        if (id) {
+            fetchMedicalRecord(id);
         }
-    }, [_id]);
+    }, [id]);
 
 
     return (
