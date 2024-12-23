@@ -103,7 +103,15 @@ const MoreDetail = () => {
 
     return (
         <div className="p-6 space-y-6 bg-gray-50">
-            <h2 className="text-3xl font-semibold text-gray-800">Medical Record & Prescription Details</h2>
+            <div className="flex justify-between items-center">
+                <button
+                    onClick={() => router.back()}
+                    className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg shadow hover:bg-blue-700"
+                >
+                    Back
+                </button>
+                <h2 className="text-3xl font-semibold text-gray-800">Medical Record & Prescription Details</h2>
+            </div>
             {/* Medical Record Details */}
             <div className="bg-white shadow-lg rounded-xl p-6">
                 <h3 className="text-2xl font-medium text-gray-800 mb-4">Medical Record Details</h3>
@@ -172,7 +180,6 @@ const MoreDetail = () => {
                 ) : (
                     <p className="text-center text-lg text-gray-500">No medications in this prescription.</p>
                 )}
-
             </div>
         </div>
     );

@@ -1,65 +1,37 @@
+// app/layout.tsx
 'use client';
+
 import "./globals.css";
 import Sidebar from "./components/Sidebar";
 import StoreProvider from "./components/StoreProvider";
-import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useState } from "react";
+import { AuthNextProvider } from "./context/AuthContext";
+import { usePathname } from 'next/navigation';
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-  const path = usePathname();
-  const router = useRouter();
+  const pathname = usePathname();
 
-  useEffect(() => {
-    const checkAuthentication = () => {
-      const token = localStorage.getItem('accessToken');
-      if (!token) {
-        setIsAuthenticated(false);
-        if (path !== '/login') {
-          router.push('/login');
-        }
-      } else {
-        setIsAuthenticated(true);
-        if (path === '/login') {
-
-          router.push('/home');
-
-        }
-      }
-    };
-
-    checkAuthentication();
-  }, [path, router]);
-
-  if (isAuthenticated === null) {
-    return (
-      <div className="flex h-screen justify-center items-center">
-        <div className="loader">Loading...</div>
-      </div>
-    );
-  }
-
-  const showSidebar = isAuthenticated && path !== '/login';
+  const isLoginPage = pathname === '/login';
 
   return (
     <html lang="en">
-      <body className={`h-screen ${showSidebar ? 'flex' : ''}`}>
+      <body className="h-screen">
         <StoreProvider>
-          {showSidebar && (
-            <aside className="flex-shrink-0 bg-gray-800 text-white">
-              <Sidebar />
-            </aside>
-          )}
-          <main
-            className={`flex-1 overflow-y-auto bg-gray-100 ${showSidebar ? 'ml-32' : 'w-full'
-              }`}
-          >
-            {children}
-          </main>
+          <AuthNextProvider>
+            <div className="flex h-screen">
+              {!isLoginPage && (
+                <aside className="flex-shrink-0 bg-gray-800 text-white">
+                  <Sidebar />
+                </aside>
+              )}
+              <main className={`flex-1 overflow-y-auto bg-gray-100 ${!isLoginPage ? 'ml-32' : 'w-full'}`}>
+                {children}
+              </main>
+            </div>
+          </AuthNextProvider>
         </StoreProvider>
       </body>
     </html>

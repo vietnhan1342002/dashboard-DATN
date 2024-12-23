@@ -22,18 +22,16 @@ const Dashboard = () => {
     const [userId, setUserId] = useState<string | null>()
 
     useEffect(() => {
-        if (socket) {
-            socket.on('doctor-notification', (message: string) => {
-                console.log('Received notification:', message);
-                toast.success(`New Notification: ${message}`);
-                fetchAppointment();
+        if (!socket) return;
+        socket.on('doctor-notification', (message: string) => {
+            console.log('Received notification:', message);
+            toast.success(`New Notification: ${message}`);
+            fetchAppointment();
+        });
 
-            });
-
-            return () => {
-                socket.off('doctor-notification');
-            };
-        }
+        return () => {
+            socket.off('doctor-notification');
+        };
     }, [socket]);
 
     useEffect(() => {
@@ -159,7 +157,7 @@ const Dashboard = () => {
             fetchAppointment();
             fetchSumAppointment()
         }
-    }, [role, appointmentCount]);
+    }, [role]);
 
     return (
         <div className="p-4 bg-blue-50 rounded-l-2xl w-full">
@@ -199,6 +197,7 @@ const Dashboard = () => {
                 <table className="w-full border-collapse">
                     <thead>
                         <tr className="bg-gray-200 text-left">
+                            <th className="p-3 border">STT</th>
                             <th className="p-3 border">Patient</th>
                             <th className="p-3 border">Phone number</th>
                             <th className="p-3 border">Date</th>
@@ -217,6 +216,7 @@ const Dashboard = () => {
                         {appointments.length > 0 ? (
                             appointments.map((appointment, index) => (
                                 <tr key={appointment._id || index}>
+                                    <td className="p-3 border">{index || 'No data available'}</td>
                                     <td className="p-3 border">{appointment?.detail?.patientId?.userId?.fullName || 'No data available'}</td>
                                     <td className="p-3 border">{appointment?.detail?.patientId?.userId?.phoneNumber || 'No data available'}</td>
                                     <td className="p-3 border">{formatDateTime(appointment?.detail?.appointmentDate) || 'No data available'}</td>

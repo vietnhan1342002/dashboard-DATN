@@ -25,7 +25,6 @@ const routesByRole = {
         { href: "/medicine/MedicineList", icon: FaPills, label: "Medicine" },
         { href: "/bill", icon: FaFileInvoiceDollar, label: "Bills" },
         { href: "/bill/PaidBillsPage", icon: FaFileInvoiceDollar, label: "Bills Paid" },
-
     ],
     doctor: [
         { href: "/home", icon: TiHome, label: "Home" },
@@ -52,10 +51,7 @@ const Sidebar = () => {
     const getRole = async (userId: string) => {
         try {
             const res = await axiosInstance.get(`user-auth/${userId}`);
-
             const nameRole = res.data.roleId.nameRole as UserRole;
-            console.log(nameRole);
-
             setUserRole(nameRole);
         } catch (error) {
             console.error("Failed to fetch role", error);
@@ -72,7 +68,6 @@ const Sidebar = () => {
         }
     }, []);
 
-
     const routes = userRole ? routesByRole[userRole] : [];
 
     const handleLogout = () => {
@@ -82,7 +77,7 @@ const Sidebar = () => {
     };
 
     const isActive = (path: string) => {
-        const baseClass = "flex flex-col items-center justify-center mt-4 p-3 rounded-lg transition-all duration-300 ease-in-out w-full"; // Thêm w-full để chiếm hết chiều ngang
+        const baseClass = "flex flex-col items-center justify-center mt-4 p-3 rounded-lg transition-all duration-300 ease-in-out w-full";
         if (path === '/') {
             return pathname === path
                 ? `${baseClass} bg-blue-800 text-white scale-110 shadow-md`
@@ -93,14 +88,12 @@ const Sidebar = () => {
             return pathname === path
                 ? `${baseClass} bg-blue-800 text-white scale-110 shadow-md`
                 : `${baseClass} text-gray-300 hover:bg-blue-500 hover:text-white`;
-
         }
 
         return pathname.includes(path)
             ? `${baseClass} bg-blue-800 text-white scale-110 shadow-md`
             : `${baseClass} text-gray-300 hover:bg-blue-500 hover:text-white`;
     };
-
 
     return (
         <div className="h-screen w-32 bg-blue-600 fixed top-0 left-0 flex flex-col justify-between items-center py-8 text-white overflow-y-auto overflow-x-hidden shadow-xl transition-all duration-300 ease-in-out sidebar">
@@ -119,11 +112,9 @@ const Sidebar = () => {
                     </Link>
                 ))}
             </div>
-            {/* Sticky Logout button */}
             <div
                 onClick={handleLogout}
                 className="cursor-pointer flex flex-col items-center justify-center mt-auto sticky bottom-0 p-3 transition-all duration-300 ease-in-out w-full bg-red-700 hover:bg-red-900"
-
             >
                 <RiLogoutBoxFill
                     className="w-8 h-8 cursor-pointer transition-all duration-300 ease-in-out"
