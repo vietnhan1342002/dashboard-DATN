@@ -124,7 +124,7 @@ const DoctorProfile = () => {
                         <div className="flex-shrink-0 flex justify-center lg:justify-start">
                             {doctorData.avatar ? (
                                 <img
-                                    src={doctorData.avatar}
+                                    src={doctorData?.avatar}
                                     alt="Doctor Avatar"
                                     className="w-52 h-52 lg:w-72 lg:h-72 object-cover rounded-full shadow-lg"
                                 />
@@ -162,13 +162,13 @@ const DoctorProfile = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-600">Specialty</label>
                                     <p className="w-full text-lg font-semibold text-gray-800 border rounded-lg p-4 bg-gray-200">
-                                        {doctorData.specialtyId.name}
+                                        {doctorData?.specialtyId?.name}
                                     </p>
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-600">License Number</label>
                                     <p className="w-full text-lg font-semibold text-gray-800 border rounded-lg p-4 bg-gray-200">
-                                        {doctorData.licenseNumber}
+                                        {doctorData?.licenseNumber}
                                     </p>
                                 </div>
                             </div>
@@ -178,7 +178,7 @@ const DoctorProfile = () => {
                                     <label className="block text-xl font-bold text-blue-700 mb-2 uppercase">
                                         Years of Experience
                                     </label>
-                                    <p className="text-3xl font-extrabold text-blue-800">{doctorData.yearsOfExperience}</p>
+                                    <p className="text-3xl font-extrabold text-blue-800">{doctorData?.yearsOfExperience}</p>
                                 </div>
 
                                 <button
