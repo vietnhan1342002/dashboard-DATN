@@ -43,7 +43,7 @@ const DoctorList = () => {
     const fetchDoctors = async (currentPage: number, query: string) => {
 
         try {
-            const response = await axiosInstance.get(`http://localhost:8080/api/v1/doctors?current=${currentPage}&pageSize=${pageSize}&query=${query}`);
+            const response = await axiosInstance.get(`/doctors?current=${currentPage}&pageSize=${pageSize}&query=${query}`);
             const { result, totalPages } = response.data;
             setTotalPages(totalPages);
             dispatch(setDoctors(result));
@@ -104,21 +104,19 @@ const DoctorList = () => {
 
             <>
                 {/* Pagination controls */}
-                <div className="mb-4 flex justify-between items-center">
+                <div className="flex justify-between my-4">
                     <button
                         onClick={goToPreviousPage}
                         disabled={currentPage === 1}
-                        className="bg-gray-300 text-gray-700 px-3 py-1 rounded disabled:opacity-50"
+                        className={`px-4 py-2 rounded ${currentPage === 1 ? 'bg-gray-300' : 'bg-blue-500 text-white'}`}
                     >
                         Previous
                     </button>
-
-                    <span>Page {currentPage} of {totalPages}</span>
-
+                    <span className="self-center">Page {currentPage} of {totalPages}</span>
                     <button
                         onClick={goToNextPage}
                         disabled={currentPage === totalPages}
-                        className="bg-gray-300 text-gray-700 px-3 py-1 rounded disabled:opacity-50"
+                        className={`px-4 py-2 rounded ${currentPage === totalPages ? 'bg-gray-300' : 'bg-blue-500 text-white'}`}
                     >
                         Next
                     </button>
@@ -140,7 +138,7 @@ const DoctorList = () => {
                     <tbody>
                         {doctors.map((doctor, index) => (
                             <tr key={doctor._id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                                <td className="px-6 py-4">{doctor.userId?.fullName || 'N/A'}</td>
+                                <td className="px-6 py-4">{doctor.userId?.fullName || 'No data available'}</td>
 
                                 {/* Sửa cột Avatar */}
                                 <td className="px-6 py-4">

@@ -49,7 +49,7 @@ const MedicalRecordList = () => {
 
     const fetchMedicalRecord = async () => {
         try {
-            const res = await axiosInstance.get(`http://localhost:8080/api/v1/medical-records?current=${currentPage}&pageSize=${pageSize}`);
+            const res = await axiosInstance.get(`/medical-records?current=${currentPage}&pageSize=${pageSize}`);
             const { result, totalPages } = res.data;
             setMedicalRecords(result);
             setTotalPages(totalPages);

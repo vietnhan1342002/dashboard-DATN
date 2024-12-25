@@ -60,10 +60,10 @@ const BillsPage = () => {
                                 <td className="py-3 px-4 border-b">{bill.totalPrice.toLocaleString()} VND</td>
                                 <td className="py-3 px-4 border-b">
                                     <span className={bill.status === 'pending' ? 'bg-yellow-400 px-2 py-1 rounded' : ''}>
-                                        {bill.status}
+                                        {bill.status ? bill.status.charAt(0).toUpperCase() + bill.status.slice(1) : 'No data available'}
                                     </span>
                                 </td>
-                                <td className="py-3 px-4 border-b">{bill.createdAt ? new Date(bill.createdAt).toLocaleString() : 'N/A'}</td>
+                                <td className="py-3 px-4 border-b">{bill.createdAt ? new Date(bill.createdAt).toLocaleString() : 'No data available'}</td>
                                 <td className="py-3 px-4 border-b">
                                     <button
                                         onClick={() => handleViewBill(bill._id)}

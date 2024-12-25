@@ -33,7 +33,7 @@ const EditSpecialty = () => {
 
             try {
                 const response = await axiosInstance.get(
-                    `http://localhost:8080/api/v1/departments/${departmentId}`
+                    `/departments/${departmentId}`
                 );
                 console.log(response.data);
 
@@ -63,7 +63,7 @@ const EditSpecialty = () => {
         }
         try {
             await axiosInstance.patch(
-                `http://localhost:8080/api/v1/departments/${departmentId}`,
+                `/departments/${departmentId}`,
                 {
                     departmentName: specialty.departmentName,
                     description: specialty.description

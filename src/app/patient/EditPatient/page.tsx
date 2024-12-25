@@ -29,7 +29,7 @@ const EditPatient = () => {
 
     const fetchPatient = async (patientId: string) => {
         try {
-            const response = await axiosInstance.get(`http://localhost:8080/api/v1/patients/${patientId}`);
+            const response = await axiosInstance.get(`/patients/${patientId}`);
             const patient = response.data;
             console.log('patient', patient);
             if (patient.dateOfBirth) {
@@ -46,7 +46,7 @@ const EditPatient = () => {
 
     const fetchUpdatePatient = async (patientId: string) => {
         try {
-            const res = await axiosInstance.patch(`http://localhost:8080/api/v1/patients/${patientId}`, {
+            const res = await axiosInstance.patch(`/patients/${patientId}`, {
                 patient: {
                     dateOfBirth: patient.dateOfBirth,
                     address: patient.address,

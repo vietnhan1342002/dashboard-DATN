@@ -22,7 +22,7 @@ const AppointmentList = () => {
     // Lấy danh sách cuộc hẹn từ API
     const fetchAppointments = async (currentPage: number) => {
         try {
-            const response = await axios.get(`http://localhost:8080/api/v1/appointments/status?status=pending&current=${currentPage}&pageSize=${pageSize}`);
+            const response = await axiosInstance.get(`/appointments/status?status=pending&current=${currentPage}&pageSize=${pageSize}`);
             const { result, totalPages } = response.data
             setTotalPages(totalPages)
             dispatch(setAppointments(result)); // Lưu dữ liệu vào Redux store
@@ -105,21 +105,19 @@ const AppointmentList = () => {
 
 
             {/* Phân trang */}
-            <div className="my-4 flex justify-between items-center">
+            <div className="flex justify-between my-4">
                 <button
                     onClick={goToPreviousPage}
                     disabled={currentPage === 1}
-                    className="bg-gray-300 text-gray-700 px-3 py-1 rounded disabled:opacity-50"
+                    className={`px-4 py-2 rounded ${currentPage === 1 ? 'bg-gray-300' : 'bg-blue-500 text-white'}`}
                 >
                     Previous
                 </button>
-                <span>
-                    Page {currentPage} of {totalPages}
-                </span>
+                <span className="self-center">Page {currentPage} of {totalPages}</span>
                 <button
                     onClick={goToNextPage}
                     disabled={currentPage === totalPages}
-                    className="bg-gray-300 text-gray-700 px-3 py-1 rounded disabled:opacity-50"
+                    className={`px-4 py-2 rounded ${currentPage === totalPages ? 'bg-gray-300' : 'bg-blue-500 text-white'}`}
                 >
                     Next
                 </button>
@@ -145,7 +143,7 @@ const AppointmentList = () => {
                             <td className="px-6 py-4">{appointment._id}</td>
                             <td className="px-6 py-4">{appointment.patientId?.userId?.fullName}</td>
                             <td className="px-6 py-4">
-                                {appointment.patientId?.userId?.phoneNumber || 'N/A'}
+                                {appointment.patientId?.userId?.phoneNumber || 'No data available'}
                             </td>
                             <td className="px-6 py-4">{appointment.doctorId?.userId?.fullName}</td>
                             <td className="px-6 py-4">{appointment?.appointmentDate?.split(' ')[0]}</td>

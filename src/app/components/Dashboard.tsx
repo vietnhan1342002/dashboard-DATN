@@ -7,7 +7,7 @@ import useSocket from "@/hooks/useSocket";
 import { formatDateTime } from "../utils/format";
 
 const Dashboard = () => {
-    const socket = useSocket("http://localhost:8080");
+    const socket = useSocket("http://13.211.141.240:8080");
     const router = useRouter()
 
     const initialData = {
@@ -223,7 +223,7 @@ const Dashboard = () => {
                                     <td className="p-3 border">{appointment?.detail?.doctorId?.userId?.fullName || 'No data available'} </td>
                                     <td className="p-3 border">{appointment?.detail?.reason || 'No data available'}</td>
                                     <td className="p-3 border">
-                                        <span className="bg-blue-300 p-1 rounded">{appointment.detail.status}</span>
+                                        <span className="bg-blue-300 p-1 rounded">{appointment.detail.status ? appointment.detail.status.charAt(0).toUpperCase() + appointment.detail.status.slice(1) : 'No data available'}</span>
                                     </td>
                                     {role === "doctor" ?
                                         <>

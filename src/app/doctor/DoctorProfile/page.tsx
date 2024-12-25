@@ -107,13 +107,7 @@ const DoctorProfile = () => {
     return (
         <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-indigo-400 to-blue-500">
             <div className="w-full max-w-5xl bg-white border border-gray-300 rounded-lg p-8 shadow-2xl relative">
-                {/* Back Button */}
-                <button
-                    onClick={() => router.back()}
-                    className="absolute top-4 left-4 bg-gray-200 text-gray-800 px-4 py-2 rounded-md shadow-md hover:bg-gray-300 transition"
-                >
-                    Back
-                </button>
+
 
                 <h2 className="text-4xl font-bold text-gray-800 mb-8 text-center">
                     Doctor Profile

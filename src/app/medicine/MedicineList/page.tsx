@@ -67,7 +67,7 @@ const MedicineList = () => {
 
 
     const fetchDeleteMedicine = async (medicineId: string) => {
-        const res = await axiosInstance.delete(`http://localhost:8080/api/v1/medications/${medicineId}`);
+        const res = await axiosInstance.delete(`/medications/${medicineId}`);
         if (res) {
             toast.success("Successfully deleted")
             setTimeout(function () {

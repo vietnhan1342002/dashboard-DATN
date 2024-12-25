@@ -135,14 +135,16 @@ const PatientList = () => {
                     <tbody>
                         {patients.map((patient, index) => (
                             <tr key={patient._id || index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                                <td className="px-6 py-4">{patient.userId?.fullName || "N/A"}</td>
-                                <td className="px-6 py-4">{patient?.email || "N/A"}</td>
-                                <td className="px-6 py-4">{patient.userId?.phoneNumber || "N/A"}</td>
+                                <td className="px-6 py-4">{patient.userId?.fullName || "No data available"}</td>
+                                <td className="px-6 py-4">{patient?.email || "No data available"}</td>
+                                <td className="px-6 py-4">{patient.userId?.phoneNumber || "No data available"}</td>
                                 <td className="px-6 py-4">
                                     {new Date(patient.dateOfBirth).toLocaleDateString('en-GB') || '01/01/1990'}
                                 </td>
-                                <td className="px-6 py-4">{patient.address || "N/A"}</td>
-                                <td className="px-6 py-4">{patient.gender || "N/A"}</td>
+                                <td className="px-6 py-4">{patient.address || "No data available"}</td>
+                                <td className="px-6 py-4">
+                                    {patient.gender ? patient.gender.charAt(0).toUpperCase() + patient.gender.slice(1) : "No data available"}
+                                </td>
                             </tr>
                         ))}
                     </tbody>

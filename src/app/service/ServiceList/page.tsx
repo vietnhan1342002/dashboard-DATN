@@ -6,6 +6,7 @@ import { RootState } from "@/redux/store";
 import { setServices, setLoading } from "@/redux/store/serviceSlice"; // Giả sử bạn có một slice cho dịch vụ
 import axios from "axios";
 import Link from "next/link";
+import axiosInstance from "@/app/utils/axios";
 
 const ServiceList = () => {
     const dispatch = useDispatch();
@@ -21,7 +22,7 @@ const ServiceList = () => {
         const fetchServices = async () => {
             dispatch(setLoading(true)); // Bắt đầu trạng thái loading
             try {
-                const response = await axios.get(`http://localhost:8080/api/v1/specialties?current=1&pageSize=30`);
+                const response = await axiosInstance.get(`/specialties?current=1&pageSize=30`);
                 dispatch(setServices(response.data.result)); // Lưu dữ liệu vào Redux store
             } catch (error) {
                 console.error("Error fetching services:", error);
@@ -60,10 +61,10 @@ const ServiceList = () => {
 
     const handleDelete = async (id: string) => {
         try {
-            await axios.delete(`http://localhost:8080/api/v1/specialties/${id}`);
+            await axiosInstance.delete(`/specialties/${id}`);
             // Sau khi xóa, re-fetch lại danh sách dịch vụ
             dispatch(setLoading(true));
-            const response = await axios.get('http://localhost:8080/api/v1/specialties');
+            const response = await axiosInstance.get('/specialties');
             dispatch(setServices(response.data.result));
             dispatch(setLoading(false));
         } catch (error) {
@@ -96,23 +97,19 @@ const ServiceList = () => {
             </div>
 
             {/* Phân trang */}
-            <div className="my-4 flex justify-between items-center">
+            <div className="flex justify-between my-4">
                 <button
                     onClick={goToPreviousPage}
                     disabled={currentPage === 1}
-                    className="bg-gray-300 text-gray-700 px-3 py-1 rounded disabled:opacity-50"
+                    className={`px-4 py-2 rounded ${currentPage === 1 ? 'bg-gray-300' : 'bg-blue-500 text-white'}`}
                 >
                     Previous
                 </button>
-
-                <span>
-                    Page {currentPage} of {totalPages}
-                </span>
-
+                <span className="self-center">Page {currentPage} of {totalPages}</span>
                 <button
                     onClick={goToNextPage}
                     disabled={currentPage === totalPages}
-                    className="bg-gray-300 text-gray-700 px-3 py-1 rounded disabled:opacity-50"
+                    className={`px-4 py-2 rounded ${currentPage === totalPages ? 'bg-gray-300' : 'bg-blue-500 text-white'}`}
                 >
                     Next
                 </button>

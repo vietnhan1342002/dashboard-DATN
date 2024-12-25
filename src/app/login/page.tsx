@@ -4,6 +4,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast, Toaster } from "sonner";
+import axiosInstance from "../utils/axios";
 
 export default function LoginPage() {
 
@@ -26,7 +27,7 @@ export default function LoginPage() {
 
     const fetchLogin = async () => {
         try {
-            const res = await axios.post(`http://localhost:8080/api/v1/user-auth/login`, {
+            const res = await axiosInstance.post(`/user-auth/login`, {
                 phoneNumber: formLogin.phoneNumber,
                 password: formLogin.password
             });

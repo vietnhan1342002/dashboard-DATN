@@ -169,10 +169,10 @@ const PrescriptionForm = () => {
                 console.log(res.data);
 
                 if (res.data) {
-                    router.push(`/bill/BillDetail?id=${res.data._id}`);
+                    router.push(`/medicalrecord/MedicalRecordList`);
                 }
             } else {
-                router.push(`/bill/BillDetail?id=${billId}`);
+                router.push(`/medicalrecord/MedicalRecordList`);
             }
         } catch (error) {
             toast.error('Có lỗi xảy ra khi tạo hóa đơn');
