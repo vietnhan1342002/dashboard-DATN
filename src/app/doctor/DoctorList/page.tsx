@@ -6,6 +6,7 @@ import { RootState } from '@/redux/store';
 import axiosInstance from '@/app/utils/axios';
 import { toast } from 'sonner';
 import useDebounce from '@/hooks/useDebounce'; // Import useDebounce hook
+import { useRouter } from 'next/navigation';
 
 interface Doctor {
     _id: string;
@@ -28,10 +29,11 @@ const DoctorList = () => {
     const dispatch = useDispatch();
     const doctors = useSelector((state: RootState) => state.doctors.doctors);
     const loading = useSelector((state: RootState) => state.doctors.loading);
-
+    const router = useRouter(); // Dùng router để điều hướng
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [searchQuery, setSearchQuery] = useState('');
+    const [doctorList, setDoctorList] = useState<Doctor[]>([]);
     const pageSize = 5;
 
     // Apply useDebounce hook on the search query with a delay of 500ms
@@ -60,6 +62,23 @@ const DoctorList = () => {
 
     const goToPreviousPage = () => {
         if (currentPage > 1) setCurrentPage(currentPage - 1);
+    };
+
+    const handleEdit = (doctorId: string) => {
+        router.push(`/doctor/EditDoctor?id=${doctorId}`); // Chuyển hướng tới trang chỉnh sửa
+    };
+
+    const handleDelete = async (doctorId: string) => {
+        try {
+            const res = await axiosInstance.delete(`/doctors/${doctorId}`);
+            if (res) {
+                toast.success('Successfully deleted');
+                // Tạo bản sao mới và cập nhật state
+                setDoctorList(prevDoctors => prevDoctors.filter(doctor => doctor._id !== doctorId));
+            }
+        } catch (error) {
+            toast.error('Delete Failed');
+        }
     };
 
     return (
@@ -142,8 +161,18 @@ const DoctorList = () => {
                                 {/* Sửa cột Action */}
                                 <td className="px-6 py-4">
                                     <div className="flex justify-center space-x-2">
-                                        <button className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">Edit</button>
-                                        <button className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Delete</button>
+                                        <button
+                                            onClick={() => handleEdit(doctor._id)}
+                                            className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(doctor._id)}
+                                            className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+                                        >
+                                            Delete
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
