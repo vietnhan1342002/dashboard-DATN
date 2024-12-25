@@ -8,6 +8,7 @@ import { MdAddModerator } from "react-icons/md";
 import { IoPersonAddSharp } from "react-icons/io5";
 import { RiLogoutBoxFill } from "react-icons/ri";
 import { GiHealthNormal } from "react-icons/gi";
+import { AiOutlineFileDone } from "react-icons/ai";
 import { FaFileMedical, FaClipboardList, FaFileInvoiceDollar, FaChartBar, FaPills } from "react-icons/fa";
 import { usePathname, useRouter } from 'next/navigation';
 import axiosInstance from "../utils/axios";
@@ -24,7 +25,7 @@ const routesByRole = {
         { href: "/medicalrecord/MedicalRecordList", icon: FaFileMedical, label: "Medical Records" },
         { href: "/medicine/MedicineList", icon: FaPills, label: "Medicine" },
         { href: "/bill", icon: FaFileInvoiceDollar, label: "Bills" },
-        { href: "/bill/PaidBillsPage", icon: FaFileInvoiceDollar, label: "Bills Paid" },
+        { href: "/bill/PaidBillsPage", icon: AiOutlineFileDone, label: "Paid" },
     ],
     doctor: [
         { href: "/home", icon: TiHome, label: "Home" },

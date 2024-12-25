@@ -222,7 +222,9 @@ const Dashboard = () => {
                                     <td className="p-3 border">{formatDateTime(appointment?.detail?.appointmentDate) || 'No data available'}</td>
                                     <td className="p-3 border">{appointment?.detail?.doctorId?.userId?.fullName || 'No data available'} </td>
                                     <td className="p-3 border">{appointment?.detail?.reason || 'No data available'}</td>
-                                    <td className="p-3 border">{appointment.detail.status}</td>
+                                    <td className="p-3 border">
+                                        <span className="bg-blue-300 p-1 rounded">{appointment.detail.status}</span>
+                                    </td>
                                     {role === "doctor" ?
                                         <>
                                             <td className="p-3 border">

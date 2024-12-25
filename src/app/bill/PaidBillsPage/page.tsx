@@ -68,15 +68,8 @@ const PaidBillsPage = () => {
 
     return (
         <div className="max-w-7xl mx-auto p-8 bg-white shadow-lg rounded-xl mt-8">
-            <div className="flex items-center justify-between mb-8">
-                <button
-                    onClick={handleBack}
-                    className="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold rounded-lg focus:outline-none transition-all duration-300"
-                >
-                    Back
-                </button>
+            <div className="flex items-center justify-center mb-8">
                 <h1 className="text-4xl font-semibold text-center text-gray-900">Paid Bills</h1>
-                <div></div>
             </div>
 
             <div className="">
@@ -91,7 +84,12 @@ const PaidBillsPage = () => {
                                     <h2 className="text-2xl font-semibold text-gray-800 mb-4">Patient Information</h2>
                                     <ul className="space-y-3 text-lg text-gray-700">
                                         <li><strong>Patient Name:</strong> {bill.patientName}</li>
-                                        <li><strong>Status:</strong> Paid</li>
+                                        <li>
+                                            <strong>Status:</strong>
+                                            <span className="bg-green-300 px-2 py-1 rounded">
+                                                Paid
+                                            </span>
+                                        </li>
                                         <li><strong>Payment Date:</strong> {bill.paymentDate ? new Date(bill.paymentDate).toLocaleDateString('en-US') : 'Pending'}</li>
                                     </ul>
                                 </div>

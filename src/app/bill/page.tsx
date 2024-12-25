@@ -58,7 +58,11 @@ const BillsPage = () => {
                             <tr key={bill._id} className="hover:bg-gray-50">
                                 <td className="py-3 px-4 border-b">{bill.patientName}</td>
                                 <td className="py-3 px-4 border-b">{bill.totalPrice.toLocaleString()} VND</td>
-                                <td className="py-3 px-4 border-b">{bill.status === 'pending' ? 'Pending' : 'Paid'}</td>
+                                <td className="py-3 px-4 border-b">
+                                    <span className={bill.status === 'pending' ? 'bg-yellow-400 px-2 py-1 rounded' : ''}>
+                                        {bill.status}
+                                    </span>
+                                </td>
                                 <td className="py-3 px-4 border-b">{bill.createdAt ? new Date(bill.createdAt).toLocaleString() : 'N/A'}</td>
                                 <td className="py-3 px-4 border-b">
                                     <button

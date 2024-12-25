@@ -87,7 +87,7 @@ const MedicineList = () => {
 
     return (
         <div className="p-4 flex-1">
-            <h2 className="text-2xl font-bold mb-4">Quản Lý Thuốc</h2>
+            <h2 className="text-2xl font-bold mb-4">Manage Medicine</h2>
             <div className="flex items-center mb-4">
                 <input
                     type="text"
@@ -96,21 +96,43 @@ const MedicineList = () => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)} // Handle search input change
                 />
-                <button className="bg-green-500 text-white px-4 py-2 rounded">Search</button>
+                <button
+                    className="bg-green-500 text-white px-4 py-2 rounded"
+                    onClick={() => setSearchQuery('')}
+                >
+                    Clear
+                </button>
+            </div>
+            <div className="flex justify-between my-4">
+                <button
+                    onClick={handlePreviousPage}
+                    disabled={currentPage === 1}
+                    className={`px-4 py-2 rounded ${currentPage === 1 ? 'bg-gray-200 text-gray-400' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+                >
+                    Previous
+                </button>
+                <span className="px-4 py-2 text-gray-700">Page {currentPage} of {totalPages}</span>
+                <button
+                    onClick={handleNextPage}
+                    disabled={currentPage === totalPages}
+                    className={`px-4 py-2 rounded ${currentPage === totalPages ? 'bg-gray-200 text-gray-400' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+                >
+                    Next
+                </button>
             </div>
 
             <table className="min-w-full bg-white shadow rounded-lg overflow-hidden">
                 <thead>
                     <tr className="bg-gray-100">
-                        <th className="px-6 py-3 text-left">Tên</th>
+                        <th className="px-6 py-3 text-left">Name</th>
                         <th className="px-6 py-3 text-left">description</th>
                         <th className="px-6 py-3 text-left">usageInstructions</th>
                         <th className="px-6 py-3 text-left">sideEffects</th>
-                        <th className="px-6 py-3 text-left">Giá</th>
-                        <th className="px-6 py-3 text-left">Số Lượng</th>
-                        <th className="px-6 py-3 text-left">Số Lượng giới hạn</th>
+                        <th className="px-6 py-3 text-left">Price</th>
+                        <th className="px-6 py-3 text-left">Quantity</th>
+                        <th className="px-6 py-3 text-left">Min quantity</th>
                         <th className="px-6 py-3 text-left">Unit</th>
-                        <th className="px-6 py-3 text-left">Hành Động</th>
+                        <th className="px-6 py-3 text-left">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -147,24 +169,6 @@ const MedicineList = () => {
                     <button className="bg-blue-500 text-white px-4 py-2 rounded">+ Add Medicine</button>
                 </Link>
             </div>
-            <div className="flex justify-between mt-4">
-                <button
-                    onClick={handlePreviousPage}
-                    disabled={currentPage === 1}
-                    className={`px-4 py-2 rounded ${currentPage === 1 ? 'bg-gray-200 text-gray-400' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
-                >
-                    Previous
-                </button>
-                <span className="px-4 py-2 text-gray-700">Page {currentPage} of {totalPages}</span>
-                <button
-                    onClick={handleNextPage}
-                    disabled={currentPage === totalPages}
-                    className={`px-4 py-2 rounded ${currentPage === totalPages ? 'bg-gray-200 text-gray-400' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
-                >
-                    Next
-                </button>
-            </div>
-
         </div>
     );
 };

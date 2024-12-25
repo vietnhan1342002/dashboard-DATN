@@ -115,7 +115,25 @@ const MedicalRecordList = () => {
                         className="bg-green-500 text-white px-4 py-2 rounded"
                         onClick={() => setSearchQuery('')}
                     >
-                        Clear Search
+                        Clear
+                    </button>
+                </div>
+
+                <div className="flex justify-between my-4">
+                    <button
+                        onClick={handlePreviousPage}
+                        disabled={currentPage === 1}
+                        className={`px-4 py-2 rounded ${currentPage === 1 ? 'bg-gray-200 text-gray-400' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+                    >
+                        Previous
+                    </button>
+                    <span className="px-4 py-2 text-gray-700">Page {currentPage} of {totalPages}</span>
+                    <button
+                        onClick={handleNextPage}
+                        disabled={currentPage === totalPages}
+                        className={`px-4 py-2 rounded ${currentPage === totalPages ? 'bg-gray-200 text-gray-400' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+                    >
+                        Next
                     </button>
                 </div>
 
@@ -171,23 +189,7 @@ const MedicalRecordList = () => {
                     </table>
                 )}
 
-                <div className="flex justify-between mt-4">
-                    <button
-                        onClick={handlePreviousPage}
-                        disabled={currentPage === 1}
-                        className={`px-4 py-2 rounded ${currentPage === 1 ? 'bg-gray-200 text-gray-400' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
-                    >
-                        Previous
-                    </button>
-                    <span className="px-4 py-2 text-gray-700">Page {currentPage} of {totalPages}</span>
-                    <button
-                        onClick={handleNextPage}
-                        disabled={currentPage === totalPages}
-                        className={`px-4 py-2 rounded ${currentPage === totalPages ? 'bg-gray-200 text-gray-400' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
-                    >
-                        Next
-                    </button>
-                </div>
+
             </div>
             <Toaster position='top-center' />
 

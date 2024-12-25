@@ -103,6 +103,28 @@ const AppointmentList = () => {
                 </button>
             </div>
 
+
+            {/* Phân trang */}
+            <div className="my-4 flex justify-between items-center">
+                <button
+                    onClick={goToPreviousPage}
+                    disabled={currentPage === 1}
+                    className="bg-gray-300 text-gray-700 px-3 py-1 rounded disabled:opacity-50"
+                >
+                    Previous
+                </button>
+                <span>
+                    Page {currentPage} of {totalPages}
+                </span>
+                <button
+                    onClick={goToNextPage}
+                    disabled={currentPage === totalPages}
+                    className="bg-gray-300 text-gray-700 px-3 py-1 rounded disabled:opacity-50"
+                >
+                    Next
+                </button>
+            </div>
+
             {/* Danh sách cuộc hẹn */}
             <table className="min-w-full bg-white shadow rounded-lg overflow-hidden">
                 <thead>
@@ -149,35 +171,7 @@ const AppointmentList = () => {
                 </tbody>
             </table>
 
-            {/* Thêm cuộc hẹn */}
-            {/* <div className="mt-4 flex justify-end">
-                <Link href="/appointment/AddAppointment">
-                    <button className="bg-blue-500 text-white px-4 py-2 rounded">
-                        + Add Appointment
-                    </button>
-                </Link>
-            </div> */}
 
-            {/* Phân trang */}
-            <div className="mt-4 flex justify-between items-center">
-                <button
-                    onClick={goToPreviousPage}
-                    disabled={currentPage === 1}
-                    className="bg-gray-300 text-gray-700 px-3 py-1 rounded disabled:opacity-50"
-                >
-                    Previous
-                </button>
-                <span>
-                    Page {currentPage} of {totalPages}
-                </span>
-                <button
-                    onClick={goToNextPage}
-                    disabled={currentPage === totalPages}
-                    className="bg-gray-300 text-gray-700 px-3 py-1 rounded disabled:opacity-50"
-                >
-                    Next
-                </button>
-            </div>
             <Toaster position="top-center" />
         </div>
     );

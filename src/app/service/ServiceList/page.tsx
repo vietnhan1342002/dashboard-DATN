@@ -95,6 +95,29 @@ const ServiceList = () => {
                 </button>
             </div>
 
+            {/* Phân trang */}
+            <div className="my-4 flex justify-between items-center">
+                <button
+                    onClick={goToPreviousPage}
+                    disabled={currentPage === 1}
+                    className="bg-gray-300 text-gray-700 px-3 py-1 rounded disabled:opacity-50"
+                >
+                    Previous
+                </button>
+
+                <span>
+                    Page {currentPage} of {totalPages}
+                </span>
+
+                <button
+                    onClick={goToNextPage}
+                    disabled={currentPage === totalPages}
+                    className="bg-gray-300 text-gray-700 px-3 py-1 rounded disabled:opacity-50"
+                >
+                    Next
+                </button>
+            </div>
+
             {/* Danh sách dịch vụ */}
             <table className="min-w-full bg-white shadow rounded-lg overflow-hidden">
                 <thead>
@@ -150,28 +173,7 @@ const ServiceList = () => {
                 </Link>
             </div>
 
-            {/* Phân trang */}
-            <div className="mt-4 flex justify-between items-center">
-                <button
-                    onClick={goToPreviousPage}
-                    disabled={currentPage === 1}
-                    className="bg-gray-300 text-gray-700 px-3 py-1 rounded disabled:opacity-50"
-                >
-                    Previous
-                </button>
 
-                <span>
-                    Page {currentPage} of {totalPages}
-                </span>
-
-                <button
-                    onClick={goToNextPage}
-                    disabled={currentPage === totalPages}
-                    className="bg-gray-300 text-gray-700 px-3 py-1 rounded disabled:opacity-50"
-                >
-                    Next
-                </button>
-            </div>
         </div>
     );
 };

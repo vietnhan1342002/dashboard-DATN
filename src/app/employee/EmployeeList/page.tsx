@@ -21,7 +21,7 @@ const EmployeeList = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [searchQuery, setSearchQuery] = useState('');
 
-    const pageSize = 7;
+    const pageSize = 10;
 
     const fetchEmployees = async (currentPage: number) => {
         try {
@@ -86,7 +86,31 @@ const EmployeeList = () => {
                         value={searchQuery}
                         onChange={handleSearch}
                     />
-                    <button className="bg-green-500 text-white px-4 py-2 rounded">Search</button>
+                    <button
+                        onClick={() => setSearchQuery("")}
+                        className="bg-green-500 text-white px-4 py-2 rounded"
+                    >
+                        Clear
+                    </button>
+                </div>
+                <div className="my-4 flex justify-between items-center">
+                    <button
+                        onClick={goToPreviousPage}
+                        disabled={currentPage === 1}
+                        className="bg-gray-300 text-gray-700 px-3 py-1 rounded disabled:opacity-50"
+                    >
+                        Previous
+                    </button>
+
+                    <span>Page {currentPage} of {totalPages}</span>
+
+                    <button
+                        onClick={goToNextPage}
+                        disabled={currentPage === totalPages}
+                        className="bg-gray-300 text-gray-700 px-3 py-1 rounded disabled:opacity-50"
+                    >
+                        Next
+                    </button>
                 </div>
 
                 <table className="min-w-full bg-white shadow rounded-lg overflow-hidden">
@@ -128,28 +152,6 @@ const EmployeeList = () => {
                         <button className="bg-blue-500 text-white px-4 py-2 rounded">+ Add Employee</button>
                     </Link>
                 </div>
-
-                <div className="mt-4 flex justify-between items-center">
-                    <button
-                        onClick={goToPreviousPage}
-                        disabled={currentPage === 1}
-                        className="bg-gray-300 text-gray-700 px-3 py-1 rounded disabled:opacity-50"
-                    >
-                        Previous
-                    </button>
-
-                    <span>Page {currentPage} of {totalPages}</span>
-
-                    <button
-                        onClick={goToNextPage}
-                        disabled={currentPage === totalPages}
-                        className="bg-gray-300 text-gray-700 px-3 py-1 rounded disabled:opacity-50"
-                    >
-                        Next
-                    </button>
-                </div>
-
-
             </div>
         </div>
     );
