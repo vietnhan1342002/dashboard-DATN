@@ -59,6 +59,12 @@ const AddEmployee = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
+            console.log({
+                fullName: employee.fullName,
+                phoneNumber: employee.phoneNumber,
+                password: employee.password,
+                roleId: employee.roleId._id
+            });
 
             const res = await axiosInstance.post('/user-auth', {
                 fullName: employee.fullName,
@@ -66,18 +72,18 @@ const AddEmployee = () => {
                 password: employee.password,
                 roleId: employee.roleId._id
             })
-        } catch (error) {
-
+            if (employee.roleId.nameRole === 'doctor') {
+                const doctor = await axiosInstance.get(`/doctors/user/${res.data._id}`)
+                if (doctor) {
+                    toast.success('update successfully')
+                    setTimeout(() => {
+                        router.push(`/doctor/EditDoctor?id=${doctor.data._id}`)
+                    }, 2000)
+                }
+            }
+        } catch (error: any) {
+            toast.error(error.response.data.message)
         }
-        // if (employee.roleId.nameRole === 'doctor') {
-        //     const doctor = await axiosInstance.get(`/doctors/user/${res.data._id}`)
-        //     if (doctor) {
-        //         toast.success('update successfully')
-        //         setTimeout(() => {
-        //             router.push(`/doctor/EditDoctor?id=${doctor.data._id}`)
-        //         }, 2000)
-        //     }
-        // }
         router.back()
     };
 
