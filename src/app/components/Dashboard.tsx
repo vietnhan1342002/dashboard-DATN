@@ -7,7 +7,7 @@ import useSocket from "@/hooks/useSocket";
 import { formatDateTime } from "../utils/format";
 
 const Dashboard = () => {
-    const socket = useSocket("http://13.211.141.240:8080");
+    const socket = useSocket("https://13.211.141.240.nip.io");
     const router = useRouter()
 
     const initialData = {

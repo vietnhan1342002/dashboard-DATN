@@ -37,6 +37,7 @@ const routesByRole = {
         { href: "/appointment/AppointmentList", icon: FaClipboardList, label: "Appointments" },
         { href: "/schedules", icon: FaUserDoctor, label: "Doctor Schedule" },
         { href: "/bill", icon: FaFileInvoiceDollar, label: "Bills" },
+        { href: "/bill/PaidBillsPage", icon: AiOutlineFileDone, label: "Paid" },
     ],
 } as const;
 
