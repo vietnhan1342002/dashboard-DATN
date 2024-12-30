@@ -47,7 +47,7 @@ const PaidBillsPage = () => {
     const fetchData = async () => {
         try {
             const res = await axiosInstance.get(`/bills`);
-            const paidBills = res.data.filter((bill: Bill) => bill.status === 'paid');
+            const paidBills = res.data.result.filter((bill: Bill) => bill.status === 'paid');
             setBills(paidBills);
 
             if (paidBills.length > 0) {
