@@ -145,6 +145,7 @@ const MedicalRecordList = () => {
                     <table className="min-w-full bg-white shadow rounded-lg overflow-hidden">
                         <thead>
                             <tr className="bg-gray-100">
+                                <th className="px-6 py-3 text-left">No.</th> {/* Cột số thứ tự */}
                                 <th className="px-6 py-3 text-left">Patient Name</th>
                                 <th className="px-6 py-3 text-left">Phone</th>
                                 <th className="px-6 py-3 text-left">Doctor</th>
@@ -155,36 +156,41 @@ const MedicalRecordList = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {medicalrecords.map((record, index) => (
-                                <tr key={record._id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                                    <td className="px-6 py-4">{record?.patientId?.userId?.fullName || ''}</td>
-                                    <td className="px-6 py-4">{record?.patientId?.userId?.phoneNumber || ''}</td>
-                                    <td className="px-6 py-4">{record?.doctorId?.userId?.fullName || ''}</td>
-                                    <td className="px-6 h-14 py-4 w-72 overflow-hidden">{record?.note || ''}</td>
-                                    <td className="px-6 py-4">{record?.diagnosis || ''}</td>
-                                    <td className="px-6 py-4">{formatDateTime(record?.appointmentId?.appointmentDate) || ''}</td>
-                                    <td className="px-6 py-4 flex space-x-2">
-                                        <button
-                                            onClick={() => handleEdit(record.appointmentId._id)}
-                                            className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
-                                        >
-                                            Edit
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(record._id)}
-                                            className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
-                                        >
-                                            Delete
-                                        </button>
-                                        <button
-                                            onClick={() => handleViewMore(record._id)}
-                                            className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
-                                        >
-                                            View More
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
+                            {medicalrecords.map((record, index) => {
+                                // Tính toán số thứ tự
+                                const no = (currentPage - 1) * pageSize + index + 1;
+                                return (
+                                    <tr key={record._id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                                        <td className="px-6 py-4">{no}</td> {/* Hiển thị số thứ tự */}
+                                        <td className="px-6 py-4">{record?.patientId?.userId?.fullName || ''}</td>
+                                        <td className="px-6 py-4">{record?.patientId?.userId?.phoneNumber || ''}</td>
+                                        <td className="px-6 py-4">{record?.doctorId?.userId?.fullName || ''}</td>
+                                        <td className="px-6 h-14 py-4 w-72 overflow-hidden">{record?.note || ''}</td>
+                                        <td className="px-6 py-4">{record?.diagnosis || ''}</td>
+                                        <td className="px-6 py-4">{formatDateTime(record?.appointmentId?.appointmentDate) || ''}</td>
+                                        <td className="px-6 py-4 flex space-x-2">
+                                            <button
+                                                onClick={() => handleEdit(record.appointmentId._id)}
+                                                className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
+                                            >
+                                                Edit
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(record._id)}
+                                                className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+                                            >
+                                                Delete
+                                            </button>
+                                            <button
+                                                onClick={() => handleViewMore(record._id)}
+                                                className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
+                                            >
+                                                View More
+                                            </button>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </table>
                 )}

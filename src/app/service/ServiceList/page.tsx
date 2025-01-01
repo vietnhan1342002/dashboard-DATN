@@ -3,10 +3,9 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { setServices, setLoading } from "@/redux/store/serviceSlice"; // Giả sử bạn có một slice cho dịch vụ
-import axios from "axios";
-import Link from "next/link";
+import { setServices, setLoading } from "@/redux/store/serviceSlice";
 import axiosInstance from "@/app/utils/axios";
+import Link from "next/link";
 
 const ServiceList = () => {
     const dispatch = useDispatch();
@@ -33,12 +32,12 @@ const ServiceList = () => {
 
         fetchServices();
     }, [dispatch]);
+
     const filteredServices = services.filter((service) => {
         const serviceName = service.name?.toLowerCase() || '';
         const department = service.departmentId?.departmentName?.toLowerCase() || ''; // Safe access
         return serviceName.includes(searchQuery.toLowerCase()) || department.includes(searchQuery.toLowerCase());
     });
-
 
     // Phân trang
     const indexOfLastItem = currentPage * itemsPerPage;
@@ -95,6 +94,14 @@ const ServiceList = () => {
                     Clear
                 </button>
             </div>
+            {/* Thêm dịch vụ */}
+            <div className="mt-4 flex justify-end">
+                <Link href="/service/AddService">
+                    <button className="bg-blue-500 text-white px-4 py-2 rounded">
+                        + Add Service
+                    </button>
+                </Link>
+            </div>
 
             {/* Phân trang */}
             <div className="flex justify-between my-4">
@@ -119,6 +126,7 @@ const ServiceList = () => {
             <table className="min-w-full bg-white shadow rounded-lg overflow-hidden">
                 <thead>
                     <tr className="bg-gray-100">
+                        <th className="px-6 py-3 text-left">No.</th>
                         <th className="px-6 py-3 text-left">Service Name</th>
                         <th className="px-6 py-3 text-left">Department</th>
                         <th className="px-6 py-3 text-left">Description</th>
@@ -128,8 +136,9 @@ const ServiceList = () => {
                 <tbody>
                     {currentServices.map((service, index) => (
                         <tr key={service._id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                            {/* Cột Số thứ tự */}
+                            <td className="px-6 py-4">{index + 1 + (currentPage - 1) * itemsPerPage}</td>
                             <td className="px-6 py-4">{service.name}</td>
-
                             <td className="px-6 py-4">{service.departmentId?.departmentName}</td>
                             <td className="px-6 py-4">
                                 <div>
@@ -142,7 +151,6 @@ const ServiceList = () => {
                                     <strong>Related Diseases:</strong> {service.description.relatedDiseases.join(', ')}
                                 </div>
                             </td>
-
                             <td className="px-6 py-4 flex space-x-2">
                                 <Link href={`/service/EditService?id=${service._id}`}>
                                     <button className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">
@@ -160,17 +168,6 @@ const ServiceList = () => {
                     ))}
                 </tbody>
             </table>
-
-            {/* Thêm dịch vụ */}
-            <div className="mt-4 flex justify-end">
-                <Link href="/service/AddService">
-                    <button className="bg-blue-500 text-white px-4 py-2 rounded">
-                        + Add Service
-                    </button>
-                </Link>
-            </div>
-
-
         </div>
     );
 };

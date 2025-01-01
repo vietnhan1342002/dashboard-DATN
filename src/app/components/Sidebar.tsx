@@ -98,7 +98,7 @@ const Sidebar = () => {
     };
 
     return (
-        <div className="h-screen w-32 bg-blue-600 fixed top-0 left-0 flex flex-col justify-between items-center py-8 text-white overflow-y-auto overflow-x-hidden shadow-xl transition-all duration-300 ease-in-out sidebar">
+        <div className="h-screen w-32 bg-blue-600 fixed top-0 left-0 flex flex-col justify-between items-center py-2 text-white overflow-y-auto overflow-x-hidden shadow-xl transition-all duration-300 ease-in-out sidebar">
             <div className="flex-grow w-full">
                 {routes.map((route, index) => (
                     <Link

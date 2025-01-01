@@ -5,9 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+
 const MedicineList = () => {
-
-
     const initialMedicine = [{
         _id: "",
         name: "",
@@ -18,8 +17,7 @@ const MedicineList = () => {
         minQuantity: 0,
         price: 0,
         unit: ""
-    }
-    ]
+    }]
 
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
@@ -30,22 +28,14 @@ const MedicineList = () => {
     const [medicines, setMedicines] = useState(initialMedicine);
 
     const fetchMedicines = async (currentPage: number) => {
-
         try {
             const response = await axiosInstance.get(`/medications?current=${currentPage}&pageSize=${pageSize}`);
             const { result, totalPages } = response.data;
-            console.log(result);
-            if (result.dateOfBirth) {
-                const formattedDate = result.dateOfBirth.split('T')[0];
-                result.dateOfBirth = formattedDate;
-                console.log('patient.dateOfBirth', result.dateOfBirth);
-            }
-
             setTotalPages(totalPages);
-            setMedicines(result)
+            setMedicines(result);
         } catch (err: any) {
             console.log('Error from fetchPatient', err);
-            toast.error(err.response.data.message)
+            toast.error(err.response.data.message);
         }
     };
 
@@ -65,25 +55,24 @@ const MedicineList = () => {
         router.push(`/medicine/EditMedicine?id=${medicineId}`);
     };
 
-
     const fetchDeleteMedicine = async (medicineId: string) => {
         const res = await axiosInstance.delete(`/medications/${medicineId}`);
         if (res) {
-            toast.success("Successfully deleted")
+            toast.success("Successfully deleted");
             setTimeout(function () {
-                location.reload();  // Tự động reload trang sau 2 giây
+                location.reload(); // Tự động reload trang sau 2 giây
             }, 1000);
         }
-    }
+    };
 
     const handleDelete = (medicineId: string) => {
         console.log('Deleting medicine with ID: ', medicineId);
-        fetchDeleteMedicine(medicineId)
+        fetchDeleteMedicine(medicineId);
     };
 
     useEffect(() => {
-        fetchMedicines(currentPage)
-    }, [currentPage])
+        fetchMedicines(currentPage);
+    }, [currentPage]);
 
     return (
         <div className="p-4 flex-1">
@@ -102,6 +91,11 @@ const MedicineList = () => {
                 >
                     Clear
                 </button>
+            </div>
+            <div className="mt-4 flex justify-end">
+                <Link href="/medicine/AddMedicine">
+                    <button className="bg-blue-500 text-white px-4 py-2 rounded">+ Add Medicine</button>
+                </Link>
             </div>
             <div className="flex justify-between my-4">
                 <button
@@ -124,13 +118,14 @@ const MedicineList = () => {
             <table className="min-w-full bg-white shadow rounded-lg overflow-hidden">
                 <thead>
                     <tr className="bg-gray-100">
+                        <th className="px-6 py-3 text-left">No.</th>
                         <th className="px-6 py-3 text-left">Name</th>
-                        <th className="px-6 py-3 text-left">description</th>
-                        <th className="px-6 py-3 text-left">usageInstructions</th>
-                        <th className="px-6 py-3 text-left">sideEffects</th>
+                        <th className="px-6 py-3 text-left">Description</th>
+                        <th className="px-6 py-3 text-left">Usage Instructions</th>
+                        <th className="px-6 py-3 text-left">Side Effects</th>
                         <th className="px-6 py-3 text-left">Price</th>
                         <th className="px-6 py-3 text-left">Quantity</th>
-                        <th className="px-6 py-3 text-left">Min quantity</th>
+                        <th className="px-6 py-3 text-left">Min Quantity</th>
                         <th className="px-6 py-3 text-left">Unit</th>
                         <th className="px-6 py-3 text-left">Actions</th>
                     </tr>
@@ -138,6 +133,7 @@ const MedicineList = () => {
                 <tbody>
                     {medicines.map((medicine, index) => (
                         <tr key={medicine._id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                            <td className="px-6 py-4">{(currentPage - 1) * pageSize + index + 1}</td>
                             <td className="px-6 py-4">{medicine?.name || 'No data available'}</td>
                             <td className="px-6 py-4">{medicine?.description || 'No data available'}</td>
                             <td className="px-6 py-4">{medicine?.usageInstructions || 'No data available'}</td>
@@ -164,11 +160,6 @@ const MedicineList = () => {
                     ))}
                 </tbody>
             </table>
-            <div className="mt-4 flex justify-end">
-                <Link href="/medicine/AddMedicine">
-                    <button className="bg-blue-500 text-white px-4 py-2 rounded">+ Add Medicine</button>
-                </Link>
-            </div>
         </div>
     );
 };

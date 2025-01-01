@@ -78,8 +78,6 @@ const AppointmentList = () => {
         fetchCanceledAppointment(appointmentId)
     };
 
-
-
     return (
         <div className="p-4 flex-1">
             <h2 className="text-2xl font-semibold mb-4">Appointments</h2>
@@ -102,7 +100,6 @@ const AppointmentList = () => {
                     Clear
                 </button>
             </div>
-
 
             {/* Phân trang */}
             <div className="flex justify-between my-4">
@@ -127,7 +124,7 @@ const AppointmentList = () => {
             <table className="min-w-full bg-white shadow rounded-lg overflow-hidden">
                 <thead>
                     <tr className="bg-gray-100">
-                        <th className="px-6 py-3 text-left">ID</th>
+                        <th className="px-6 py-3 text-left">No.</th> {/* Đổi từ "ID" thành "No." */}
                         <th className="px-6 py-3 text-left">Patient Name</th>
                         <th className="px-6 py-3 text-left">Phone Patient</th>
                         <th className="px-6 py-3 text-left">Doctor Name</th>
@@ -138,37 +135,40 @@ const AppointmentList = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {appointments.map((appointment, index) => (
-                        <tr key={appointment._id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                            <td className="px-6 py-4">{appointment._id}</td>
-                            <td className="px-6 py-4">{appointment.patientId?.userId?.fullName}</td>
-                            <td className="px-6 py-4">
-                                {appointment.patientId?.userId?.phoneNumber || 'No data available'}
-                            </td>
-                            <td className="px-6 py-4">{appointment.doctorId?.userId?.fullName}</td>
-                            <td className="px-6 py-4">{appointment?.appointmentDate?.split(' ')[0]}</td>
-                            <td className="px-6 py-4">{appointment?.appointmentDate?.split(' ')[1]}</td>
-                            <td className="px-6 py-4">{appointment?.reason}</td>
-                            <td className="px-6 py-4 flex space-x-2">
-                                <button
-                                    onClick={() => handleConfirm(appointment._id)} // Hàm handleConfirm thay thế cho handleEdit
-                                    className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
-                                >
-                                    Confirm
-                                </button>
-                                <button
-                                    onClick={() => handleCancel(appointment._id)} // Hàm handleCancel thay thế cho handleDelete
-                                    className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
-                                >
-                                    Cancel
-                                </button>
-                            </td>
-
-                        </tr>
-                    ))}
+                    {appointments.map((appointment, index) => {
+                        // Tính toán số thứ tự dựa trên trang hiện tại
+                        const no = (currentPage - 1) * pageSize + index + 1;
+                        return (
+                            <tr key={appointment._id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                                <td className="px-6 py-4">{no}</td> {/* Sử dụng số thứ tự đã tính */}
+                                <td className="px-6 py-4">{appointment.patientId?.userId?.fullName}</td>
+                                <td className="px-6 py-4">
+                                    {appointment.patientId?.userId?.phoneNumber || 'No data available'}
+                                </td>
+                                <td className="px-6 py-4">{appointment.doctorId?.userId?.fullName}</td>
+                                <td className="px-6 py-4">{appointment?.appointmentDate?.split(' ')[0]}</td>
+                                <td className="px-6 py-4">{appointment?.appointmentDate?.split(' ')[1]}</td>
+                                <td className="px-6 py-4">{appointment?.reason}</td>
+                                <td className="px-6 py-4 flex space-x-2">
+                                    <button
+                                        onClick={() => handleConfirm(appointment._id)} // Hàm handleConfirm thay thế cho handleEdit
+                                        className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
+                                    >
+                                        Confirm
+                                    </button>
+                                    <button
+                                        onClick={() => handleCancel(appointment._id)} // Hàm handleCancel thay thế cho handleDelete
+                                        className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+                                    >
+                                        Cancel
+                                    </button>
+                                </td>
+                            </tr>
+                        );
+                    })}
                 </tbody>
-            </table>
 
+            </table>
 
             <Toaster position="top-center" />
         </div>

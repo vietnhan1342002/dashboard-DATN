@@ -126,6 +126,7 @@ const DoctorList = () => {
                 <table className="min-w-full bg-white shadow rounded-lg overflow-hidden table-fixed">
                     <thead>
                         <tr className="bg-gray-100">
+                            <th className="px-6 py-3 text-left w-1/7">No.</th> {/* Thêm cột số thứ tự */}
                             <th className="px-6 py-3 text-left w-1/7">Full Name</th>
                             <th className="px-6 py-3 text-left w-1/7">Avatar</th>
                             <th className="px-6 py-3 text-left w-1/7">Phone</th>
@@ -138,25 +139,21 @@ const DoctorList = () => {
                     <tbody>
                         {doctors.map((doctor, index) => (
                             <tr key={doctor._id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                                <td className="px-6 py-4">{(currentPage - 1) * pageSize + index + 1}</td> {/* Số thứ tự */}
                                 <td className="px-6 py-4">{doctor.userId?.fullName || 'No data available'}</td>
-
-                                {/* Sửa cột Avatar */}
                                 <td className="px-6 py-4">
                                     <div className="flex items-center justify-center">
                                         <img
                                             src={doctor.avatar}
                                             alt="Avatar Preview"
-                                            className="w-32 h-32 object-cover rounded" // Ảnh lớn hơn
+                                            className="w-32 h-32 object-cover rounded"
                                         />
                                     </div>
                                 </td>
-
                                 <td className="px-6 py-4">{doctor.userId?.phoneNumber || 'No data available'}</td>
                                 <td className="px-6 py-4">{doctor.specialtyId?.name || 'No data available'}</td>
                                 <td className="px-6 py-4">{doctor.licenseNumber}</td>
                                 <td className="px-6 py-4">{doctor.yearsOfExperience}</td>
-
-                                {/* Sửa cột Action */}
                                 <td className="px-6 py-4">
                                     <div className="flex justify-center space-x-2">
                                         <button

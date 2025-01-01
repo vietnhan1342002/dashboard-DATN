@@ -5,11 +5,49 @@ import { toast, Toaster } from "sonner";
 import { useRouter } from "next/navigation";
 import useSocket from "@/hooks/useSocket";
 import { formatDateTime } from "../utils/format";
+import { Line } from "react-chartjs-2";
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+} from "chart.js";
+
+// Đăng ký các thành phần Chart.js
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend
+);
 
 const Dashboard = () => {
     const socket = useSocket("https://13.211.141.240.nip.io");
     const router = useRouter()
-
+    const [chartData] = useState({
+        labels: ["Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+        datasets: [
+            {
+                label: "Earned",
+                data: [40, 60, 80, 50, 90, 100],
+                borderColor: "#6a5acd",
+                backgroundColor: "rgba(106, 90, 205, 0.2)",
+            },
+            {
+                label: "Forecasted",
+                data: [50, 70, 60, 80, 110, 90],
+                borderColor: "#32cd32",
+                backgroundColor: "rgba(50, 205, 50, 0.2)",
+            },
+        ],
+    });
     const initialData = {
         fullName: '',
         phoneNumber: ''
@@ -190,6 +228,28 @@ const Dashboard = () => {
                     }
                 </div>
             </div>
+            <div
+                className="bg-white p-4 rounded-lg shadow-lg mb-6 mx-auto"
+                style={{ maxWidth: "90%", height: "300px" }}
+            >
+                <h3 className="text-xl font-semibold mb-4">Revenue Overview</h3>
+                <Line
+                    data={chartData}
+                    options={{
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: "top",
+                            },
+                            title: {
+                                display: true,
+                                text: "Revenue Earned vs Forecasted",
+                            },
+                        },
+                    }}
+                />
+            </div>
 
             {/* Appointments Table */}
             <div className="bg-white p-6 rounded-lg shadow-lg">
@@ -197,35 +257,35 @@ const Dashboard = () => {
                 <table className="w-full border-collapse">
                     <thead>
                         <tr className="bg-gray-200 text-left">
-                            <th className="p-3 border">STT</th>
+                            <th className="p-3 border">No.</th> {/* Thay 'STT' bằng 'No.' */}
                             <th className="p-3 border">Patient</th>
                             <th className="p-3 border">Phone number</th>
                             <th className="p-3 border">Date</th>
                             <th className="p-3 border">Doctor</th>
                             <th className="p-3 border">Reason</th>
                             <th className="p-3 border">Status</th>
-                            {
-                                role === "doctor" ? <>
+                            {role === "doctor" ? (
+                                <>
                                     <th className="p-3 border">Medical</th>
                                     <th className="p-3 border">Visited</th>
-                                </> : <></>
-                            }
+                                </>
+                            ) : null}
                         </tr>
                     </thead>
                     <tbody>
                         {appointments.length > 0 ? (
                             appointments.map((appointment, index) => (
                                 <tr key={appointment._id || index}>
-                                    <td className="p-3 border">{index || 'No data available'}</td>
+                                    <td className="p-3 border">{index + 1 || 'No data available'}</td> {/* Thêm số thứ tự */}
                                     <td className="p-3 border">{appointment?.detail?.patientId?.userId?.fullName || 'No data available'}</td>
                                     <td className="p-3 border">{appointment?.detail?.patientId?.userId?.phoneNumber || 'No data available'}</td>
                                     <td className="p-3 border">{formatDateTime(appointment?.detail?.appointmentDate) || 'No data available'}</td>
-                                    <td className="p-3 border">{appointment?.detail?.doctorId?.userId?.fullName || 'No data available'} </td>
+                                    <td className="p-3 border">{appointment?.detail?.doctorId?.userId?.fullName || 'No data available'}</td>
                                     <td className="p-3 border">{appointment?.detail?.reason || 'No data available'}</td>
                                     <td className="p-3 border">
                                         <span className="bg-blue-300 p-1 rounded">{appointment.detail.status ? appointment.detail.status.charAt(0).toUpperCase() + appointment.detail.status.slice(1) : 'No data available'}</span>
                                     </td>
-                                    {role === "doctor" ?
+                                    {role === "doctor" ? (
                                         <>
                                             <td className="p-3 border">
                                                 <button
@@ -250,8 +310,7 @@ const Dashboard = () => {
                                                 </button>
                                             </td>
                                         </>
-                                        : <></>
-                                    }
+                                    ) : null}
                                 </tr>
                             ))
                         ) : (
@@ -264,7 +323,6 @@ const Dashboard = () => {
                     </tbody>
                 </table>
             </div>
-
             <Toaster position="top-center" />
 
         </div>

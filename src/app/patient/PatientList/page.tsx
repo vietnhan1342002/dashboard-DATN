@@ -100,6 +100,12 @@ const PatientList = () => {
                         Clear
                     </button>
                 </div>
+                {/* Nút thêm bệnh nhân */}
+                <div className="mt-4 flex justify-end">
+                    <Link href="/patient/AddPatient">
+                        <button className="bg-blue-500 text-white px-4 py-2 rounded">+ Add Patient</button>
+                    </Link>
+                </div>
 
                 {/* Điều hướng trang */}
                 <div className="flex justify-between my-4">
@@ -124,6 +130,7 @@ const PatientList = () => {
                 <table className="min-w-full bg-white shadow rounded-lg overflow-hidden">
                     <thead>
                         <tr className="bg-gray-100">
+                            <th className="px-6 py-3 text-left">No.</th>
                             <th className="px-6 py-3 text-left">Name</th>
                             <th className="px-6 py-3 text-left">Email</th>
                             <th className="px-6 py-3 text-left">Phone</th>
@@ -135,6 +142,7 @@ const PatientList = () => {
                     <tbody>
                         {patients.map((patient, index) => (
                             <tr key={patient._id || index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                                <td className="px-6 py-4">{(currentPage - 1) * pageSize + index + 1}</td> {/* Hiển thị số thứ tự */}
                                 <td className="px-6 py-4">{patient.userId?.fullName || "No data available"}</td>
                                 <td className="px-6 py-4">{patient?.email || "No data available"}</td>
                                 <td className="px-6 py-4">{patient.userId?.phoneNumber || "No data available"}</td>
@@ -150,12 +158,7 @@ const PatientList = () => {
                     </tbody>
                 </table>
 
-                {/* Nút thêm bệnh nhân */}
-                <div className="mt-4 flex justify-end">
-                    <Link href="/patient/AddPatient">
-                        <button className="bg-blue-500 text-white px-4 py-2 rounded">+ Add Patient</button>
-                    </Link>
-                </div>
+
             </div>
         </div>
     );

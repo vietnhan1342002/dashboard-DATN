@@ -4,10 +4,9 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { setSpecialties, setLoading } from "@/redux/store/specialtySlice";
-import axios from "axios";
+import axiosInstance from "@/app/utils/axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import axiosInstance from "@/app/utils/axios";
 
 // Component
 const SpecialtyList = () => {
@@ -101,6 +100,13 @@ const SpecialtyList = () => {
                 </button>
             </div>
 
+            <div className="mt-4 flex justify-end">
+                <Link href="/specialty/AddSpecialty">
+                    <button className="bg-blue-500 text-white px-4 py-2 rounded">
+                        + Add Specialty
+                    </button>
+                </Link>
+            </div>
             <div className="flex justify-between my-4">
                 <button
                     onClick={goToPreviousPage}
@@ -122,6 +128,7 @@ const SpecialtyList = () => {
             <table className="min-w-full bg-white shadow rounded-lg overflow-hidden">
                 <thead>
                     <tr className="bg-gray-100">
+                        <th className="px-6 py-3 text-left">No.</th> {/* Cột số thứ tự */}
                         <th className="px-6 py-3 text-left">Specialty Name</th>
                         <th className="px-6 py-3 text-left">Description</th>
                         <th className="px-6 py-3 text-left">Action</th>
@@ -133,6 +140,7 @@ const SpecialtyList = () => {
                             key={specialty._id}
                             className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
                         >
+                            <td className="px-6 py-4">{(currentPage - 1) * itemsPerPage + index + 1}</td> {/* Số thứ tự */}
                             <td className="px-6 py-4">{specialty.departmentName}</td>
                             <td className="px-6 py-4">{specialty.description}</td>
                             <td className="px-6 py-4 flex space-x-2">
@@ -153,14 +161,6 @@ const SpecialtyList = () => {
                     ))}
                 </tbody>
             </table>
-
-            <div className="mt-4 flex justify-end">
-                <Link href="/specialty/AddSpecialty">
-                    <button className="bg-blue-500 text-white px-4 py-2 rounded">
-                        + Add Specialty
-                    </button>
-                </Link>
-            </div>
         </div>
     );
 };
