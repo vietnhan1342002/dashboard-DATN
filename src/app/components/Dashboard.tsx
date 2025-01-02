@@ -29,8 +29,8 @@ ChartJS.register(
 );
 
 const Dashboard = () => {
-    // const socket = useSocket("https://13.211.141.240.nip.io");
-    const socket = useSocket("http://localhost:8080")
+    const socket = useSocket("https://13.211.141.240.nip.io");
+    // const socket = useSocket("http://localhost:8080")
     const router = useRouter()
     const [chartData] = useState({
         labels: ["Feb", "Mar", "Apr", "May", "Jun", "Jul"],
