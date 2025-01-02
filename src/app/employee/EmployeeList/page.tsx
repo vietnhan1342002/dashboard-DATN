@@ -78,24 +78,27 @@ const EmployeeList = () => {
         <div className="flex">
             <div className="p-4 flex-1">
                 <h2 className="text-2xl font-semibold mb-4">Employees</h2>
-                <div className="flex items-center mb-4">
-                    <input
-                        type="text"
-                        placeholder="Search"
-                        className="border rounded p-2 flex-grow mr-2"
-                        value={searchQuery}
-                        onChange={handleSearch}
-                    />
-                    <button
-                        onClick={() => setSearchQuery("")}
-                        className="bg-green-500 text-white px-4 py-2 rounded"
-                    >
-                        Clear
-                    </button>
-                </div>
-                <div className="mt-4 flex justify-end">
+                <div className="flex items-center justify-between mb-6 bg-gray-100 p-4 rounded shadow">
+                    {/* Search Input */}
+                    <div className="flex items-center flex-grow gap-2">
+                        <input
+                            type="text"
+                            placeholder="Search"
+                            className="border border-gray-300 rounded-l p-2 flex-grow focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            value={searchQuery}
+                            onChange={handleSearch}
+                        />
+                        <button
+                            onClick={() => setSearchQuery("")}
+                            className="bg-green-500 text-white px-4 py-2 rounded-r hover:bg-green-600 transition"
+                        >
+                            Clear
+                        </button>
+                    </div>
                     <Link href="/employee/AddEmployee">
-                        <button className="bg-blue-500 text-white px-4 py-2 rounded">+ Add Employee</button>
+                        <button className="ml-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
+                            Add Employee
+                        </button>
                     </Link>
                 </div>
 

@@ -29,7 +29,8 @@ ChartJS.register(
 );
 
 const Dashboard = () => {
-    const socket = useSocket("https://13.211.141.240.nip.io");
+    // const socket = useSocket("https://13.211.141.240.nip.io");
+    const socket = useSocket("http://localhost:8080")
     const router = useRouter()
     const [chartData] = useState({
         labels: ["Feb", "Mar", "Apr", "May", "Jun", "Jul"],
@@ -105,6 +106,9 @@ const Dashboard = () => {
             let appointment;
             if (role === "doctor") {
                 const doctorId = await axiosInstance.get(`/doctors/user/${userId}`)
+                if (doctorId) {
+                    localStorage.setItem("doctorId", doctorId.data._id)
+                }
                 appointment = await axiosInstance.get(`filter/count/appointments?doctorId=${doctorId.data._id}`);
             } else {
                 appointment = await axiosInstance.get('/filter/count/appointments');
@@ -202,13 +206,18 @@ const Dashboard = () => {
             {/* Header Section */}
             <div className="flex space-x-4 mb-6">
                 {/* Greeting Card */}
-                <div className="bg-purple-200 flex-1 p-16 rounded-lg shadow-lg flex items-center space-x-4">
-                    <img src="/doc.png" alt="Doctor" className="w-16 h-16 rounded-full" />
+                <div className="bg-gradient-to-r from-purple-500 via-purple-400 to-purple-300 flex-1 p-16 rounded-lg shadow-lg flex items-center space-x-4">
+                    <img src="/doc.png" alt="Doctor" className="w-20 h-20 rounded-full border-4 border-white shadow-lg" />
                     <div>
-                        <h2 className="text-lg font-semibold text-purple-800">
-                            Hello, <span className="text-purple-600">{user.fullName}</span>
+                        <h2 className="text-2xl font-bold text-white">
+                            Hello, <span className="text-yellow-300">{user.fullName || "Guest"}</span>
                         </h2>
-                        <p className="text-sm text-purple-700">Welcome to your dashboard. Here you can manage appointments and doctors.</p>
+                        <p className="mt-2 text-lg font-medium text-white">
+                            Welcome to your dashboard! You are a:
+                            <span className="ml-2 px-4 py-1 text-lg font-semibold bg-yellow-500 text-purple-900 rounded-full shadow-lg">
+                                {role || "Unknown"}
+                            </span>
+                        </p>
                     </div>
                 </div>
                 {/* Statistics Cards */}
@@ -228,28 +237,30 @@ const Dashboard = () => {
                     }
                 </div>
             </div>
-            <div
-                className="bg-white p-4 rounded-lg shadow-lg mb-6 mx-auto"
-                style={{ maxWidth: "90%", height: "300px" }}
-            >
-                <h3 className="text-xl font-semibold mb-4">Revenue Overview</h3>
-                <Line
-                    data={chartData}
-                    options={{
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: "top",
+            {(role === 'admin' || role === 'receptionist') && (
+                <div
+                    className="bg-white p-4 rounded-lg shadow-lg mb-6 mx-auto"
+                    style={{ maxWidth: "90%", height: "300px" }}
+                >
+                    <h3 className="text-xl font-semibold mb-4">Revenue Overview</h3>
+                    <Line
+                        data={chartData}
+                        options={{
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: "top",
+                                },
+                                title: {
+                                    display: true,
+                                    text: "Revenue Earned vs Forecasted",
+                                },
                             },
-                            title: {
-                                display: true,
-                                text: "Revenue Earned vs Forecasted",
-                            },
-                        },
-                    }}
-                />
-            </div>
+                        }}
+                    />
+                </div>
+            )}
 
             {/* Appointments Table */}
             <div className="bg-white p-6 rounded-lg shadow-lg">

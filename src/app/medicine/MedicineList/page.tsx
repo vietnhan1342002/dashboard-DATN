@@ -24,7 +24,7 @@ const MedicineList = () => {
     const router = useRouter();
     const [searchQuery, setSearchQuery] = useState("");
 
-    const pageSize = 5;
+    const pageSize = 10;
     const [medicines, setMedicines] = useState(initialMedicine);
 
     const fetchMedicines = async (currentPage: number) => {
@@ -77,24 +77,28 @@ const MedicineList = () => {
     return (
         <div className="p-4 flex-1">
             <h2 className="text-2xl font-bold mb-4">Manage Medicine</h2>
-            <div className="flex items-center mb-4">
-                <input
-                    type="text"
-                    placeholder="Search"
-                    className="border rounded p-2 flex-grow mr-2"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)} // Handle search input change
-                />
-                <button
-                    className="bg-green-500 text-white px-4 py-2 rounded"
-                    onClick={() => setSearchQuery('')}
-                >
-                    Clear
-                </button>
-            </div>
-            <div className="mt-4 flex justify-end">
+            <div className="flex items-center justify-between bg-gray-100 p-4 rounded shadow mb-6">
+                {/* Search Input */}
+                <div className="flex items-center flex-grow gap-2">
+                    <input
+                        type="text"
+                        placeholder="Search"
+                        className="border border-gray-300 rounded-l p-2 flex-grow focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)} // Handle search input change
+                    />
+                    <button
+                        className="bg-green-500 text-white px-4 py-2 rounded-r hover:bg-green-600 transition"
+                        onClick={() => setSearchQuery('')}
+                    >
+                        Clear
+                    </button>
+                </div>
+                {/* Add Medicine Button */}
                 <Link href="/medicine/AddMedicine">
-                    <button className="bg-blue-500 text-white px-4 py-2 rounded">+ Add Medicine</button>
+                    <button className="ml-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
+                        Add Medicine
+                    </button>
                 </Link>
             </div>
             <div className="flex justify-between my-4">

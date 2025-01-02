@@ -43,13 +43,27 @@ const MedicalRecordList = () => {
     const [medicalrecords, setMedicalRecords] = useState<MedicalRecord[]>([]);
     const [selectedRecord, setSelectedRecord] = useState<MedicalRecord | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [doctorId, setDoctorId] = useState("")
 
     const pageSize = 10;
     const router = useRouter();
 
+    useEffect(() => {
+        const doctorId = localStorage.getItem("doctorId")
+        if (doctorId) {
+            setDoctorId(doctorId)
+        }
+        fetchMedicalRecord();
+    }, [currentPage, searchQuery]);
+
     const fetchMedicalRecord = async () => {
         try {
-            const res = await axiosInstance.get(`/medical-records?current=${currentPage}&pageSize=${pageSize}`);
+            let res;
+            if (doctorId) {
+                res = await axiosInstance.get(`/medical-records/doctor/${doctorId}`)
+            } else {
+                res = await axiosInstance.get(`/medical-records?current=${currentPage}&pageSize=${pageSize}`);
+            }
             const { result, totalPages } = res.data;
             setMedicalRecords(result);
             setTotalPages(totalPages);
@@ -94,9 +108,6 @@ const MedicalRecordList = () => {
         setSelectedRecord(null);
     };
 
-    useEffect(() => {
-        fetchMedicalRecord();
-    }, [currentPage, searchQuery]);
 
     return (
         <div className='flex'>
@@ -148,7 +159,9 @@ const MedicalRecordList = () => {
                                 <th className="px-6 py-3 text-left">No.</th> {/* Cột số thứ tự */}
                                 <th className="px-6 py-3 text-left">Patient Name</th>
                                 <th className="px-6 py-3 text-left">Phone</th>
-                                <th className="px-6 py-3 text-left">Doctor</th>
+                                {!doctorId ?
+                                    <th className="px-6 py-3 text-left">Doctor</th> : <></>
+                                }
                                 <th className="px-6 py-3 text-left">Note</th>
                                 <th className="px-6 py-3 text-left">Diagnosis</th>
                                 <th className="px-6 py-3 text-left">Date of Visit</th>
@@ -164,7 +177,9 @@ const MedicalRecordList = () => {
                                         <td className="px-6 py-4">{no}</td> {/* Hiển thị số thứ tự */}
                                         <td className="px-6 py-4">{record?.patientId?.userId?.fullName || ''}</td>
                                         <td className="px-6 py-4">{record?.patientId?.userId?.phoneNumber || ''}</td>
-                                        <td className="px-6 py-4">{record?.doctorId?.userId?.fullName || ''}</td>
+                                        {!doctorId ?
+                                            <td className="px-6 py-4">{record?.doctorId?.userId?.fullName || ''}</td> : <></>
+                                        }
                                         <td className="px-6 h-14 py-4 w-72 overflow-hidden">{record?.note || ''}</td>
                                         <td className="px-6 py-4">{record?.diagnosis || ''}</td>
                                         <td className="px-6 py-4">{formatDateTime(record?.appointmentId?.appointmentDate) || ''}</td>

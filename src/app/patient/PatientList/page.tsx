@@ -100,13 +100,6 @@ const PatientList = () => {
                         Clear
                     </button>
                 </div>
-                {/* Nút thêm bệnh nhân */}
-                <div className="mt-4 flex justify-end">
-                    <Link href="/patient/AddPatient">
-                        <button className="bg-blue-500 text-white px-4 py-2 rounded">+ Add Patient</button>
-                    </Link>
-                </div>
-
                 {/* Điều hướng trang */}
                 <div className="flex justify-between my-4">
                     <button
@@ -147,7 +140,7 @@ const PatientList = () => {
                                 <td className="px-6 py-4">{patient?.email || "No data available"}</td>
                                 <td className="px-6 py-4">{patient.userId?.phoneNumber || "No data available"}</td>
                                 <td className="px-6 py-4">
-                                    {new Date(patient.dateOfBirth).toLocaleDateString('en-GB') || '01/01/1990'}
+                                    {new Date(patient.dateOfBirth).toLocaleDateString('en-GB').replace(/\//g, '-') || '01-01-1990'}
                                 </td>
                                 <td className="px-6 py-4">{patient.address || "No data available"}</td>
                                 <td className="px-6 py-4">

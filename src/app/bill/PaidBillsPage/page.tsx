@@ -90,7 +90,7 @@ const PaidBillsPage = () => {
                                                 Paid
                                             </span>
                                         </li>
-                                        <li><strong>Payment Date:</strong> {bill.paymentDate ? new Date(bill.paymentDate).toLocaleDateString('en-US') : 'Pending'}</li>
+                                        <li><strong>Payment Date:</strong> {bill.paymentDate ? new Date(bill.paymentDate).toLocaleDateString('en-GB').replaceAll('/', '-') : 'Pending'}</li>
                                     </ul>
                                 </div>
 

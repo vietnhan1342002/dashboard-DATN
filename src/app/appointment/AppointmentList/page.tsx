@@ -146,7 +146,7 @@ const AppointmentList = () => {
                                     {appointment.patientId?.userId?.phoneNumber || 'No data available'}
                                 </td>
                                 <td className="px-6 py-4">{appointment.doctorId?.userId?.fullName}</td>
-                                <td className="px-6 py-4">{appointment?.appointmentDate?.split(' ')[0]}</td>
+                                <td className="px-6 py-4">{appointment?.appointmentDate?.split(' ')[0].split('-').reverse().join('-')}</td>
                                 <td className="px-6 py-4">{appointment?.appointmentDate?.split(' ')[1]}</td>
                                 <td className="px-6 py-4">{appointment?.reason}</td>
                                 <td className="px-6 py-4 flex space-x-2">

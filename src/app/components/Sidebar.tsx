@@ -75,6 +75,7 @@ const Sidebar = () => {
     const handleLogout = () => {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('userId');
+        localStorage.removeItem('doctorId');
         router.push('/login');
     };
 

@@ -63,7 +63,14 @@ const BillsPage = () => {
                                         {bill.status ? bill.status.charAt(0).toUpperCase() + bill.status.slice(1) : 'No data available'}
                                     </span>
                                 </td>
-                                <td className="py-3 px-4 border-b">{bill.createdAt ? new Date(bill.createdAt).toLocaleString() : 'No data available'}</td>
+                                <td className="py-3 px-4 border-b">
+                                    {bill.createdAt
+                                        ? new Date(bill.createdAt)
+                                            .toLocaleString('en-GB')
+                                            .split('/')
+                                            .join('-')
+                                        : 'No data available'}
+                                </td>
                                 <td className="py-3 px-4 border-b">
                                     <button
                                         onClick={() => handleViewBill(bill._id)}

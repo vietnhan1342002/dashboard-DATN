@@ -65,7 +65,7 @@ const AddMedicine = () => {
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
-                        <label htmlFor="name" className="block text-sm font-medium text-gray-700">Tên thuốc</label>
+                        <label htmlFor="name" className="block text-sm font-medium text-gray-700">Medicine Name</label>
                         <input
                             id="name"
                             type="text"
@@ -78,7 +78,7 @@ const AddMedicine = () => {
                     </div>
 
                     <div>
-                        <label htmlFor="description" className="block text-sm font-medium text-gray-700">Mô tả</label>
+                        <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
                         <input
                             id="description"
                             name="description"
@@ -90,7 +90,7 @@ const AddMedicine = () => {
                     </div>
 
                     <div>
-                        <label htmlFor="usageInstructions" className="block text-sm font-medium text-gray-700">Hướng dẫn sử dụng</label>
+                        <label htmlFor="usageInstructions" className="block text-sm font-medium text-gray-700">Usage Instructions</label>
                         <input
                             id="usageInstructions"
                             name="usageInstructions"
@@ -102,7 +102,7 @@ const AddMedicine = () => {
                     </div>
 
                     <div>
-                        <label htmlFor="sideEffects" className="block text-sm font-medium text-gray-700">Tác dụng phụ</label>
+                        <label htmlFor="sideEffects" className="block text-sm font-medium text-gray-700">Side Effects</label>
                         <input
                             id="sideEffects"
                             name="sideEffects"
@@ -114,7 +114,7 @@ const AddMedicine = () => {
                     </div>
 
                     <div>
-                        <label htmlFor="quantity" className="block text-sm font-medium text-gray-700">Số lượng</label>
+                        <label htmlFor="quantity" className="block text-sm font-medium text-gray-700">Quantity</label>
                         <input
                             id="quantity"
                             type="number"
@@ -127,7 +127,7 @@ const AddMedicine = () => {
                     </div>
 
                     <div>
-                        <label htmlFor="minQuantity" className="block text-sm font-medium text-gray-700">Số lượng tối thiểu</label>
+                        <label htmlFor="minQuantity" className="block text-sm font-medium text-gray-700">Minimum Quantity</label>
                         <input
                             id="minQuantity"
                             type="number"
@@ -140,7 +140,7 @@ const AddMedicine = () => {
                     </div>
 
                     <div>
-                        <label htmlFor="price" className="block text-sm font-medium text-gray-700">Giá</label>
+                        <label htmlFor="price" className="block text-sm font-medium text-gray-700">Price</label>
                         <input
                             id="price"
                             type="number"
@@ -153,7 +153,7 @@ const AddMedicine = () => {
                     </div>
 
                     <div>
-                        <label htmlFor="unit" className="block text-sm font-medium text-gray-700">Đơn vị</label>
+                        <label htmlFor="unit" className="block text-sm font-medium text-gray-700">Unit</label>
                         <select
                             id="unit"
                             name="unit"
@@ -162,7 +162,7 @@ const AddMedicine = () => {
                             required
                             className="border border-gray-300 rounded-lg p-3 w-full mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
-                            <option value="">Chọn đơn vị</option>
+                            <option value="">Select Unit</option>
                             {unitOptions.map((option) => (
                                 <option key={option.value} value={option.value}>
                                     {option.label}
