@@ -16,6 +16,7 @@ import {
     Tooltip,
     Legend,
 } from "chart.js";
+import ChartOne from "./Chart";
 
 // Đăng ký các thành phần Chart.js
 ChartJS.register(
@@ -32,23 +33,6 @@ const Dashboard = () => {
     const socket = useSocket("https://13.211.141.240.nip.io");
     // const socket = useSocket("http://localhost:8080")
     const router = useRouter()
-    const [chartData] = useState({
-        labels: ["Feb", "Mar", "Apr", "May", "Jun", "Jul"],
-        datasets: [
-            {
-                label: "Earned",
-                data: [40, 60, 80, 50, 90, 100],
-                borderColor: "#6a5acd",
-                backgroundColor: "rgba(106, 90, 205, 0.2)",
-            },
-            {
-                label: "Forecasted",
-                data: [50, 70, 60, 80, 110, 90],
-                borderColor: "#32cd32",
-                backgroundColor: "rgba(50, 205, 50, 0.2)",
-            },
-        ],
-    });
     const initialData = {
         fullName: '',
         phoneNumber: ''
@@ -59,6 +43,7 @@ const Dashboard = () => {
     const [doctorCount, setDoctorCount] = useState(0)
     const [appointments, setAppointments] = useState<any[]>([])
     const [userId, setUserId] = useState<string | null>()
+    const [chartData, setChartData] = useState<Number[]>([])
 
     useEffect(() => {
         if (!socket) return;
@@ -187,10 +172,73 @@ const Dashboard = () => {
         }
     };
 
+    const getSumPaidBillsForDates = async (dates: string[]) => {
+        const requests = dates.map(date =>
+            fetch(`http://localhost:8080/api/v1/bills/sum-paid-bills?date=${date}`)
+                .then(response => response.json())
+                .then(data => ({ date, data }))  // Thêm ngày vào dữ liệu trả về
+                .catch(error => ({ date, error }))  // Xử lý lỗi nếu có
+        );
+
+        const results = await Promise.all(requests);
+        return results;
+    };
+
+
+    const [week, setWeek] = useState({
+        startOfWeek: '',
+        endOfWeek: ''
+    })
+
+    const getCurrentWeekRange = () => {
+        const currentDate = new Date();
+
+        const dayOfWeek = currentDate.getDay();
+        const diffToStartOfWeek = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+
+        const startOfWeek = new Date(currentDate);
+        startOfWeek.setDate(currentDate.getDate() + diffToStartOfWeek);
+
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6);
+
+        // Lấy ra các ngày trong tuần với ngày tháng năm
+        const weekDays = [];
+        let currentDay = new Date(startOfWeek);
+
+        for (let i = 0; i < 7; i++) {
+            const day = currentDay.getDate();
+            const month = currentDay.getMonth() + 1;
+            const year = currentDay.getFullYear();
+            weekDays.push(`${year}-${month}-${day}`);
+            currentDay.setDate(currentDay.getDate() + 1);
+        }
+        getSumPaidBillsForDates(weekDays).then(results => {
+            console.log("Results:", results);
+            const seriesData = results.map(result => {
+                if ('data' in result) {
+                    return result.data.totalPaidAmountToday || 0; // Lấy giá trị hoặc mặc định là 0 nếu không có
+                }
+                return 0; // Mặc định là 0 nếu có lỗi
+            });
+            setChartData(seriesData);
+
+        });
+        const start = startOfWeek.toLocaleDateString('en-GB').replace(/\//g, '-')
+        const end = endOfWeek.toLocaleDateString('en-GB').replace(/\//g, '-')
+        setWeek({ startOfWeek: start, endOfWeek: end })
+        // console.log("Week Days:", weekDays);
+
+
+        return { startOfWeek, endOfWeek, weekDays };
+    };
+
+
     useEffect(() => {
         if (userId) {
             fetchUser(userId)
         }
+        getCurrentWeekRange()
         fetchSumDoctor()
     }, [userId])
 
@@ -238,28 +286,7 @@ const Dashboard = () => {
                 </div>
             </div>
             {(role === 'admin' || role === 'receptionist') && (
-                <div
-                    className="bg-white p-4 rounded-lg shadow-lg mb-6 mx-auto"
-                    style={{ maxWidth: "90%", height: "300px" }}
-                >
-                    <h3 className="text-xl font-semibold mb-4">Revenue Overview</h3>
-                    <Line
-                        data={chartData}
-                        options={{
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: {
-                                    position: "top",
-                                },
-                                title: {
-                                    display: true,
-                                    text: "Revenue Earned vs Forecasted",
-                                },
-                            },
-                        }}
-                    />
-                </div>
+                <ChartOne startOfWeek={week.startOfWeek} endOfWeek={week.endOfWeek} series={[{ name: "Revenue", data: chartData }]} />
             )}
 
             {/* Appointments Table */}

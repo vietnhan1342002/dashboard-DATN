@@ -4,7 +4,6 @@ import io from "socket.io-client";
 
 const useSocket = (serverUrl: string): ReturnType<typeof io> | null => {
     const [socket, setSocket] = useState<ReturnType<typeof io> | null>(null);
-    console.log(socket);
 
     useEffect(() => {
         const token = localStorage.getItem("accessToken")

@@ -4,7 +4,6 @@ export function formatDateTime(dateTimeString: string): string {
         throw new Error("Invalid input: dateTimeString must be a non-empty string.");
     }
 
-    console.log(dateTimeString);
 
     const [datePart, ...timeParts] = dateTimeString.split(' ');
 
@@ -16,9 +15,6 @@ export function formatDateTime(dateTimeString: string): string {
 
     // Chuyển phần ngày thành đối tượng Date bằng cách thêm "T00:00" để rõ ràng với thời gian
     const date = new Date(`${datePart}T00:00`);
-
-    console.log("date", date);
-
 
     // Kiểm tra xem đối tượng Date có hợp lệ không
     if (isNaN(date.getTime())) {
@@ -35,7 +31,6 @@ export function formatDateTime(dateTimeString: string): string {
 }
 
 export function convertDOBFormat(dateString: string): string {
-    console.log(dateString);
 
     const dateParts = dateString.split('/');
 
