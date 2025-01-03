@@ -21,7 +21,7 @@ const BillsPage = () => {
 
     const fetchBills = async () => {
         try {
-            const response = await axiosInstance.get('/bills');
+            const response = await axiosInstance.get('/bills?pageSize=100');
             console.log("Bills data:", response.data);
             const pendingBills = response.data.result.filter((bill: Bill) => bill.status === 'pending');
             setBills(pendingBills);
