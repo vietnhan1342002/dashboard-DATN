@@ -174,7 +174,7 @@ const Dashboard = () => {
 
     const getSumPaidBillsForDates = async (dates: string[]) => {
         const requests = dates.map(date =>
-            fetch(`https://13.211.141.240.nip.io/bills/sum-paid-bills?date=${date}`)
+            fetch(`https://13.211.141.240.nip.io/api/v1/bills/sum-paid-bills?date=${date}`)
                 .then(response => response.json())
                 .then(data => ({ date, data }))  // Thêm ngày vào dữ liệu trả về
                 .catch(error => ({ date, error }))  // Xử lý lỗi nếu có
