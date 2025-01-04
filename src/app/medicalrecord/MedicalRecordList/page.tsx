@@ -54,11 +54,13 @@ const MedicalRecordList = () => {
             setDoctorId(doctorId)
         }
         fetchMedicalRecord();
-    }, [currentPage, searchQuery]);
+    }, [currentPage, searchQuery, doctorId]);
 
     const fetchMedicalRecord = async () => {
         try {
             let res;
+            console.log(doctorId);
+
             if (doctorId) {
                 res = await axiosInstance.get(`/medical-records/doctor/${doctorId}`)
             } else {
